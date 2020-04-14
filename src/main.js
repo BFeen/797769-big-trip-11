@@ -6,6 +6,7 @@ import {createTripDaysTemplate} from "./components/trip-days.js";
 import {createTripPointTemplate} from "./components/trip-point.js";
 import {createAddEventFormTemplate} from "./components/add-event-form.js";
 import {generatePoints} from "./mock/trip-point.js";
+import {generateFilters} from "./mock/filters.js";
 
 const POINT_COUNT = 3;
 
@@ -18,10 +19,11 @@ const tripMain = header.querySelector(`.trip-main`);
 const tripControls = tripMain.querySelector(`.trip-controls`);
 
 const points = generatePoints(POINT_COUNT);
+const filters = generateFilters();
 
-render(tripMain, createTripInfoTemplate(points), `afterbegin`);
+render(tripMain, createTripInfoTemplate(), `afterbegin`);
 render(tripControls, createMenuTemplate(), `afterbegin`);
-render(tripControls, createFiltersTemplate());
+render(tripControls, createFiltersTemplate(filters));
 
 const main = document.querySelector(`.page-main`);
 const tripEvents = main.querySelector(`.trip-events`);
