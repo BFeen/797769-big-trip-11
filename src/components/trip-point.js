@@ -1,5 +1,6 @@
 export const createTripPointTemplate = (point) => {
-  const {type, destination, info, photo, price} = point;
+  const {type, destination, price, timeStart, timeEnd, offer, offerPrice} = point;
+
   return (
     `<li class="trip-events__item">
         <div class="event">
@@ -10,9 +11,9 @@ export const createTripPointTemplate = (point) => {
 
         <div class="event__schedule">
             <p class="event__time">
-            <time class="event__start-time" datetime="2019-03-18T14:30">14:30</time>
+            <time class="event__start-time" datetime="2019-03-18T14:30">${timeStart}</time>
             &mdash;
-            <time class="event__end-time" datetime="2019-03-18T16:05">16:05</time>
+            <time class="event__end-time" datetime="2019-03-18T16:05">${timeEnd}</time>
             </p>
             <p class="event__duration">1H 35M</p>
         </div>
@@ -24,9 +25,9 @@ export const createTripPointTemplate = (point) => {
         <h4 class="visually-hidden">Offers:</h4>
         <ul class="event__selected-offers">
             <li class="event__offer">
-            <span class="event__offer-title">Rent a car</span>
+            <span class="event__offer-title">${offer}</span>
             &plus;
-            &euro;&nbsp;<span class="event__offer-price">200</span>
+            &euro;&nbsp;<span class="event__offer-price">${offerPrice}</span>
             </li>
         </ul>
 
