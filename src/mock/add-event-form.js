@@ -1,25 +1,56 @@
-const generateRandomInfo = () => {
+const getRandomArrayItem = (array) => {
+  const randomIndex = getRandomInteger(0, array.length);
+
+  return array[randomIndex];
+};
+
+const getRandomInteger = (min, max) => {
+  return min + Math.floor(Math.random() * (max - min));
+};
+
+export const generateRandomInfo = () => {
   let description = new Array();
   for (let i = 0; i < getRandomInteger(1,5); i++) {
     description.push(getRandomArrayItem(Info));
-};
+  }
 
   return description.join(' ');
 };
 
-export const Type = [
-    `Taxi`, `Bus`, `Train`, `Ship`, `Transport`, `Drive`, `Flight`, `Check-in`, `Sightseeng`, `Reastaurant`
-];
+export const pointType = {
+  transfer: [`taxi`, `bus`, `train`, `ship`, `transport`, `drive`, `flight`],
+  activity: [`check-in`, `sightseeing`, `restaurant`],
+};
 
-export const Destination = [
+export const destination = [
   `Paris`, `Moscow`, `Berlin`, `Oslo`, `Amsterdam`, `Barcelona`, `Lissabon`, `Los Angeles`, `New York`, `London`
 ];
 
-export const Offers = [
-  `Rent a car`, `Add luggage`, `Switch to comfort`, `Choose seat`, `Add breakfast`, `Book tickets`, `Lunch in city`
+export const offers = [
+  {
+    type: `luggage`,
+    desc: `Add luggage`,
+    price: 30
+  }, {
+    type: `car`,
+    desc: `Rent a car`,
+    price: 200
+  }, {
+    type: `breakfast`,
+    desc: `Add breakfast`,
+    price: 10
+  }, {
+    type: `comfort`,
+    desc: `Switch to comfort`,
+    price: 100
+  }, {
+    type: `lunch`,
+    desc: `Lunch in city`,
+    price: 25
+  }
 ];
 
-export const Info = [
+const Info = [
   `Lorem ipsum dolor sit amet, consectetur adipiscing elit.`,
   `Cras aliquet varius magna, non porta ligula feugiat eget.`,
   `Fusce tristique felis at fermentum pharetra.`,
@@ -31,4 +62,12 @@ export const Info = [
   `Aliquam erat volutpat.`,
   `Nunc fermentum tortor ac porta dapibus.`, 
   `In rutrum ac purus sit amet tempus.`
+];
+
+export const photoes = [
+  `http://picsum.photos/248/152?r=${Math.random()}`,
+  `http://picsum.photos/248/152?r=${Math.random()}`,
+  `http://picsum.photos/248/152?r=${Math.random()}`,
+  `http://picsum.photos/248/152?r=${Math.random()}`,
+  `http://picsum.photos/248/152?r=${Math.random()}`
 ];

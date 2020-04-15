@@ -1,5 +1,3 @@
-import {capitalizeFirstLetter} from "../utils.js";
-
 const createTypeSelectMarkup = () => {
   return (
       `<div class="event__type-list">

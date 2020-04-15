@@ -1,13 +1,3 @@
-const getRandomArrayItem = (array) => {
-  const randomIndex = getRandomInteger(0, array.length);
-
-  return array[randomIndex];
-};
-
-const getRandomInteger = (min, max) => {
-  return min + Math.floor(Math.random() * (max - min));
-};
-
 const generatePoint = () => {
   return {
     type: `taxi`,
