@@ -5,7 +5,7 @@ import {createSortTemplate} from "./components/sorting.js";
 import {createTripDaysTemplate} from "./components/trip-days.js";
 import {createTripPointTemplate} from "./components/trip-point.js";
 import {createAddEventFormTemplate} from "./components/add-event-form.js";
-import {createEditEventFormTemplate} from "./components/edit-event.js"; // ПОСЛЕ отрисовки ПЕРВОГО поинта
+import {createEditEventFormTemplate} from "./components/edit-event.js";
 import {generateFilters} from "./mock/filters.js";
 import {generatePoints} from "./mock/trip-point.js";
 
@@ -22,7 +22,7 @@ const tripControls = tripMain.querySelector(`.trip-controls`);
 const filters = generateFilters();
 const points = generatePoints(POINT_COUNT);
 
-render(tripMain, createTripInfoTemplate(), `afterbegin`);
+
 render(tripControls, createMenuTemplate(), `afterbegin`);
 render(tripControls, createFiltersTemplate(filters));
 
@@ -34,12 +34,15 @@ render(tripEvents, createSortTemplate());
 render(tripEvents, createTripDaysTemplate());
 
 const tripEventsList = tripEvents.querySelector(`.trip-events__list`);
+let totalPrice = null;
 
 points
   .forEach((point, index) => {
+    render(tripEventsList, createTripPointTemplate(point));
     if (index === 0) {
-      render(tripEventsList, createTripPointTemplate(point));
-      render(tripEventsList, createEditEventFormTemplate(point))  
+      render(tripEventsList, createEditEventFormTemplate(point));
     };
-    render(tripEventsList, createTripPointTemplate(point))  
+    totalPrice += point.price;
   }); 
+
+render(tripMain, createTripInfoTemplate(totalPrice), `afterbegin`);

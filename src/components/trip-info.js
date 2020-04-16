@@ -1,4 +1,4 @@
-export const createTripInfoTemplate = (points) => {
+export const createTripInfoTemplate = (price) => {
   return (
     `<section class="trip-main__trip-info  trip-info">
         <div class="trip-info__main">
@@ -8,7 +8,7 @@ export const createTripInfoTemplate = (points) => {
         </div>
 
         <p class="trip-info__cost">
-            Total: &euro;&nbsp;<span class="trip-info__cost-value">1230</span>
+            Total: &euro;&nbsp;<span class="trip-info__cost-value">${price}</span>
         </p>
     </section>`
   );
