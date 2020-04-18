@@ -1,19 +1,50 @@
+import {pointType, destination, offers, getRandomArrayItem, getRandomInteger} from "./add-event-form.js";
+
+
+const countDurationTime = (startDate, endDate) => {
+  const duration = new Date();
+  duration.setTime(endDate - startDate);
+
+  const hours = duration.getUTCHours();
+  const minutes = duration.getUTCMinutes();
+  return `
+    ${hours ? `${hours}H` : ``} 
+    ${minutes ? `${minutes}M` : ``}`
+};
+
+const getRandomDate = () => {
+  const targetDate = new Date();
+  const diffHours = getRandomInteger(0, 4);
+  const diffMinutes = getRandomInteger(0, 60);
+
+  targetDate.setHours(targetDate.getHours() + diffHours, targetDate.getMinutes() + diffMinutes);
+
+  return targetDate;
+};
+
 const generatePoint = () => {
+  const types = Object.values(pointType).join(',');
+  const {desc: offerName, price: offerPrice} = offers[getRandomInteger(0, offers.length)];
+  const timeStart = getRandomDate();
+  const timeEnd = getRandomDate();
+  const duration = countDurationTime(timeStart, timeEnd);
+
   return {
     type: `taxi`,
-    destination: `Moscow`,
-    price: 200,
-    timeStart: `17:30`,
-    timeEnd: `19:05`,
-    offer: `Rent a car`,
-    offerPrice: `200`
+    destination: getRandomArrayItem(destination),
+    price: getRandomInteger(0, 200),
+    timeStart,
+    timeEnd,
+    duration,
+    offerName,
+    offerPrice
   };
 };
 
 const generatePoints = (count) => {
-  return new Array(count) 
+  return new Array(count)
     .fill(``)
     .map(generatePoint);
 };
 
-export {generatePoint, generatePoints};
+export {countDurationTime, generatePoint, generatePoints};

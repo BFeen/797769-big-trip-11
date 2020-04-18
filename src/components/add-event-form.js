@@ -1,15 +1,15 @@
-import {pointType, destination, offers, generateRandomInfo, photoes} from "../mock/add-event-form.js";
+import {pointType, destination, offers, description, getRandomArrayItem} from "../mock/add-event-form.js";
 import {capitalizeFirstLetter} from "../utils.js";
 
 const createSelectPointTypeMarkup = () => {
   const {transfer, activity} = pointType;
+
   return (
-    `<div class="event__type-list">
-    <fieldset class="event__type-group">
+    `<fieldset class="event__type-group">
       <legend class="visually-hidden">Transfer</legend>
       ${transfer.map((item) => {
-          return (
-              `<div class="event__type-item">
+      return (
+        `<div class="event__type-item">
                 <input id="event-type-${item}-1" 
                 class="event__type-input  visually-hidden" 
                 type="radio" 
@@ -21,16 +21,15 @@ const createSelectPointTypeMarkup = () => {
                 ${capitalizeFirstLetter(item)}
                 </label>
               </div>`
-          );
-      }).join(`\n`)}
-
+      );
+    }).join(`\n`)}
     </fieldset>
 
     <fieldset class="event__type-group">
       <legend class="visually-hidden">Activity</legend>
       ${activity.map((item) => {
-        return (
-            `<div class="event__type-item">
+      return (
+        `<div class="event__type-item">
                 <input id="event-type-${item}-1" 
                 class="event__type-input  visually-hidden" 
                 type="radio" 
@@ -41,33 +40,31 @@ const createSelectPointTypeMarkup = () => {
                 ${capitalizeFirstLetter(item)}
                 </label>
             </div>`
-        );
-      }).join(`\n`)}
-      
-    </fieldset>
-  </div>`
+      );
+    }).join(`\n`)}
+    </fieldset>`
   );
 };
 
 const createDestinationSelectMarkup = () => {
   return destination
     .map((city) => {
-        return (
-            `<option value="${city}"></option>`
-        );
+      return (
+        `<option value="${city}"></option>`
+      );
     });
-}
+};
 
 const createOffersMarkup = () => {
   return offers
     .map((offer) => {
       const {type, desc, price} = offer;
-      const isChecked = Math.random() > 0.5;
+      const isChecked = Math.random() > 0.5 ? `checked` : ``;
 
       return (
         `<div class="event__offer-selector">
             <input class="event__offer-checkbox  visually-hidden" id="event-offer-${type}-1" 
-            type="checkbox" name="event-offer-${type}" ${isChecked ? `checked` : ``}>
+            type="checkbox" name="event-offer-${type}" ${isChecked}>
 
             <label class="event__offer-label" for="event-offer-${type}-1">
             <span class="event__offer-title">${desc}</span>
@@ -76,13 +73,13 @@ const createOffersMarkup = () => {
             </label>
         </div>`
       );
-    }); 
-}
+    });
+};
 
 export const createAddEventFormTemplate = () => {
-  const type = `taxi`;
-  const city = `Moscow`;
-  const info = generateRandomInfo();
+  const {info, photoes} = description;
+  const type = `flight`;
+  const city = getRandomArrayItem(destination);
 
   const timeStart = `00:00`;
   const timeEnd = `00:00`;
@@ -102,14 +99,16 @@ export const createAddEventFormTemplate = () => {
         <img class="event__type-icon" width="17" height="17" src="img/icons/flight.png" alt="Event type icon">
         </label>
         <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox">
-
+        
+        <div class="event__type-list">
         ${selectPointTypeMarkup}
+        </div>
 
     </div>
 
     <div class="event__field-group  event__field-group--destination">
         <label class="event__label  event__type-output" for="event-destination-1">
-        ${type} to
+        ${capitalizeFirstLetter(type)} to
         </label>
         <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${city}" list="destination-list-1">
         <datalist id="destination-list-1">
@@ -151,21 +150,21 @@ export const createAddEventFormTemplate = () => {
         </div>
     </section>
 
-    <section class="event__section  event__section--destination">
+    <section class="event__section  event__section--destination ${city ? `` :`visually-hidden`}">
         <h3 class="event__section-title  event__section-title--destination">Destination</h3>
         <p class="event__destination-description">${info}</p>
 
         <div class="event__photos-container">
         <div class="event__photos-tape">
         ${photoes.map((photo) => {
-            return (
-                `<img class="event__photo" src="${photo}">`
-            );
-        })}
+      return (
+        `<img class="event__photo" src="${photo}">`
+      );
+    }).join(`\n`)}
         </div>
         </div>
     </section>
     </section>
   </form>`
   );
-};  
+};
