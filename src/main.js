@@ -41,8 +41,8 @@ points
     render(tripEventsList, createTripPointTemplate(point));
     if (index === 0) {
       render(tripEventsList, createEditEventFormTemplate(point));
-    };
+    }
     totalPrice += point.price;
-  }); 
+  });
 
 render(tripMain, createTripInfoTemplate(totalPrice), `afterbegin`);

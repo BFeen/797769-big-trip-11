@@ -1,4 +1,4 @@
-import {pointType, destination, offers, getRandomArrayItem, getRandomInteger} from "./add-event-form.js";
+import {destination, offers, getRandomArrayItem, getRandomInteger} from "./add-event-form.js";
 
 
 const countDurationTime = (startDate, endDate) => {
@@ -9,7 +9,7 @@ const countDurationTime = (startDate, endDate) => {
   const minutes = duration.getUTCMinutes();
   return `
     ${hours ? `${hours}H` : ``} 
-    ${minutes ? `${minutes}M` : ``}`
+    ${minutes ? `${minutes}M` : ``}`;
 };
 
 const getRandomDate = () => {
@@ -23,7 +23,6 @@ const getRandomDate = () => {
 };
 
 const generatePoint = () => {
-  const types = Object.values(pointType).join(',');
   const {desc: offerName, price: offerPrice} = offers[getRandomInteger(0, offers.length)];
   const timeStart = getRandomDate();
   const timeEnd = getRandomDate();
