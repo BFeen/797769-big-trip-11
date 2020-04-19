@@ -86,7 +86,7 @@ const createOffersMarkup = (checkedOffer) => {
             </label>
         </div>`
       );
-    });
+    }).join(`\n`);
 };
 
 export const createEditEventFormTemplate = (point) => {

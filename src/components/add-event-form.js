@@ -1,49 +1,31 @@
-import {pointType, destination, offers, description, getRandomArrayItem} from "../mock/add-event-form.js";
-import {capitalizeFirstLetter} from "../utils.js";
+import {eventType, destination, offers, description} from "../mock/add-event-form.js";
+import {capitalizeFirstLetter, getRandomArrayItem} from "../utils.js";
 
-const createSelectPointTypeMarkup = () => {
-  const {transfer, activity} = pointType;
+const createSelectEventTypeMarkup = () => {
+  let markup = ``;
 
-  return (
-    `<fieldset class="event__type-group">
-      <legend class="visually-hidden">Transfer</legend>
-      ${transfer.map((item) => {
-      return (
-        `<div class="event__type-item">
-                <input id="event-type-${item}-1" 
-                class="event__type-input  visually-hidden" 
-                type="radio" 
-                name="event-type" 
-                value="${item}"
-                >
-                <label class="event__type-label  event__type-label--${item}" 
-                for="event-type-${item}-1">
-                ${capitalizeFirstLetter(item)}
-                </label>
-              </div>`
-      );
-    }).join(`\n`)}
-    </fieldset>
+  for (const [key, value] of Object.entries(eventType)) {
+    markup += `<fieldset class="event__type-group">
+                <legend class="visually-hidden">${key}</legend> 
+                ${value.map((item) => {
+    return (
+      `<div class="event__type-item">
+        <input id="event-type-${item}-1" 
+        class="event__type-input  visually-hidden" 
+        type="radio" 
+        name="event-type" 
+        value="${item}">
+        <label class="event__type-label  event__type-label--${item}" 
+        for="event-type-${item}-1">
+        ${capitalizeFirstLetter(item)}
+        </label>
+      </div>`
+    );
+  }).join(`\n`)}
+    </fieldset>`;
+  }
 
-    <fieldset class="event__type-group">
-      <legend class="visually-hidden">Activity</legend>
-      ${activity.map((item) => {
-      return (
-        `<div class="event__type-item">
-                <input id="event-type-${item}-1" 
-                class="event__type-input  visually-hidden" 
-                type="radio" 
-                name="event-type" 
-                value="${item}">
-                <label class="event__type-label  event__type-label--${item}" 
-                for="event-type-${item}-1">
-                ${capitalizeFirstLetter(item)}
-                </label>
-            </div>`
-      );
-    }).join(`\n`)}
-    </fieldset>`
-  );
+  return markup;
 };
 
 const createDestinationSelectMarkup = () => {
@@ -73,11 +55,11 @@ const createOffersMarkup = () => {
             </label>
         </div>`
       );
-    });
+    }).join(`\n`);
 };
 
 export const createAddEventFormTemplate = () => {
-  const {info, photoes} = description;
+  const {info, photos} = description;
   const type = `flight`;
   const city = getRandomArrayItem(destination);
 
@@ -86,7 +68,7 @@ export const createAddEventFormTemplate = () => {
   const dayStart = `18/03/2019`;
   const dayEnd = `21/03/2019`;
 
-  const selectPointTypeMarkup = createSelectPointTypeMarkup();
+  const selectEventTypeMarkup = createSelectEventTypeMarkup();
   const destinationSelectMarkup = createDestinationSelectMarkup();
   const offersMarkup = createOffersMarkup();
 
@@ -101,7 +83,7 @@ export const createAddEventFormTemplate = () => {
         <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox">
         
         <div class="event__type-list">
-        ${selectPointTypeMarkup}
+        ${selectEventTypeMarkup}
         </div>
 
     </div>
@@ -156,7 +138,7 @@ export const createAddEventFormTemplate = () => {
 
         <div class="event__photos-container">
         <div class="event__photos-tape">
-        ${photoes.map((photo) => {
+        ${photos.map((photo) => {
       return (
         `<img class="event__photo" src="${photo}">`
       );

@@ -1,4 +1,5 @@
-import {destination, offers, getRandomArrayItem, getRandomInteger} from "./add-event-form.js";
+import {eventType, destination, offers, getAllTypes} from "./add-event-form.js";
+import {getRandomArrayItem, getRandomInteger} from "../utils.js";
 
 
 const countDurationTime = (startDate, endDate) => {
@@ -23,18 +24,23 @@ const getRandomDate = () => {
 };
 
 const generatePoint = () => {
-  const {desc: offerName, price: offerPrice} = offers[getRandomInteger(0, offers.length)];
+  const {offerType, desc: offerName, price: offerPrice} = offers[getRandomInteger(0, offers.length)];
   const timeStart = getRandomDate();
   const timeEnd = getRandomDate();
   const duration = countDurationTime(timeStart, timeEnd);
 
+  const types = getAllTypes();
+  const type = getRandomArrayItem(types);
+
   return {
-    type: `taxi`,
+    type,
+    postfix: eventType.transfer.includes(type) ? `to` : `in`,
     destination: getRandomArrayItem(destination),
     price: getRandomInteger(0, 200),
     timeStart,
     timeEnd,
     duration,
+    offerType,
     offerName,
     offerPrice
   };

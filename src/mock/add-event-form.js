@@ -1,22 +1,81 @@
+import {getRandomArrayItem, getRandomInteger} from "../utils.js";
+
+
 const generateRandomInfo = () => {
   let description = [];
   for (let i = 0; i < getRandomInteger(1, 5); i++) {
-    description.push(getRandomArrayItem(Info));
+    description.push(getRandomArrayItem(info));
   }
 
   return description.join(` `);
 };
 
-const generateRandomPhotoes = () => {
-  let photoes = [];
+const generateRandomPhotos = () => {
+  let photos = [];
   for (let i = 0; i < 5; i++) {
-    photoes.push(`http://picsum.photos/248/152?r=${Math.random()}`);
+    photos.push(`http://picsum.photos/248/152?r=${Math.random()}`);
   }
 
-  return photoes;
+  return photos;
 };
 
-const Info = [
+const eventType = {
+  transfer: [`taxi`, `bus`, `train`, `ship`, `transport`, `drive`, `flight`],
+  activity: [`check-in`, `sightseeing`, `restaurant`],
+};
+
+const getAllTypes = () => {
+  let types = [];
+  Object.values(eventType).map((value) => {
+    types = types.concat(value);
+  });
+
+  return types;
+};
+
+const offers = [
+  {
+    offerType: `luggage`,
+    desc: `Add luggage`,
+    price: 30
+  }, {
+    offerType: `car`,
+    desc: `Rent a car`,
+    price: 200
+  }, {
+    offerType: `breakfast`,
+    desc: `Add breakfast`,
+    price: 10
+  }, {
+    offerType: `comfort`,
+    desc: `Switch to comfort`,
+    price: 100
+  }, {
+    offerType: `lunch`,
+    desc: `Lunch in city`,
+    price: 25
+  }
+];
+
+const availableOffers = new Map([
+  [
+    `train`, [`comfort`]
+  ], [
+    `ship`, [`comfort`, `luggage`]
+  ], [
+    `flight`, [`car`, `comfort`, `luggage`]
+  ], [
+    `check-in`, [`breakfast`]
+  ], [
+    `sightseeing`, [`lunch`]
+  ]
+]);
+
+const destination = [
+  `Paris`, `Moscow`, `Berlin`, `Oslo`, `Amsterdam`, `Barcelona`, `Lissabon`, `Los Angeles`, `New York`, `London`
+];
+
+const info = [
   `Lorem ipsum dolor sit amet, consectetur adipiscing elit.`,
   `Cras aliquet varius magna, non porta ligula feugiat eget.`,
   `Fusce tristique felis at fermentum pharetra.`,
@@ -30,52 +89,9 @@ const Info = [
   `In rutrum ac purus sit amet tempus.`
 ];
 
-const getRandomInteger = (min, max) => {
-  return min + Math.floor(Math.random() * (max - min));
-};
-
-const getRandomArrayItem = (array) => {
-  const randomIndex = getRandomInteger(0, array.length);
-
-  return array[randomIndex];
-};
-
-const pointType = {
-  transfer: [`taxi`, `bus`, `train`, `ship`, `transport`, `drive`, `flight`],
-  activity: [`check-in`, `sightseeing`, `restaurant`],
-};
-
-const destination = [
-  `Paris`, `Moscow`, `Berlin`, `Oslo`, `Amsterdam`, `Barcelona`, `Lissabon`, `Los Angeles`, `New York`, `London`
-];
-
-const offers = [
-  {
-    type: `luggage`,
-    desc: `Add luggage`,
-    price: 30
-  }, {
-    type: `car`,
-    desc: `Rent a car`,
-    price: 200
-  }, {
-    type: `breakfast`,
-    desc: `Add breakfast`,
-    price: 10
-  }, {
-    type: `comfort`,
-    desc: `Switch to comfort`,
-    price: 100
-  }, {
-    type: `lunch`,
-    desc: `Lunch in city`,
-    price: 25
-  }
-];
-
 const description = {
   info: generateRandomInfo(),
-  photoes: generateRandomPhotoes()
+  photos: generateRandomPhotos()
 };
 
-export {getRandomInteger, getRandomArrayItem, pointType, destination, offers, description};
+export {eventType, destination, offers, availableOffers, description, getAllTypes};
