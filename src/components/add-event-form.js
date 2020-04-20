@@ -1,5 +1,5 @@
 import {eventType, destination, offers, description} from "../mock/add-event-form.js";
-import {capitalizeFirstLetter, getRandomArrayItem} from "../utils.js";
+import {capitalizeFirstLetter, getRandomArrayItem, createElement} from "../utils.js";
 
 const createSelectEventTypeMarkup = () => {
   let markup = ``;
@@ -58,13 +58,11 @@ const createOffersMarkup = () => {
     }).join(`\n`);
 };
 
-export const createAddEventFormTemplate = () => {
+const createAddEventFormTemplate = () => {
   const {info, photos} = description;
   const type = `flight`;
   const city = getRandomArrayItem(destination);
 
-  const timeStart = `00:00`;
-  const timeEnd = `00:00`;
   const dayStart = `18/03/2019`;
   const dayEnd = `21/03/2019`;
 
@@ -104,12 +102,12 @@ export const createAddEventFormTemplate = () => {
         <label class="visually-hidden" for="event-start-time-1">
         From
         </label>
-        <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${dayStart} ${timeStart}">
+        <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${dayStart} 00:00">
         &mdash;
         <label class="visually-hidden" for="event-end-time-1">
         To
         </label>
-        <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${dayEnd} ${timeEnd}">
+        <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${dayEnd} 00:00">
     </div>
 
     <div class="event__field-group  event__field-group--price">
@@ -150,3 +148,25 @@ export const createAddEventFormTemplate = () => {
   </form>`
   );
 };
+
+export default class AddEventFormComponent {
+  constructor() {
+    this._element = null;
+  }
+
+  getTemplate() {
+    createAddEventFormTemplate();
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+      this._element = null;
+  }
+}

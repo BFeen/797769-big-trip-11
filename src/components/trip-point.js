@@ -1,7 +1,7 @@
-import {capitalizeFirstLetter, generateTime} from "../utils.js";
+import {capitalizeFirstLetter, generateTime, createElement} from "../utils.js";
 
 
-export const createTripPointTemplate = (point) => {
+const createTripPointTemplate = (point) => {
   const {type, postfix, destination, price, timeStart, timeEnd, duration, offerName, offerPrice} = point;
 
   return (
@@ -41,3 +41,27 @@ export const createTripPointTemplate = (point) => {
     </li>`
   );
 };
+
+export default class TripPointComponent {
+  constructor(point) {
+    this._point = point;  
+
+    this._element = null;
+  }
+
+  getTemplate() {
+    createTripPointTemplate(this._point);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+      this._element = null;
+  }
+}

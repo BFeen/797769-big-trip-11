@@ -1,3 +1,8 @@
+const RenderPosition = {
+  AFTERBEGIN: `afterbegin`,
+  BEFOREEND: `beforeend`
+};
+
 const dateFormat = (value) => {
   return String(value).padStart(2, `0`);
 };
@@ -32,4 +37,22 @@ const getRandomArrayItem = (array) => {
   return array[randomIndex];
 };
 
-export {capitalizeFirstLetter, generateTime, generateDate, getRandomInteger, getRandomArrayItem};
+const createElement = (template) => {
+  const newElement = document.createElement(`div`);
+  newElement.innerHTML = template;
+
+  return newElement.firstChild;
+}
+
+const render = (container, element, place) => {
+  switch (place) {
+    case RenderPosition.AFTERBEGIN:
+      container.prepend(element);
+      break;
+    case RenderPosition.BEFOREEND:
+      container.append(element);
+      break;
+  }
+};
+
+export {capitalizeFirstLetter, generateTime, generateDate, getRandomInteger, getRandomArrayItem, createElement, render, RenderPosition};
