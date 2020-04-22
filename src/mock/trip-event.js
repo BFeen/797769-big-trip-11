@@ -23,7 +23,7 @@ const getRandomDate = () => {
   return targetDate;
 };
 
-const generatePoint = () => {
+const generateEvent = () => {
   const {offerType, desc: offerName, price: offerPrice} = offers[getRandomInteger(0, offers.length)];
   const timeStart = getRandomDate();
   const timeEnd = getRandomDate();
@@ -46,10 +46,10 @@ const generatePoint = () => {
   };
 };
 
-const generatePoints = (count) => {
+const generateEvents = (count) => {
   return new Array(count)
     .fill(``)
-    .map(generatePoint);
+    .map(generateEvent);
 };
 
-export {countDurationTime, generatePoint, generatePoints};
+export {countDurationTime, generateEvent, generateEvents};

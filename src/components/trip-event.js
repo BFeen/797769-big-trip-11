@@ -1,8 +1,8 @@
 import {capitalizeFirstLetter, generateTime, createElement} from "../utils.js";
 
 
-const createTripPointTemplate = (point) => {
-  const {type, postfix, destination, price, timeStart, timeEnd, duration, offerName, offerPrice} = point;
+const createTripEventTemplate = (event) => {
+  const {type, postfix, destination, price, timeStart, timeEnd, duration, offerName, offerPrice} = event;
 
   return (
     `<li class="trip-events__item">
@@ -42,15 +42,15 @@ const createTripPointTemplate = (point) => {
   );
 };
 
-export default class TripPointComponent {
-  constructor(point) {
-    this._point = point;  
+export default class TripEventComponent {
+  constructor(event) {
+    this._event = event;  
 
     this._element = null;
   }
 
   getTemplate() {
-    createTripPointTemplate(this._point);
+    createTripEventTemplate(this._event);
   }
 
   getElement() {
