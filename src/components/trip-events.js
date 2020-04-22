@@ -3,7 +3,9 @@ import {createElement} from "../utils.js";
 
 const createTripEventsTemplate = () => {
   return (
-    `<section class="trip-events"></section>`
+    `<section class="trip-events">
+      <h2 class="visually-hidden">Trip events</h2>
+    </section>`
   );
 };
 
@@ -17,11 +19,11 @@ export default class TripEventsComponent {
   }
 
   getElement() {
-      if (!this._element) {
-          this._element = createElement(this.getTemplate());
-      }
+    if (!this._element) {
+        this._element = createElement(this.getTemplate());
+    }
 
-      return this._element;
+    return this._element;
   }
 
   removeElement() {
