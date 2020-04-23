@@ -36,7 +36,7 @@ export default class SortingComponent {
   }
 
   getTemplate() {
-    createSortTemplate();
+    return createSortTemplate();
   }
 
   getElement() {

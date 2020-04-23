@@ -4,10 +4,10 @@ import {capitalizeFirstLetter, getRandomArrayItem, createElement} from "../utils
 const createSelectEventTypeMarkup = () => {
   let markup = ``;
 
-  for (const [key, value] of Object.entries(eventType)) {
+  for (const [key, values] of Object.entries(eventType)) {
     markup += `<fieldset class="event__type-group">
                 <legend class="visually-hidden">${key}</legend> 
-                ${value.map((item) => {
+                ${values.map((item) => {
     return (
       `<div class="event__type-item">
         <input id="event-type-${item}-1" 

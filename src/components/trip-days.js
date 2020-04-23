@@ -22,7 +22,7 @@ export default class TripDaysComponent {
   }
 
   getTemplate() {
-    createTripDaysTemplate();
+    return createTripDaysTemplate();
   }
 
   getElement() {

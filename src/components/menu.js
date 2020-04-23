@@ -17,7 +17,7 @@ export default class MenuComponent {
   }
 
   getTemplate() {
-    createMenuTemplate();
+    return createMenuTemplate();
   }
 
   getElement() {

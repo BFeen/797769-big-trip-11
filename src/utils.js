@@ -1,4 +1,4 @@
-const RenderPosition = {
+export const RenderPosition = {
   AFTERBEGIN: `afterbegin`,
   BEFOREEND: `beforeend`
 };
@@ -7,18 +7,18 @@ const dateFormat = (value) => {
   return String(value).padStart(2, `0`);
 };
 
-const capitalizeFirstLetter = (string) => {
+export const capitalizeFirstLetter = (string) => {
   return string.charAt(0).toUpperCase() + string.slice(1);
 };
 
-const generateTime = (date) => {
+export const generateTime = (date) => {
   const hours = dateFormat(date.getHours());
   const minutes = dateFormat(date.getMinutes());
 
   return `${hours}:${minutes}`;
 };
 
-const generateDate = (date) => {
+export const generateDate = (date) => {
   const day = dateFormat(date.getDate());
   const month = dateFormat(date.getMonth());
   const year = dateFormat(date.getYear());
@@ -27,24 +27,24 @@ const generateDate = (date) => {
 };
 
 
-const getRandomInteger = (min, max) => {
+export const getRandomInteger = (min, max) => {
   return min + Math.floor(Math.random() * (max - min));
 };
 
-const getRandomArrayItem = (array) => {
+export const getRandomArrayItem = (array) => {
   const randomIndex = getRandomInteger(0, array.length);
 
   return array[randomIndex];
 };
 
-const createElement = (template) => {
+export const createElement = (template) => {
   const newElement = document.createElement(`div`);
   newElement.innerHTML = template;
 
   return newElement.firstChild;
-}
+};
 
-const render = (container, element, place) => {
+export const render = (container, element, place) => {
   switch (place) {
     case RenderPosition.AFTERBEGIN:
       container.prepend(element);
@@ -54,5 +54,3 @@ const render = (container, element, place) => {
       break;
   }
 };
-
-export {capitalizeFirstLetter, generateTime, generateDate, getRandomInteger, getRandomArrayItem, createElement, render, RenderPosition};

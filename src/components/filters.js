@@ -37,7 +37,7 @@ export default class FiltersComponent {
   }
 
   getTemplate() {
-    createFiltersTemplate(this._filters);
+    return createFiltersTemplate(this._filters);
   }
 
   getElement() {
@@ -49,6 +49,6 @@ export default class FiltersComponent {
   }
 
   removeElement() {
-      this._element = null;
+    this._element = null;
   }
 }

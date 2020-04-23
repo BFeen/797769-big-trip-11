@@ -25,7 +25,7 @@ export default class TripInfoComponent {
   }
 
   getTemplate() {
-    createTripInfoTemplate(this._price);
+    return createTripInfoTemplate(this._price);
   }
 
   getElement() {

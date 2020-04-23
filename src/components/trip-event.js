@@ -50,7 +50,7 @@ export default class TripEventComponent {
   }
 
   getTemplate() {
-    createTripEventTemplate(this._event);
+    return createTripEventTemplate(this._event);
   }
 
   getElement() {
