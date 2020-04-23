@@ -40,15 +40,18 @@ const createDestinationSelectMarkup = () => {
 const createOffersMarkup = () => {
   return offers
     .map((offer) => {
-      const {type, desc, price} = offer;
+      const {offerType, desc, price} = offer;
       const isChecked = Math.random() > 0.5 ? `checked` : ``;
 
       return (
         `<div class="event__offer-selector">
-            <input class="event__offer-checkbox  visually-hidden" id="event-offer-${type}-1" 
-            type="checkbox" name="event-offer-${type}" ${isChecked}>
+            <input class="event__offer-checkbox  visually-hidden" 
+            id="event-offer-${offerType}-1" 
+            type="checkbox" name="event-offer-${offerType}" 
+            ${isChecked}>
 
-            <label class="event__offer-label" for="event-offer-${type}-1">
+            <label class="event__offer-label" 
+            for="event-offer-${offerType}-1">
             <span class="event__offer-title">${desc}</span>
             &plus;
             &euro;&nbsp;<span class="event__offer-price">${price}</span>

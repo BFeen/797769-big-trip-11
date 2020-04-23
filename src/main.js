@@ -1,4 +1,5 @@
 import AddEventFormComponent from "./components/add-event-form.js";
+import EditFormComponent from "./components/edit-event.js";
 import FiltersComponent from "./components/filters.js";
 import MenuComponent from "./components/menu.js";
 import SortingComponent from "./components/sorting.js";
@@ -14,7 +15,26 @@ import {render, RenderPosition} from "./utils.js";
 const EVENT_COUNT = 3;
 
 const renderEvents = (tripEventsListElement, event) => {
+  const onEditButtonClick = () => {
+    tripEventsListElement.replaceChild(editFormComponent.getElement(), tripEventComponent.getElement());
+  };
+
+  const onEditFormSubmit = (evt) => {
+    evt.preventDefault();
+    tripEventsListElement.replaceChild(tripEventComponent.getElement(), editFormComponent.getElement());
+  };
+
   const tripEventComponent = new TripEventComponent(event);
+  const editButton = tripEventComponent.getElement().querySelector(`button`);
+  editButton.addEventListener(`click`, onEditButtonClick);
+
+  const editFormComponent = new EditFormComponent(event);
+  const editForm = editFormComponent.getElement().querySelector(`form`);
+  const editFormCloseButton = editFormComponent.getElement().querySelector(`.event__rollup-btn`);
+
+  editForm.addEventListener(`submit`, onEditFormSubmit);
+  editFormCloseButton.addEventListener(`click`, onEditFormSubmit);
+
   render(tripEventsListElement, tripEventComponent.getElement(), RenderPosition.BEFOREEND);
 };
 

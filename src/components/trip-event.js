@@ -3,6 +3,7 @@ import {capitalizeFirstLetter, generateTime, createElement} from "../utils.js";
 
 const createTripEventTemplate = (event) => {
   const {type, postfix, destination, price, timeStart, timeEnd, duration, offerName, offerPrice} = event;
+  const totalPrice = price + offerPrice;
 
   return (
     `<li class="trip-events__item">
@@ -14,15 +15,15 @@ const createTripEventTemplate = (event) => {
 
         <div class="event__schedule">
             <p class="event__time">
-            <time class="event__start-time" datetime="2019-03-18T14:30">${generateTime(timeStart)}</time>
+            <time class="event__start-time" datetime="2019-03-18">${generateTime(timeStart)}</time>
             &mdash;
-            <time class="event__end-time" datetime="2019-03-18T16:05">${generateTime(timeEnd)}</time>
+            <time class="event__end-time" datetime="2019-03-18">${generateTime(timeEnd)}</time>
             </p>
             <p class="event__duration">${duration}</p>
         </div>
 
         <p class="event__price">
-            &euro;&nbsp;<span class="event__price-value">${price}</span>
+            &euro;&nbsp;<span class="event__price-value">${totalPrice}</span>
         </p>
 
         <h4 class="visually-hidden">Offers:</h4>
