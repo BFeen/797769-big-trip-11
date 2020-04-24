@@ -31,7 +31,7 @@ const createFiltersTemplate = (filters) => {
 
 export default class FiltersComponent {
   constructor(filters) {
-    this._filters = filters;  
+    this._filters = filters;
 
     this._element = null;
   }

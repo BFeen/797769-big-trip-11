@@ -45,7 +45,7 @@ const createTripEventTemplate = (event) => {
 
 export default class TripEventComponent {
   constructor(event) {
-    this._event = event;  
+    this._event = event;
 
     this._element = null;
   }
@@ -63,6 +63,6 @@ export default class TripEventComponent {
   }
 
   removeElement() {
-      this._element = null;
+    this._element = null;
   }
 }

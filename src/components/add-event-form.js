@@ -170,6 +170,6 @@ export default class AddEventFormComponent {
   }
 
   removeElement() {
-      this._element = null;
+    this._element = null;
   }
 }

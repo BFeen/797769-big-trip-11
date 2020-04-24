@@ -1,4 +1,3 @@
-import AddEventFormComponent from "./components/add-event-form.js";
 import EditFormComponent from "./components/edit-event.js";
 import FiltersComponent from "./components/filters.js";
 import MenuComponent from "./components/menu.js";
@@ -6,7 +5,7 @@ import SortingComponent from "./components/sorting.js";
 import TripInfoComponent from "./components/trip-info.js";
 import TripDaysComponent from "./components/trip-days.js";
 import TripEventComponent from "./components/trip-event.js";
-import TripEventsComponent from "./components/trip-events.js"
+import TripEventsComponent from "./components/trip-events.js";
 import {generateFilters} from "./mock/filters.js";
 import {generateEvents} from "./mock/trip-event.js";
 import {render, RenderPosition} from "./utils.js";
@@ -43,16 +42,16 @@ const renderTripEvents = (tripEventsComponent, events) => {
 
   const tripDaysComponent = new TripDaysComponent();
   render(tripEventsComponent.getElement(), tripDaysComponent.getElement(), RenderPosition.BEFOREEND);
-  
+
   let totalPrice = 0;
-  
+
   const tripEventsListElement = tripDaysComponent.getElement().querySelector(`.trip-events__list`);
   events
     .forEach((event) => {
       renderEvents(tripEventsListElement, event);
       totalPrice = totalPrice + event.price;
     });
-}
+};
 
 const tripMain = document.querySelector(`.trip-main`);
 const tripControls = tripMain.querySelector(`.trip-controls`);
@@ -70,4 +69,4 @@ const tripEventsComponent = new TripEventsComponent();
 render(mainContainer, tripEventsComponent.getElement(), RenderPosition.BEFOREEND);
 renderTripEvents(tripEventsComponent, events);
 
-render(tripMain, new TripInfoComponent().getElement(), RenderPosition.AFTERBEGIN);
+render(tripMain, new TripInfoComponent(0).getElement(), RenderPosition.AFTERBEGIN);

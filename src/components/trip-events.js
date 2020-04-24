@@ -27,6 +27,6 @@ export default class TripEventsComponent {
   }
 
   removeElement() {
-      this._element = null;
+    this._element = null;
   }
 }

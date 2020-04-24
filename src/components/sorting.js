@@ -48,6 +48,6 @@ export default class SortingComponent {
   }
 
   removeElement() {
-      this._element = null;
+    this._element = null;
   }
 }

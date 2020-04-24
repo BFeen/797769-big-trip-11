@@ -34,6 +34,6 @@ export default class TripDaysComponent {
   }
 
   removeElement() {
-      this._element = null;
+    this._element = null;
   }
 }

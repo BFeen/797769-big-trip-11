@@ -11,7 +11,7 @@ const createMenuTemplate = () => {
 };
 
 export default class MenuComponent {
-  constructor() { 
+  constructor() {
     this._element = null;
   }
 
@@ -28,6 +28,6 @@ export default class MenuComponent {
   }
 
   removeElement() {
-      this._element = null;
+    this._element = null;
   }
 }

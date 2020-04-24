@@ -19,7 +19,7 @@ const createTripInfoTemplate = (price) => {
 
 export default class TripInfoComponent {
   constructor(price) {
-    this._price = price;  
+    this._price = price;
 
     this._element = null;
   }
@@ -37,6 +37,6 @@ export default class TripInfoComponent {
   }
 
   removeElement() {
-      this._element = null;
+    this._element = null;
   }
 }

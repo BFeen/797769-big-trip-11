@@ -1,5 +1,5 @@
-import {eventType, offers} from "../mock/add-event-form.js";
-import {capitalizeFirstLetter, generateDate, generateTime, createElement} from "../utils.js";
+import {eventType, destination, offers} from "../mock/add-event-form.js";
+import {capitalizeFirstLetter, generateTime, createElement} from "../utils.js";
 
 const createTypeSelectMarkup = () => {
   let markup = ``;
@@ -28,6 +28,15 @@ const createTypeSelectMarkup = () => {
   return markup;
 };
 
+const createDestinationSelectMarkup = () => {
+  return destination
+    .map((city) => {
+      return (
+        `<option value="${city}"></option>`
+      );
+    });
+};
+
 const createOffersMarkup = (checkedOffer) => {
   return offers
     .map((offer) => {
@@ -54,9 +63,10 @@ const createOffersMarkup = (checkedOffer) => {
 };
 
 export const createEditEventFormTemplate = (event) => {
-  const {type, postfix, destination, price, timeStart, timeEnd, offerName, offerPrice} = event;
+  const {type, postfix, destination: eventDestination, price, timeStart, timeEnd, offerName, offerPrice} = event;
 
   const typeSelectMarkup = createTypeSelectMarkup();
+  const destinationSelectMarkup = createDestinationSelectMarkup();
   const offersMarkup = createOffersMarkup(offerName);
   const totalPrice = price + offerPrice;
 
@@ -82,11 +92,11 @@ export const createEditEventFormTemplate = (event) => {
               ${capitalizeFirstLetter(type)} ${postfix}
               </label>
               <input class="event__input  event__input--destination" id="event-destination-1" 
-              type="text" name="event-destination" value="${destination}" list="destination-list-1">
+              type="text" name="event-destination" value="${eventDestination}" list="destination-list-1">
               <datalist id="destination-list-1">
-              <option value="Amsterdam"></option>
-              <option value="Geneva"></option>
-              <option value="Chamonix"></option>
+              
+              ${destinationSelectMarkup}
+
               </datalist>
           </div>
 
