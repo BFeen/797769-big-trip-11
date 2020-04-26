@@ -1,6 +1,7 @@
 import EditFormComponent from "./components/edit-event.js";
 import FiltersComponent from "./components/filters.js";
 import MenuComponent from "./components/menu.js";
+import NoEventsComponent from "./components/no-events.js";
 import SortingComponent from "./components/sorting.js";
 import TripInfoComponent from "./components/trip-info.js";
 import TripDaysComponent from "./components/trip-days.js";
@@ -11,7 +12,7 @@ import {generateEvents} from "./mock/trip-event.js";
 import {render, RenderPosition} from "./utils.js";
 
 
-const EVENT_COUNT = 3;
+const EVENT_COUNT = 5;
 
 const renderEvents = (tripEventsListElement, event) => {
   const onEditButtonClick = () => {
@@ -23,27 +24,45 @@ const renderEvents = (tripEventsListElement, event) => {
     tripEventsListElement.replaceChild(tripEventComponent.getElement(), editFormComponent.getElement());
   };
 
+  const onEscKeyDown = (evt) => {
+    const isEscKey = evt.key === `Escape` || evt.key === `Esc`;
+
+    if (isEscKey) {
+      tripEventsListElement.replaceChild(tripEventComponent.getElement(), editFormComponent.getElement());
+    }
+  };
+
   const tripEventComponent = new TripEventComponent(event);
   const editButton = tripEventComponent.getElement().querySelector(`button`);
-  editButton.addEventListener(`click`, onEditButtonClick);
+  editButton.addEventListener(`click`, () => {
+    onEditButtonClick();
+    document.addEventListener(`keydown`, onEscKeyDown);
+  });
 
   const editFormComponent = new EditFormComponent(event);
   const editForm = editFormComponent.getElement().querySelector(`form`);
   const editFormCloseButton = editFormComponent.getElement().querySelector(`.event__rollup-btn`);
 
-  editForm.addEventListener(`submit`, onEditFormSubmit);
+  editForm.addEventListener(`submit`, () => {
+    onEditFormSubmit();
+    document.removeEventListener(`keydown`, onEscKeyDown);
+  });
   editFormCloseButton.addEventListener(`click`, onEditFormSubmit);
 
   render(tripEventsListElement, tripEventComponent.getElement(), RenderPosition.BEFOREEND);
 };
 
 const renderTripEvents = (tripEventsComponent, events) => {
+  let totalPrice = 0;
+  if (events.length === 0) {
+    render(tripEventsComponent.getElement(), new NoEventsComponent().getElement(), RenderPosition.AFTERBEGIN);
+    return;
+  }
+
   render(tripEventsComponent.getElement(), new SortingComponent().getElement(), RenderPosition.BEFOREEND);
 
   const tripDaysComponent = new TripDaysComponent();
   render(tripEventsComponent.getElement(), tripDaysComponent.getElement(), RenderPosition.BEFOREEND);
-
-  let totalPrice = 0;
 
   const tripEventsListElement = tripDaysComponent.getElement().querySelector(`.trip-events__list`);
   events
