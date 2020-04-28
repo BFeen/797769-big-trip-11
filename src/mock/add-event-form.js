@@ -26,9 +26,7 @@ const eventType = {
 
 const getAllTypes = () => {
   let types = [];
-  Object.values(eventType).forEach((value) => {
-    types = types.concat(value);
-  });
+  Object.values(eventType).forEach((value) => types.push(...value));
 
   return types;
 };

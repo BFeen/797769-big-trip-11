@@ -21,7 +21,7 @@ export const generateTime = (date) => {
 export const generateDate = (date) => {
   const day = dateFormat(date.getDate());
   const month = dateFormat(date.getMonth());
-  const year = dateFormat(date.getYear());
+  const year = date.getFullYear();
 
   return `${day}/${month}/${year}`;
 };

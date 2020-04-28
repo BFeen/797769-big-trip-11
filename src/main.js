@@ -19,8 +19,7 @@ const renderEvents = (tripEventsListElement, event) => {
     tripEventsListElement.replaceChild(editFormComponent.getElement(), tripEventComponent.getElement());
   };
 
-  const onEditFormSubmit = (evt) => {
-    evt.preventDefault();
+  const onEditFormClose = () => {
     tripEventsListElement.replaceChild(tripEventComponent.getElement(), editFormComponent.getElement());
   };
 
@@ -40,14 +39,12 @@ const renderEvents = (tripEventsListElement, event) => {
   });
 
   const editFormComponent = new EditFormComponent(event);
-  const editForm = editFormComponent.getElement().querySelector(`form`);
   const editFormCloseButton = editFormComponent.getElement().querySelector(`.event__rollup-btn`);
 
-  editForm.addEventListener(`submit`, () => {
-    onEditFormSubmit();
+  editFormCloseButton.addEventListener(`click`, () => {
+    onEditFormClose();
     document.removeEventListener(`keydown`, onEscKeyDown);
   });
-  editFormCloseButton.addEventListener(`click`, onEditFormSubmit);
 
   render(tripEventsListElement, tripEventComponent.getElement(), RenderPosition.BEFOREEND);
 };
