@@ -1,4 +1,5 @@
-import {capitalizeFirstLetter, generateTime, createElement} from "../utils.js";
+import AbstractComponent from "./abstract-component.js";
+import {capitalizeFirstLetter, generateTime} from "../utils.js";
 
 
 const createTripEventTemplate = (event) => {
@@ -43,26 +44,14 @@ const createTripEventTemplate = (event) => {
   );
 };
 
-export default class TripEventComponent {
+export default class TripEventComponent extends AbstractComponent {
   constructor(event) {
-    this._event = event;
+    super();
 
-    this._element = null;
+    this._event = event;
   }
 
   getTemplate() {
     return createTripEventTemplate(this._event);
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }

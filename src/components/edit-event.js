@@ -1,5 +1,7 @@
+import AbstractComponent from "./abstract-component.js";
 import {eventType, destination, offers} from "../mock/add-event-form.js";
-import {capitalizeFirstLetter, generateTime, createElement} from "../utils.js";
+import {capitalizeFirstLetter, generateTime} from "../utils.js";
+
 
 const createTypeSelectMarkup = () => {
   let markup = ``;
@@ -152,25 +154,14 @@ export const createEditEventFormTemplate = (event) => {
   );
 };
 
-export default class EditFormComponent {
+export default class EditFormComponent extends AbstractComponent{
   constructor(event) {
+    super();
+
     this._event = event;
-    this._element = null;
   }
 
   getTemplate() {
     return createEditEventFormTemplate(this._event);
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }
