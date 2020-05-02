@@ -54,4 +54,8 @@ export default class TripEventComponent extends AbstractComponent {
   getTemplate() {
     return createTripEventTemplate(this._event);
   }
+
+  setEditButtonClickHandler(handler) {
+    this.getElement().querySelector(`button`).addEventListener(`click`, handler);
+  }
 }

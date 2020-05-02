@@ -164,4 +164,8 @@ export default class EditFormComponent extends AbstractComponent{
   getTemplate() {
     return createEditEventFormTemplate(this._event);
   }
+
+  setCloseEditButtonClickHandler(handler) {
+    this.getElement().querySelector(`.event__rollup-btn`).addEventListener(`click`, handler);
+  }
 }
