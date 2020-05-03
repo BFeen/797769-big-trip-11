@@ -8,12 +8,12 @@ import {render, replace, RenderPosition} from "../utils/render";
 
 const renderEvent = (tripEventsListElement, event) => {
   const replaceEventToEdit = () => {
-    replace(tripEventComponent, editFormComponent);
+    replace(editFormComponent, tripEventComponent);
     document.addEventListener(`keydown`, onEscKeyDown);
   };
 
   const replaceEditToEvent = () => {
-    replace(editFormComponent, tripEventComponent);
+    replace(tripEventComponent, editFormComponent);
     document.removeEventListener(`keydown`, onEscKeyDown);
   };
 
@@ -41,11 +41,11 @@ export default class TripController {
     this._noEventsComponent = new NoEventsComponent();
     this._sortingComponent = new SortingComponent();
     this._tripDaysComponent = new TripDaysComponent();
+    this._totalPrice = 0;
   }
 
   render(events) {
     const container = this._container.getElement();
-    let totalPrice = 0;
 
     if (events.length === 0) {
       render(container, this._noEventsComponent, RenderPosition.AFTERBEGIN);
@@ -59,7 +59,7 @@ export default class TripController {
     events
       .forEach((event) => {
         renderEvent(tripEventsListElement, event);
-        totalPrice = totalPrice + event.price;
+        this._totalPrice = this._totalPrice + event.price;
       });
   }
 }
