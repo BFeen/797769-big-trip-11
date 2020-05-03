@@ -1,6 +1,6 @@
 import AbstractComponent from "./abstract-component.js";
 import {eventType, destination, offers} from "../mock/add-event-form.js";
-import {capitalizeFirstLetter, generateTime} from "../utils.js";
+import {capitalizeFirstLetter, generateTime} from "../utils/common.js";
 
 
 const createTypeSelectMarkup = () => {
@@ -154,7 +154,7 @@ export const createEditEventFormTemplate = (event) => {
   );
 };
 
-export default class EditFormComponent extends AbstractComponent{
+export default class EditFormComponent extends AbstractComponent {
   constructor(event) {
     super();
 

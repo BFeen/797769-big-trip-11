@@ -1,4 +1,4 @@
-import {getRandomArrayItem, getRandomInteger} from "../utils.js";
+import {getRandomArrayItem, getRandomInteger} from "../utils/common.js";
 
 
 const generateRandomInfo = () => {

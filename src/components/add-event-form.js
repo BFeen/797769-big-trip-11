@@ -154,7 +154,7 @@ const createAddEventFormTemplate = () => {
   );
 };
 
-export default class AddEventFormComponent extends AbstractComponent{
+export default class AddEventFormComponent extends AbstractComponent {
   getTemplate() {
     return createAddEventFormTemplate();
   }

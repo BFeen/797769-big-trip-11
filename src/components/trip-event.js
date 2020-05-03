@@ -1,5 +1,5 @@
 import AbstractComponent from "./abstract-component.js";
-import {capitalizeFirstLetter, generateTime} from "../utils.js";
+import {capitalizeFirstLetter, generateTime} from "../utils/common.js";
 
 
 const createTripEventTemplate = (event) => {

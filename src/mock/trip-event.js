@@ -1,5 +1,5 @@
 import {eventType, destination, offers, getAllTypes} from "./add-event-form.js";
-import {getRandomArrayItem, getRandomInteger} from "../utils.js";
+import {getRandomArrayItem, getRandomInteger} from "../utils/common.js";
 
 
 const countDurationTime = (startDate, endDate) => {
