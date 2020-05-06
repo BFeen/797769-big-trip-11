@@ -39,22 +39,31 @@ const createDestinationSelectMarkup = () => {
     });
 };
 
-const createOffersMarkup = (checkedOffer) => {
+const createOffersMarkup = (selectedOffers) => {
+  let isChecked;
+
   return offers
     .map((offer) => {
-      const {offerType, desc, price} = offer;
-      let isChecked = desc === checkedOffer ? `checked` : ``;
+      const {type, desc, price} = offer;
+      isChecked = false;
+
+      for (const element of selectedOffers) {
+        if (element.desc === desc) {
+          isChecked = true;
+          break;
+        }
+      }
 
       return (
         `<div class="event__offer-selector">
             <input class="event__offer-checkbox  visually-hidden" 
-            id="event-offer-${offerType}-1" 
+            id="event-offer-${type}-1" 
             type="checkbox" 
-            name="event-offer-${offerType}" 
-            ${isChecked}>
+            name="event-offer-${type}" 
+            ${isChecked ? `checked` : ``}>
 
             <label class="event__offer-label" 
-            for="event-offer-${offerType}-1">
+            for="event-offer-${type}-1">
             <span class="event__offer-title">${desc}</span>
             &plus;
             &euro;&nbsp;<span class="event__offer-price">${price}</span>
@@ -65,12 +74,11 @@ const createOffersMarkup = (checkedOffer) => {
 };
 
 export const createEditEventFormTemplate = (event) => {
-  const {type, postfix, destination: eventDestination, price, timeStart, timeEnd, offerName, offerPrice} = event;
+  const {type, postfix, destination: eventDestination, price, timeStart, timeEnd, selectedOffers} = event;
 
   const typeSelectMarkup = createTypeSelectMarkup();
   const destinationSelectMarkup = createDestinationSelectMarkup();
-  const offersMarkup = createOffersMarkup(offerName);
-  const totalPrice = price + offerPrice;
+  const offersMarkup = createOffersMarkup(selectedOffers);
 
   return (
     `<li class="trip-events__item">
@@ -122,7 +130,7 @@ export const createEditEventFormTemplate = (event) => {
               &euro;
               </label>
               <input class="event__input  event__input--price" id="event-price-1" 
-              type="text" name="event-price" value="${totalPrice}">
+              type="text" name="event-price" value="${price}">
           </div>
 
           <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>

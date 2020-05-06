@@ -24,7 +24,13 @@ const getRandomDate = () => {
 };
 
 const generateEvent = () => {
-  const {offerType, desc: offerName, price: offerPrice} = offers[getRandomInteger(0, offers.length)];
+  const selectedOffers = [];
+  offers
+    .forEach((offer) => {
+      if (Math.random() > 0.5) {
+        selectedOffers.push(offer);
+      }
+    });
   const timeStart = getRandomDate();
   const timeEnd = getRandomDate();
   const duration = countDurationTime(timeStart, timeEnd);
@@ -40,9 +46,7 @@ const generateEvent = () => {
     timeStart,
     timeEnd,
     duration,
-    offerType,
-    offerName,
-    offerPrice
+    selectedOffers,
   };
 };
 

@@ -2,9 +2,24 @@ import AbstractComponent from "./abstract-component.js";
 import {capitalizeFirstLetter, generateTime} from "../utils/common.js";
 
 
+const createSelectedOffersMarkup = (selectedOffers) => {
+  return selectedOffers
+    .map((offer) => {
+      const {desc, price} = offer;
+      return (
+        `<li class="event__offer">
+          <span class="event__offer-title">${desc}</span>
+          &plus;
+          &euro;&nbsp;<span class="event__offer-price">${price}</span>
+        </li>`
+    );
+  }).join(`\n`);
+}
+
 const createTripEventTemplate = (event) => {
-  const {type, postfix, destination, price, timeStart, timeEnd, duration, offerName, offerPrice} = event;
-  const totalPrice = price + offerPrice;
+  const {type, postfix, destination, price, timeStart, timeEnd, duration, selectedOffers} = event;
+
+  const selectedOffersMarkup = createSelectedOffersMarkup(selectedOffers);
 
   return (
     `<li class="trip-events__item">
@@ -24,16 +39,12 @@ const createTripEventTemplate = (event) => {
         </div>
 
         <p class="event__price">
-            &euro;&nbsp;<span class="event__price-value">${totalPrice}</span>
+            &euro;&nbsp;<span class="event__price-value">${price}</span>
         </p>
 
         <h4 class="visually-hidden">Offers:</h4>
         <ul class="event__selected-offers">
-            <li class="event__offer">
-            <span class="event__offer-title">${offerName}</span>
-            &plus;
-            &euro;&nbsp;<span class="event__offer-price">${offerPrice}</span>
-            </li>
+          ${selectedOffersMarkup}
         </ul>
 
         <button class="event__rollup-btn" type="button">

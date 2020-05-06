@@ -68,8 +68,7 @@ const createAddEventFormTemplate = () => {
   const type = `flight`;
   const city = getRandomArrayItem(destination);
 
-  const dayStart = `18/03/2019`;
-  const dayEnd = `21/03/2019`;
+  const date = new Date();
 
   const selectEventTypeMarkup = createSelectEventTypeMarkup();
   const destinationSelectMarkup = createDestinationSelectMarkup();
@@ -107,12 +106,12 @@ const createAddEventFormTemplate = () => {
         <label class="visually-hidden" for="event-start-time-1">
         From
         </label>
-        <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${dayStart} 00:00">
+        <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${date} 00:00">
         &mdash;
         <label class="visually-hidden" for="event-end-time-1">
         To
         </label>
-        <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${dayEnd} 00:00">
+        <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${date} 00:00">
     </div>
 
     <div class="event__field-group  event__field-group--price">

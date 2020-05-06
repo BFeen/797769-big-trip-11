@@ -19,11 +19,6 @@ const generateRandomPhotos = () => {
   return photos;
 };
 
-const eventType = {
-  transfer: [`taxi`, `bus`, `train`, `ship`, `transport`, `drive`, `flight`],
-  activity: [`check-in`, `sightseeing`, `restaurant`],
-};
-
 const getAllTypes = () => {
   let types = [];
   Object.values(eventType).forEach((value) => types.push(...value));
@@ -31,25 +26,30 @@ const getAllTypes = () => {
   return types;
 };
 
+const eventType = {
+  transfer: [`taxi`, `bus`, `train`, `ship`, `transport`, `drive`, `flight`],
+  activity: [`check-in`, `sightseeing`, `restaurant`],
+};
+
 const offers = [
   {
-    offerType: `luggage`,
+    type: `luggage`,
     desc: `Add luggage`,
     price: 30
   }, {
-    offerType: `car`,
+    type: `car`,
     desc: `Rent a car`,
     price: 200
   }, {
-    offerType: `breakfast`,
+    type: `breakfast`,
     desc: `Add breakfast`,
     price: 10
   }, {
-    offerType: `comfort`,
+    type: `comfort`,
     desc: `Switch to comfort`,
     price: 100
   }, {
-    offerType: `lunch`,
+    type: `lunch`,
     desc: `Lunch in city`,
     price: 25
   }
