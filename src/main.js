@@ -19,6 +19,7 @@ render(tripControls, new MenuComponent(), RenderPosition.AFTERBEGIN);
 render(tripControls, new FiltersComponent(filters), RenderPosition.BEFOREEND);
 
 const events = generateEvents(EVENT_COUNT);
+events.sort((a,b) => a.dateStart.getTime() - b.dateStart.getTime());
 
 const main = document.querySelector(`.page-main`);
 const mainContainer = main.querySelector(`.page-body__container`);

@@ -44,10 +44,12 @@ const getSortedEvents = (events, sortType) => {
       sortedEvents = showingEvents;
       break;
     case SortType.TIME:
-      sortedEvents = showingEvents.sort((a,b) => (b.dateEnd - b.dateStart) - (a.dateEnd - a.dateStart));
+      sortedEvents = showingEvents
+        .sort((a,b) => (b.dateEnd - b.dateStart) - (a.dateEnd - a.dateStart));
       break;
     case SortType.PRICE:
-      sortedEvents = showingEvents.sort((a,b) => b.totalPrice - a.totalPrice);
+      sortedEvents = showingEvents
+        .sort((a,b) => b.totalPrice - a.totalPrice);
       break;
   }
 

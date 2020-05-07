@@ -14,10 +14,10 @@ const countDurationTime = (startDate, endDate) => {
   return `${days ? `${days}D ` : ``}${hours ? `${hours}H ` : ``}${minutes ? `${minutes}M` : ``}`;
 };
 
-const getRandomDate = (coefficient = false) => {
+const getRandomDate = () => {
   const targetDate = new Date();
-  const diffHours = getRandomInteger(0, 4) * coefficient;
-  const diffMinutes = getRandomInteger(0, 60) * coefficient;
+  const diffHours = getRandomInteger(0, 4);
+  const diffMinutes = getRandomInteger(0, 60);
 
   targetDate.setHours(targetDate.getHours() + diffHours, targetDate.getMinutes() + diffMinutes);
 
@@ -34,7 +34,10 @@ const generateEvent = () => {
     });
 
   const dateStart = getRandomDate();
-  const dateEnd = getRandomDate(true);
+  const dateEnd = new Date();
+  dateEnd.setTime(
+    dateStart.getTime() + getRandomInteger(100000, 172800000),
+    );
 
   const duration = countDurationTime(dateStart, dateEnd);
 
