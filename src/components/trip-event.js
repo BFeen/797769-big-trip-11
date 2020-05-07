@@ -1,5 +1,5 @@
 import AbstractComponent from "./abstract-component.js";
-import {capitalizeFirstLetter, generateTime} from "../utils/common.js";
+import {capitalizeFirstLetter, generateTime, generateDate} from "../utils/common.js";
 
 
 const createSelectedOffersMarkup = (selectedOffers) => {
@@ -17,7 +17,12 @@ const createSelectedOffersMarkup = (selectedOffers) => {
 }
 
 const createTripEventTemplate = (event) => {
-  const {type, postfix, destination, price, timeStart, timeEnd, duration, selectedOffers} = event;
+  const {type, postfix, destination, totalPrice, dateStart, dateEnd, duration, selectedOffers} = event;
+
+  const dayStart = generateDate(dateStart);
+  const timeStart = generateTime(dateStart);
+  const dayEnd = generateDate(dateEnd);
+  const timeEnd = generateTime(dateEnd);
 
   const selectedOffersMarkup = createSelectedOffersMarkup(selectedOffers);
 
@@ -31,15 +36,15 @@ const createTripEventTemplate = (event) => {
 
         <div class="event__schedule">
             <p class="event__time">
-            <time class="event__start-time" datetime="2019-03-18">${generateTime(timeStart)}</time>
+            <time class="event__start-time" datetime="${dayStart}">${timeStart}</time>
             &mdash;
-            <time class="event__end-time" datetime="2019-03-18">${generateTime(timeEnd)}</time>
+            <time class="event__end-time" datetime="${dayEnd}">${timeEnd}</time>
             </p>
             <p class="event__duration">${duration}</p>
         </div>
 
         <p class="event__price">
-            &euro;&nbsp;<span class="event__price-value">${price}</span>
+            &euro;&nbsp;<span class="event__price-value">${totalPrice}</span>
         </p>
 
         <h4 class="visually-hidden">Offers:</h4>

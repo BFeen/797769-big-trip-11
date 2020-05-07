@@ -1,6 +1,6 @@
 import AbstractComponent from "./abstract-component.js";
 import {eventType, destination, offers} from "../mock/add-event-form.js";
-import {capitalizeFirstLetter, generateTime} from "../utils/common.js";
+import {capitalizeFirstLetter, generateTime, generateDate} from "../utils/common.js";
 
 
 const createTypeSelectMarkup = () => {
@@ -45,11 +45,11 @@ const createOffersMarkup = (selectedOffers) => {
   return offers
     .map((offer) => {
       const {type, desc, price} = offer;
-      isChecked = false;
+      isChecked = ``;
 
       for (const element of selectedOffers) {
         if (element.desc === desc) {
-          isChecked = true;
+          isChecked = `checked`;
           break;
         }
       }
@@ -60,7 +60,7 @@ const createOffersMarkup = (selectedOffers) => {
             id="event-offer-${type}-1" 
             type="checkbox" 
             name="event-offer-${type}" 
-            ${isChecked ? `checked` : ``}>
+            ${isChecked}>
 
             <label class="event__offer-label" 
             for="event-offer-${type}-1">
@@ -74,7 +74,12 @@ const createOffersMarkup = (selectedOffers) => {
 };
 
 export const createEditEventFormTemplate = (event) => {
-  const {type, postfix, destination: eventDestination, price, timeStart, timeEnd, selectedOffers} = event;
+  const {type, postfix, destination: eventDestination, price, dateStart, dateEnd, selectedOffers} = event;
+
+  const dayStart = generateDate(dateStart);
+  const timeStart = generateTime(dateStart);
+  const dayEnd = generateDate(dateEnd);
+  const timeEnd = generateTime(dateEnd);
 
   const typeSelectMarkup = createTypeSelectMarkup();
   const destinationSelectMarkup = createDestinationSelectMarkup();
@@ -115,13 +120,13 @@ export const createEditEventFormTemplate = (event) => {
               From
               </label>
               <input class="event__input  event__input--time" id="event-start-time-1" 
-              type="text" name="event-start-time" value="18/03/2020 ${generateTime(timeStart)}">
+              type="text" name="event-start-time" value="${dayStart} ${timeStart}">
               &mdash;
               <label class="visually-hidden" for="event-end-time-1">
               To
               </label>
               <input class="event__input  event__input--time" id="event-end-time-1" 
-              type="text" name="event-end-time" value="21/03/2020 ${generateTime(timeEnd)}">
+              type="text" name="event-end-time" value="${dayEnd} ${timeEnd}">
           </div>
 
           <div class="event__field-group  event__field-group--price">

@@ -37,17 +37,17 @@ const renderEvent = (tripEventsListElement, event) => {
 const getSortedEvents = (events, sortType) => {
   let sortedEvents = [];
   const showingEvents = events.slice();
-  console.log(`im here`);
+  console.log(showingEvents)
   // отмена рендеринга Trip day Info при выборе недефолтного типа сортировки
   switch (sortType) {
     case SortType.EVENT:
       sortedEvents = showingEvents;
       break;
     case SortType.TIME:
-      sortedEvents = showingEvents.sort((a,b) => a.duration - b.duration);
+      sortedEvents = showingEvents.sort((a,b) => (b.dateEnd - b.dateStart) - (a.dateEnd - a.dateStart));
       break;
     case SortType.PRICE:
-      sortedEvents = showingEvents.sort((a,b) => b.price - a.price);
+      sortedEvents = showingEvents.sort((a,b) => b.totalPrice - a.totalPrice);
       break;
   }
 

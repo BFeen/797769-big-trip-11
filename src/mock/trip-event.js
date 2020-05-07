@@ -3,20 +3,21 @@ import {getRandomArrayItem, getRandomInteger} from "../utils/common.js";
 
 
 const countDurationTime = (startDate, endDate) => {
-  const duration = new Date();
-  duration.setTime(endDate - startDate);
+  const difference = endDate - startDate;
 
-  const hours = duration.getUTCHours();
-  const minutes = duration.getUTCMinutes();
-  return `
-    ${hours ? `${hours}H` : ``} 
-    ${minutes ? `${minutes}M` : ``}`;
+  const toMinutes = Math.floor(difference / (1000 * 60));
+
+  const days = Math.floor(toMinutes / (60 * 24));
+  const hours = Math.floor(toMinutes / 60) % 24;
+  const minutes = toMinutes % 60;
+
+  return `${days ? `${days}D ` : ``}${hours ? `${hours}H ` : ``}${minutes ? `${minutes}M` : ``}`;
 };
 
-const getRandomDate = () => {
+const getRandomDate = (coefficient = false) => {
   const targetDate = new Date();
-  const diffHours = getRandomInteger(0, 4);
-  const diffMinutes = getRandomInteger(0, 60);
+  const diffHours = getRandomInteger(0, 4) * coefficient;
+  const diffMinutes = getRandomInteger(0, 60) * coefficient;
 
   targetDate.setHours(targetDate.getHours() + diffHours, targetDate.getMinutes() + diffMinutes);
 
@@ -31,20 +32,29 @@ const generateEvent = () => {
         selectedOffers.push(offer);
       }
     });
-  const timeStart = getRandomDate();
-  const timeEnd = getRandomDate();
-  const duration = countDurationTime(timeStart, timeEnd);
+
+  const dateStart = getRandomDate();
+  const dateEnd = getRandomDate(true);
+
+  const duration = countDurationTime(dateStart, dateEnd);
 
   const types = getAllTypes();
   const type = getRandomArrayItem(types);
+
+  const price = getRandomInteger(0, 200);
+  let totalPrice = price;
+  for (const offer of selectedOffers) {
+    totalPrice = totalPrice + offer.price;
+  }
 
   return {
     type,
     postfix: eventType.transfer.includes(type) ? `to` : `in`,
     destination: getRandomArrayItem(destination),
-    price: getRandomInteger(0, 200),
-    timeStart,
-    timeEnd,
+    price,
+    totalPrice,
+    dateStart,
+    dateEnd,
     duration,
     selectedOffers,
   };
@@ -56,4 +66,4 @@ const generateEvents = (count) => {
     .map(generateEvent);
 };
 
-export {countDurationTime, generateEvent, generateEvents};
+export {generateEvent, generateEvents};
