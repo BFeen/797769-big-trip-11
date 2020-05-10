@@ -16,7 +16,7 @@ const countDurationTime = (startDate, endDate) => {
 
 const getRandomDate = () => {
   const targetDate = new Date();
-  const diffHours = getRandomInteger(0, 4);
+  const diffHours = getRandomInteger(0, 24);
   const diffMinutes = getRandomInteger(0, 60);
 
   targetDate.setHours(targetDate.getHours() + diffHours, targetDate.getMinutes() + diffMinutes);
@@ -24,7 +24,7 @@ const getRandomDate = () => {
   return targetDate;
 };
 
-const generateEvent = () => {
+const generateRandomOffers = () => {
   const selectedOffers = [];
   offers
     .forEach((offer) => {
@@ -32,30 +32,26 @@ const generateEvent = () => {
         selectedOffers.push(offer);
       }
     });
+  return selectedOffers;
+}
+
+const generateEvent = () => {
+  const selectedOffers = generateRandomOffers();
 
   const dateStart = getRandomDate();
-  const dateEnd = new Date();
-  dateEnd.setTime(
-    dateStart.getTime() + getRandomInteger(100000, 172800000),
-    );
-
+  const dateEnd = new Date(dateStart.getTime() + getRandomInteger(100000, 172800000));
   const duration = countDurationTime(dateStart, dateEnd);
 
   const types = getAllTypes();
   const type = getRandomArrayItem(types);
 
   const price = getRandomInteger(0, 200);
-  let totalPrice = price;
-  for (const offer of selectedOffers) {
-    totalPrice = totalPrice + offer.price;
-  }
 
   return {
     type,
     postfix: eventType.transfer.includes(type) ? `to` : `in`,
     destination: getRandomArrayItem(destination),
     price,
-    totalPrice,
     dateStart,
     dateEnd,
     duration,

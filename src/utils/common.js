@@ -1,9 +1,16 @@
+import {MONTH_NAMES} from "../const.js";
+
+
 const dateFormat = (value) => {
   return String(value).padStart(2, `0`);
 };
 
 export const capitalizeFirstLetter = (string) => {
   return string.charAt(0).toUpperCase() + string.slice(1);
+};
+
+export const formatDay = (date) => {
+  return `${MONTH_NAMES[date.getMonth()]} ${date.getDate()}`;
 };
 
 export const generateTime = (date) => {
@@ -15,7 +22,7 @@ export const generateTime = (date) => {
 
 export const generateDate = (date) => {
   const day = dateFormat(date.getDate());
-  const month = dateFormat(date.getMonth());
+  const month = dateFormat(date.getMonth() + 1);
   const year = date.getFullYear();
 
   return `${day}/${month}/${year}`;
@@ -31,5 +38,3 @@ export const getRandomArrayItem = (array) => {
 
   return array[randomIndex];
 };
-
-

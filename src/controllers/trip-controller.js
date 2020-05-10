@@ -4,6 +4,7 @@ import TripDaysComponent from "../components/trip-days.js";
 import TripEventComponent from "../components/trip-event";
 import SortingComponent, {SortType} from "../components/sorting.js";
 import {render, replace, RenderPosition} from "../utils/render";
+import {formatDay} from "../utils/common.js";
 
 
 const renderEvent = (tripEventsListElement, event) => {
@@ -34,11 +35,40 @@ const renderEvent = (tripEventsListElement, event) => {
   render(tripEventsListElement, tripEventComponent, RenderPosition.BEFOREEND);
 };
 
+const renderDays = (tripDaysContainer, events) => {
+  let days = getDays(events);
+  const tripDaysComponent = new TripDaysComponent(days);
+  render(tripDaysContainer, tripDaysComponent, RenderPosition.BEFOREEND);
+
+  const tripEventsListElements = tripDaysComponent.getElement().querySelectorAll(`.trip-events__list`);
+  let index = 0;
+  events
+    .forEach((event) => {
+      const eventDay = formatDay(event.dateStart);
+
+      if (eventDay !== days[index]) {
+        index++;
+      }
+      renderEvent(tripEventsListElements[index], event);
+    });
+};
+
+const getDays = (events) => {
+  const days = [];
+
+  for (const event of events) {
+    const eventDay = formatDay(event.dateStart);
+    if (!days.includes(eventDay)) {
+      days.push(eventDay);
+    }
+  }
+
+  return days;
+};
+
 const getSortedEvents = (events, sortType) => {
   let sortedEvents = [];
   const showingEvents = events.slice();
-  console.log(showingEvents)
-  // отмена рендеринга Trip day Info при выборе недефолтного типа сортировки
   switch (sortType) {
     case SortType.EVENT:
       sortedEvents = showingEvents;
@@ -54,7 +84,7 @@ const getSortedEvents = (events, sortType) => {
   }
 
   return sortedEvents;
-}
+};
 
 export default class TripController {
   constructor(container) {
@@ -62,7 +92,6 @@ export default class TripController {
 
     this._noEventsComponent = new NoEventsComponent();
     this._sortingComponent = new SortingComponent();
-    this._tripDaysComponent = new TripDaysComponent();
     this._totalPrice = 0;
   }
 
@@ -74,16 +103,9 @@ export default class TripController {
       return;
     }
 
-    render(container, this._sortingComponent, RenderPosition.BEFOREEND);
-    render(container, this._tripDaysComponent, RenderPosition.BEFOREEND);
+    render(container, this._sortingComponent, RenderPosition.AFTERBEGIN);
 
-    const tripEventsListElement = this._tripDaysComponent.getElement().querySelector(`.trip-events__list`);
-
-    events
-      .forEach((event) => {
-        renderEvent(tripEventsListElement, event);
-        this._totalPrice = this._totalPrice + event.price;
-      });
+    renderDays(container, events);
 
     this._sortingComponent.setSortTypeChangeHandler((sortType) => {
       const sortedEvents = getSortedEvents(events, sortType);

@@ -17,7 +17,7 @@ const createSelectedOffersMarkup = (selectedOffers) => {
 }
 
 const createTripEventTemplate = (event) => {
-  const {type, postfix, destination, totalPrice, dateStart, dateEnd, duration, selectedOffers} = event;
+  const {type, postfix, destination, price, dateStart, dateEnd, duration, selectedOffers} = event;
 
   const dayStart = generateDate(dateStart);
   const timeStart = generateTime(dateStart);
@@ -25,6 +25,11 @@ const createTripEventTemplate = (event) => {
   const timeEnd = generateTime(dateEnd);
 
   const selectedOffersMarkup = createSelectedOffersMarkup(selectedOffers);
+
+  let totalPrice = price;
+  for (const offer of selectedOffers) {
+    totalPrice = totalPrice + offer.price;
+  }
 
   return (
     `<li class="trip-events__item">
