@@ -1,5 +1,4 @@
 import AbstractComponent from "./abstract-component.js";
-import {formatDay} from "../utils/common.js";
 
 
 const createDayInfoTemplate = (day, counter) => {
@@ -12,7 +11,7 @@ const createDayInfoTemplate = (day, counter) => {
       <ul class="trip-events__list"></ul>
     </li>`
   );
-}
+};
 
 export default class DayInfoComponent extends AbstractComponent {
   constructor(day, counter) {
@@ -26,4 +25,3 @@ export default class DayInfoComponent extends AbstractComponent {
     return createDayInfoTemplate(this._day, this._counter);
   }
 }
-  

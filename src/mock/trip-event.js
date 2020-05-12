@@ -33,7 +33,7 @@ const generateRandomOffers = () => {
       }
     });
   return selectedOffers;
-}
+};
 
 const generateEvent = () => {
   const selectedOffers = generateRandomOffers();
@@ -47,7 +47,9 @@ const generateEvent = () => {
 
   const price = getRandomInteger(0, 200);
   let totalPrice = price;
-  selectedOffers.forEach((offer) => totalPrice += offer.price);
+  selectedOffers.forEach((offer) => {
+    totalPrice = totalPrice + offer.price;
+  });
 
   return {
     type,

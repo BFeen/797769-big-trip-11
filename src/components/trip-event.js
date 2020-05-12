@@ -12,9 +12,9 @@ const createSelectedOffersMarkup = (selectedOffers) => {
           &plus;
           &euro;&nbsp;<span class="event__offer-price">${price}</span>
         </li>`
-    );
-  }).join(`\n`);
-}
+      );
+    }).join(`\n`);
+};
 
 const createTripEventTemplate = (event) => {
   const {type, postfix, destination, price, dateStart, dateEnd, duration, selectedOffers} = event;
