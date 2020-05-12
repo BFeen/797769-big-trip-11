@@ -8,6 +8,19 @@ import {formatDay} from "../utils/common.js";
 import DayInfoComponent from "../components/day-info";
 
 
+const renderEvents = (tripEventsListElements, events, days, counter) => {
+  events
+    .forEach((event) => {
+      const eventDay = formatDay(event.dateStart);
+      
+      if (eventDay !== days[counter]) {
+        counter++;
+      }
+
+      renderEvent(tripEventsListElements[counter], event);
+    });
+};
+
 const renderEvent = (tripEventsListElement, event) => {
   const replaceEventToEdit = () => {
     replace(tripEventComponent, editFormComponent);
@@ -82,12 +95,12 @@ export default class TripController {
 
     this._noEventsComponent = new NoEventsComponent();
     this._sortingComponent = new SortingComponent();
+    this._tripDaysComponent = new TripDaysComponent();
     this._totalPrice = 0;
   }
 
   render(events) {
     const container = this._container.getElement();
-    let days = getDays(events);
 
     if (events.length === 0) {
       render(container, this._noEventsComponent, RenderPosition.AFTERBEGIN);
@@ -95,18 +108,19 @@ export default class TripController {
     }
 
     render(container, this._sortingComponent, RenderPosition.AFTERBEGIN);
-
-    const tripDaysComponent = new TripDaysComponent();
-    render(container, tripDaysComponent, RenderPosition.BEFOREEND);
+    render(container, this._tripDaysComponent, RenderPosition.BEFOREEND); 
     
+    let days = getDays(events);
     let counter = 1;
-    const tripEventsListElements = [];
+    let tripEventsListElements = [];
+    
     days
       .forEach((day) => {
-        tripEventsListElements.push(renderDay(tripDaysComponent, day, counter++));
+        tripEventsListElements.push(renderDay(this._tripDaysComponent, day, counter++));
       });
 
     counter = 0;
+
     events
       .forEach((event) => {
         const eventDay = formatDay(event.dateStart);
@@ -121,12 +135,35 @@ export default class TripController {
     this._sortingComponent.setSortTypeChangeHandler((sortType) => {
       const sortedEvents = getSortedEvents(events, sortType);
 
-      const tripEventsListElement = tripDaysComponent.getElement().querySelector(`.trip-events__list`);
+      this._tripDaysComponent.getElement().innerHTML = ``;
 
-      sortedEvents
-        .forEach((event) => {
-          renderEvent(tripEventsListElement, event);
-        });
+      if (sortType === SortType.EVENT) {
+        tripEventsListElements = [];
+        
+        counter = 1;
+        days
+          .forEach((day) => {
+            tripEventsListElements.push(renderDay(this._tripDaysComponent, day, counter++));
+          });
+        
+        counter = 0;
+        sortedEvents
+          .forEach((event) => {
+            const eventDay = formatDay(event.dateStart);
+            
+            if (eventDay !== days[counter]) {
+              counter++;
+            }
+            renderEvent(tripEventsListElements[counter], event);
+          });
+      } else {
+        const tripEventListElement = renderDay(this._tripDaysComponent);
+
+        sortedEvents
+          .forEach((event) => {
+            renderEvent(tripEventListElement, event);
+          });
+      }
     });
   }
 }

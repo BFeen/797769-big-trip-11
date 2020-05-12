@@ -46,12 +46,15 @@ const generateEvent = () => {
   const type = getRandomArrayItem(types);
 
   const price = getRandomInteger(0, 200);
+  let totalPrice = price;
+  selectedOffers.forEach((offer) => totalPrice += offer.price);
 
   return {
     type,
     postfix: eventType.transfer.includes(type) ? `to` : `in`,
     destination: getRandomArrayItem(destination),
     price,
+    totalPrice,
     dateStart,
     dateEnd,
     duration,

@@ -8,7 +8,7 @@ import {generateEvents} from "./mock/trip-event.js";
 import {render, RenderPosition} from "./utils/render.js";
 
 
-const EVENT_COUNT = 5;
+const EVENT_COUNT = 10;
 
 const headerMain = document.querySelector(`.trip-main`);
 const tripControls = headerMain.querySelector(`.trip-controls`);
