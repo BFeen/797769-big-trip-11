@@ -43,6 +43,28 @@ const renderDay = (tripDaysComponent, day, counter) => {
   return dayInfoComponent.getElement().querySelector(`.trip-events__list`);
 };
 
+const renderDays = (tripDaysComponent, events) => {
+  const days = getDays(events);
+  const tripEventsListElements = [];
+  let counter = 1;
+  days
+    .forEach((day) => {
+      tripEventsListElements.push(renderDay(tripDaysComponent, day, counter++));
+    });
+
+  counter = 0;
+  events
+    .forEach((event) => {
+      const eventDay = formatDay(event.dateStart);
+
+      if (eventDay !== days[counter]) {
+        counter++;
+      }
+
+      renderEvent(tripEventsListElements[counter], event);
+    });
+};
+
 const getDays = (events) => {
   const days = [];
 
@@ -97,27 +119,7 @@ export default class TripController {
     render(container, this._sortingComponent, RenderPosition.AFTERBEGIN);
     render(container, this._tripDaysComponent, RenderPosition.BEFOREEND);
 
-    let days = getDays(events);
-    let counter = 1;
-    let tripEventsListElements = [];
-
-    days
-      .forEach((day) => {
-        tripEventsListElements.push(renderDay(this._tripDaysComponent, day, counter++));
-      });
-
-    counter = 0;
-
-    events
-      .forEach((event) => {
-        const eventDay = formatDay(event.dateStart);
-
-        if (eventDay !== days[counter]) {
-          counter++;
-        }
-
-        renderEvent(tripEventsListElements[counter], event);
-      });
+    renderDays(this._tripDaysComponent, events);
 
     this._sortingComponent.setSortTypeChangeHandler((sortType) => {
       const sortedEvents = getSortedEvents(events, sortType);
@@ -125,24 +127,7 @@ export default class TripController {
       this._tripDaysComponent.getElement().innerHTML = ``;
 
       if (sortType === SortType.EVENT) {
-        tripEventsListElements = [];
-
-        counter = 1;
-        days
-          .forEach((day) => {
-            tripEventsListElements.push(renderDay(this._tripDaysComponent, day, counter++));
-          });
-
-        counter = 0;
-        sortedEvents
-          .forEach((event) => {
-            const eventDay = formatDay(event.dateStart);
-
-            if (eventDay !== days[counter]) {
-              counter++;
-            }
-            renderEvent(tripEventsListElements[counter], event);
-          });
+        renderDays(this._tripDaysComponent, sortedEvents);
       } else {
         const tripEventListElement = renderDay(this._tripDaysComponent);
 

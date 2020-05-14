@@ -3,6 +3,9 @@ import {capitalizeFirstLetter, generateTime, generateDate} from "../utils/common
 
 
 const createSelectedOffersMarkup = (selectedOffers) => {
+  if (selectedOffers.length > 3) {
+    selectedOffers = selectedOffers.slice(0, 3);
+  }
   return selectedOffers
     .map((offer) => {
       const {desc, price} = offer;
