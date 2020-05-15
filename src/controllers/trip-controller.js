@@ -44,28 +44,29 @@ const renderDay = (tripDaysComponent, day, counter) => {
 };
 
 const renderDays = (tripDaysComponent, events) => {
-  const days = getDays(events);
-  const tripEventsListElements = [];
-  let counter = 1;
-  days
-    .forEach((day) => {
-      tripEventsListElements.push(renderDay(tripDaysComponent, day, counter++));
-    });
+  const days = getUniqueDays(events);
 
-  counter = 0;
-  events
-    .forEach((event) => {
-      const eventDay = formatDay(event.dateStart);
+  const eventsByDay = days.map((day) => {
+    const getEventsByDay = (day) => {
+      return events.filter((event) => formatDay(event.dateStart) === day);
+    };
 
-      if (eventDay !== days[counter]) {
-        counter++;
-      }
+    return {
+      day,
+      events: getEventsByDay(day),
+    };
+  });
 
-      renderEvent(tripEventsListElements[counter], event);
+  eventsByDay
+    .forEach((dayEvents, index) => {
+      const {day, events} = dayEvents;
+      const renderedDay = renderDay(tripDaysComponent, day, index + 1);
+
+      events.forEach((event) => renderEvent(renderedDay, event));
     });
 };
 
-const getDays = (events) => {
+const getUniqueDays = (events) => {
   const days = [];
 
   for (const event of events) {
