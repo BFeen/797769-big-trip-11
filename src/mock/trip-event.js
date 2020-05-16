@@ -36,20 +36,21 @@ const generateRandomOffers = () => {
 };
 
 const generateEvent = () => {
-  const selectedOffers = generateRandomOffers();
-
-  const dateStart = getRandomDate();
-  const dateEnd = new Date(dateStart.getTime() + getRandomInteger(100000, 172800000));
-  const duration = countDurationTime(dateStart, dateEnd);
-
   const types = getAllTypes();
   const type = getRandomArrayItem(types);
 
+  
+  const selectedOffers = generateRandomOffers();
   const price = getRandomInteger(0, 200);
   let totalPrice = price;
   selectedOffers.forEach((offer) => {
     totalPrice = totalPrice + offer.price;
   });
+  
+  const dateStart = getRandomDate();
+  const dateEnd = new Date(dateStart.getTime() + getRandomInteger(100000, 172800000));
+  const duration = countDurationTime(dateStart, dateEnd);
+  
 
   return {
     type,
@@ -61,6 +62,7 @@ const generateEvent = () => {
     dateEnd,
     duration,
     selectedOffers,
+    isFavorite: Math.random() > 0.5,
   };
 };
 
