@@ -28,21 +28,21 @@ const renderDays = (tripDaysComponent, events, onDataChange, onViewChange) => {
   let eventControllers = [];
 
   const eventsByDay = days.map((day) => {
-    const getEventsByDay = (day) => {
-      return events.filter((event) => formatDay(event.dateStart) === day);
+    const getEventsByDay = (currentDay) => {
+      return events.filter((event) => formatDay(event.dateStart) === currentDay);
     };
     return {
       day,
-      events: getEventsByDay(day),
+      eventsGroup: getEventsByDay(day),
     };
   });
 
   eventsByDay
     .forEach((dayEvents, index) => {
-      const {day, events} = dayEvents;
+      const {day, eventsGroup} = dayEvents;
       const dayElement = renderDay(tripDaysComponent, day, index + 1);
 
-      eventControllers = eventControllers.concat(renderEvents(dayElement, events, onDataChange, onViewChange));
+      eventControllers = eventControllers.concat(renderEvents(dayElement, eventsGroup, onDataChange, onViewChange));
     });
 
   return eventControllers;
@@ -144,6 +144,5 @@ export default class TripController {
       newEvents = renderEvents(tripEventListElement, sortedEvents, this._onDataChange, this._onViewChange);
     }
     this._eventControllers = newEvents;
-    console.log(this._eventControllers);
   }
 }

@@ -39,18 +39,16 @@ const generateEvent = () => {
   const types = getAllTypes();
   const type = getRandomArrayItem(types);
 
-  
-  const selectedOffers = generateRandomOffers();
   const price = getRandomInteger(0, 200);
+  const selectedOffers = generateRandomOffers();
   let totalPrice = price;
   selectedOffers.forEach((offer) => {
     totalPrice = totalPrice + offer.price;
   });
-  
+
   const dateStart = getRandomDate();
   const dateEnd = new Date(dateStart.getTime() + getRandomInteger(100000, 172800000));
   const duration = countDurationTime(dateStart, dateEnd);
-  
 
   return {
     type,

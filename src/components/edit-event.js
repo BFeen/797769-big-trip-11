@@ -72,7 +72,7 @@ const createOffersMarkup = (selectedOffers) => {
 };
 
 export const createEditEventFormTemplate = (event) => {
-  const {type, postfix, destination, price, dateStart, dateEnd, selectedOffers, isFavorite} = event;
+  const {type, postfix, destination: eventDestination, price, dateStart, dateEnd, selectedOffers, isFavorite} = event;
 
   const dayStart = generateDate(dateStart);
   const timeStart = generateTime(dateStart);
@@ -105,7 +105,7 @@ export const createEditEventFormTemplate = (event) => {
             ${capitalizeFirstLetter(type)} ${postfix}
             </label>
             <input class="event__input  event__input--destination" id="event-destination-1" 
-            type="text" name="event-destination" value="${destination}" list="destination-list-1">
+            type="text" name="event-destination" value="${eventDestination}" list="destination-list-1">
             <datalist id="destination-list-1">
             
             ${destinationSelectMarkup}
@@ -171,11 +171,11 @@ export const createEditEventFormTemplate = (event) => {
 
 const isSelectedOffer = (selectedOffers, currentOffer) => {
   return selectedOffers.some((offer) => offer.desc === currentOffer);
-}
+};
 
-const getOfferIndex = (offers, currentOffer) => {
-  return offers.findIndex((item) => item.desc === currentOffer);
-}
+const getOfferIndex = (allOffers, currentOffer) => {
+  return allOffers.findIndex((item) => item.desc === currentOffer);
+};
 
 export default class EditFormComponent extends AbstractSmartComponent {
   constructor(event) {
@@ -205,7 +205,7 @@ export default class EditFormComponent extends AbstractSmartComponent {
     // возвращать исходное состояние формы
     this.rerender();
   }
-  
+
   recoveryListeners() {
     this.setCloseEditButtonClickHandler(this._closeHandler);
     this.setSubmitHandler(this._submitHandler);
@@ -236,7 +236,7 @@ export default class EditFormComponent extends AbstractSmartComponent {
     eventTypeElements.forEach((item) => {
       item.addEventListener(`click`, () => {
         const selectedType = item.textContent.toLowerCase();
-        
+
         this._event.type = selectedType;
         this._event.postfix = eventType.transfer.includes(selectedType) ? `to` : `in`;
         // изменение офферов
@@ -248,7 +248,7 @@ export default class EditFormComponent extends AbstractSmartComponent {
     const destinationElement = element.querySelector(`.event__input--destination`);
     destinationElement.addEventListener(`change`, () => {
       this._event.destination = destinationElement.value;
-      //изменение описания города
+      // изменение описания города
 
       this.rerender();
     });

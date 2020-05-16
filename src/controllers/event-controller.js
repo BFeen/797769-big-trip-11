@@ -17,7 +17,7 @@ export default class EventController {
     this._mode = Mode.DEFAULT;
     this._tripEventComponent = null;
     this._editFormComponent = null;
-    
+
     this._onEscKeyDown = this._onEscKeyDown.bind(this);
     this._replaceEventToEdit = this._replaceEventToEdit.bind(this);
     this._replaceEditToEvent = this._replaceEditToEvent.bind(this);
@@ -36,7 +36,7 @@ export default class EventController {
     this._editFormComponent.setSubmitHandler((evt) => {
       evt.preventDefault();
     });
-    
+
     if (oldEventComponent && oldEventEditComponent) {
       replace(this._tripEventComponent, oldEventComponent);
       replace(this._editFormComponent, oldEventEditComponent);
