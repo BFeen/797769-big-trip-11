@@ -9,7 +9,7 @@ const countDurationTime = (startDate, endDate) => {
   const days = difference.days();
   const hours = difference.hours();
   const minutes = difference.minutes();
-  
+
   return `${days ? `${days}D ` : ``}${hours ? `${hours}H ` : ``}${minutes ? `${minutes}M` : ``}`;
 };
 

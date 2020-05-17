@@ -249,7 +249,6 @@ export default class EditFormComponent extends AbstractSmartComponent {
       altFormat: `d/m/y H:i`,
       altInput: true,
       allowInput: true,
-      time_24hr: true,
       enableTime: true,
       defaultDate: this._event.dateStart || `today`,
     });
@@ -259,7 +258,6 @@ export default class EditFormComponent extends AbstractSmartComponent {
       altFormat: `d/m/y H:i`,
       altInput: true,
       allowInput: true,
-      time_24hr: true,
       enableTime: true,
       defaultDate: this._event.dateEnd || `today`,
     });
