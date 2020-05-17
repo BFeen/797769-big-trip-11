@@ -1,3 +1,4 @@
+import EventsModel from "./models/trip-events.js";
 import FiltersComponent from "./components/filters.js";
 import MenuComponent from "./components/menu.js";
 import TripController from "./controllers/trip-controller.js";
@@ -20,14 +21,16 @@ render(tripControls, new FiltersComponent(filters), RenderPosition.BEFOREEND);
 
 const events = generateEvents(EVENT_COUNT);
 events.sort((a, b) => a.dateStart.getTime() - b.dateStart.getTime());
+const eventsModel = new EventsModel();
+eventsModel.setEvents(events);
 
 const main = document.querySelector(`.page-main`);
 const mainContainer = main.querySelector(`.page-body__container`);
 const tripEventsComponent = new TripEventsComponent();
-const tripEventsController = new TripController(tripEventsComponent);
+const tripEventsController = new TripController(tripEventsComponent, eventsModel);
 
 render(mainContainer, tripEventsComponent, RenderPosition.BEFOREEND);
 
-tripEventsController.render(events);
+tripEventsController.render();
 
 render(headerMain, new TripInfoComponent(0), RenderPosition.AFTERBEGIN);

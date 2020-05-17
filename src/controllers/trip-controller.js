@@ -82,10 +82,10 @@ const getSortedEvents = (events, sortType) => {
 };
 
 export default class TripController {
-  constructor(container) {
+  constructor(container, eventsModel) {
     this._container = container;
+    this._eventsModel = eventsModel;
 
-    this._events = [];
     this._eventControllers = [];
     this._noEventsComponent = new NoEventsComponent();
     this._sortingComponent = new SortingComponent();
@@ -98,11 +98,11 @@ export default class TripController {
     this._sortingComponent.setSortTypeChangeHandler(this._onSortTypeChange);
   }
 
-  render(events) {
-    this._events = events;
+  render() {
     const container = this._container.getElement();
+    const events = this._eventsModel.getEvents();
 
-    if (this._events.length === 0) {
+    if (events.length === 0) {
       render(container, this._noEventsComponent, RenderPosition.AFTERBEGIN);
       return;
     }
@@ -110,20 +110,16 @@ export default class TripController {
     render(container, this._sortingComponent, RenderPosition.AFTERBEGIN);
     render(container, this._tripDaysComponent, RenderPosition.BEFOREEND);
 
-    const newEvents = renderDays(this._tripDaysComponent, this._events, this._onDataChange, this._onViewChange);
+    const newEvents = renderDays(this._tripDaysComponent, events, this._onDataChange, this._onViewChange);
     this._eventControllers = this._eventControllers.concat(newEvents);
   }
 
   _onDataChange(eventController, oldData, newData) {
-    const index = this._events.findIndex((item) => item === oldData);
+    const isSuccess = this._eventsModel.updateEvent(oldData.id, newData);
 
-    if (index === -1) {
-      return;
+    if (isSuccess) {
+      eventController.render(newData);
     }
-
-    this._events = [].concat(this._events.slice(0, index), newData, this._events.slice(index + 1));
-
-    eventController.render(this._events[index]);
   }
 
   _onViewChange() {
@@ -131,7 +127,7 @@ export default class TripController {
   }
 
   _onSortTypeChange(sortType) {
-    const sortedEvents = getSortedEvents(this._events, sortType);
+    const sortedEvents = getSortedEvents(this._eventsModel.getEvents(), sortType);
     let newEvents;
 
     this._tripDaysComponent.getElement().innerHTML = ``;
