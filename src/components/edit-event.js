@@ -1,6 +1,9 @@
 import AbstractSmartComponent from "./abstract-smart-component.js";
 import {eventType, destination, offers} from "../mock/add-event-form.js";
-import {capitalizeFirstLetter, generateTime, generateDate} from "../utils/common.js";
+import {capitalizeFirstLetter, getTime, generateDate} from "../utils/common.js";
+import flatpicr from "flatpickr";
+
+import "flatpickr/dist/flatpickr.min.css";
 
 
 const createTypeSelectMarkup = (currentType = `flight`) => {
@@ -75,9 +78,9 @@ export const createEditEventFormTemplate = (event) => {
   const {type, postfix, destination: eventDestination, price, dateStart, dateEnd, selectedOffers, isFavorite} = event;
 
   const dayStart = generateDate(dateStart);
-  const timeStart = generateTime(dateStart);
+  const timeStart = getTime(dateStart);
   const dayEnd = generateDate(dateEnd);
-  const timeEnd = generateTime(dateEnd);
+  const timeEnd = getTime(dateEnd);
 
   const typeSelectMarkup = createTypeSelectMarkup(type);
   const destinationSelectMarkup = createDestinationSelectMarkup();
@@ -184,12 +187,14 @@ export default class EditFormComponent extends AbstractSmartComponent {
     this._event = event;
 
     this._offers = offers;
+    this._flatpicr = null;
 
     this._closeHandler = null;
     this._deleteHandler = null;
     this._favoriteHandler = null;
     this._submitHandler = null;
 
+    this._applyFlatpicr();
     this._subscribeOnEvents();
   }
 
@@ -199,9 +204,13 @@ export default class EditFormComponent extends AbstractSmartComponent {
 
   rerender() {
     super.rerender();
+
+    this._applyFlatpicr();
   }
 
   reset() {
+    // this._event.destination = event.destination;
+    // this._event.selectedOffers = event.selectedOffers;
     // возвращать исходное состояние формы
     this.rerender();
   }
@@ -229,6 +238,33 @@ export default class EditFormComponent extends AbstractSmartComponent {
     this.getElement().addEventListener(`submit`, handler);
   }
 
+  _applyFlatpicr() {
+    if (this._flatpicr) {
+      this._flatpicr.destroy();
+      this._flatpicr = null;
+    }
+
+    const dateStartElement = this.getElement().querySelector(`#event-start-time-1`);
+    this._flatpicr = flatpicr(dateStartElement, {
+      altFormat: `d/m/y H:i`,
+      altInput: true,
+      allowInput: true,
+      time_24hr: true,
+      enableTime: true,
+      defaultDate: this._event.dateStart || `today`,
+    });
+
+    const dateEndElement = this.getElement().querySelector(`#event-end-time-1`);
+    this._flatpicr = flatpicr(dateEndElement, {
+      altFormat: `d/m/y H:i`,
+      altInput: true,
+      allowInput: true,
+      time_24hr: true,
+      enableTime: true,
+      defaultDate: this._event.dateEnd || `today`,
+    });
+  }
+
   _subscribeOnEvents() {
     const element = this.getElement();
     // подписка на событие "выбор даты"
@@ -239,7 +275,7 @@ export default class EditFormComponent extends AbstractSmartComponent {
 
         this._event.type = selectedType;
         this._event.postfix = eventType.transfer.includes(selectedType) ? `to` : `in`;
-        // изменение офферов
+        // моментальное изменение офферов в связи с изменением типа поездки
 
         this.rerender();
       });

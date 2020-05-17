@@ -1,31 +1,20 @@
-import {MONTH_NAMES} from "../const.js";
+import moment from "moment";
 
-
-const dateFormat = (value) => {
-  return String(value).padStart(2, `0`);
-};
 
 export const capitalizeFirstLetter = (string) => {
   return string.charAt(0).toUpperCase() + string.slice(1);
 };
 
 export const formatDay = (date) => {
-  return `${MONTH_NAMES[date.getMonth()]} ${date.getDate()}`;
+  return moment(date).format(`MMM DD`);
 };
 
-export const generateTime = (date) => {
-  const hours = dateFormat(date.getHours());
-  const minutes = dateFormat(date.getMinutes());
-
-  return `${hours}:${minutes}`;
+export const getTime = (date) => {
+  return moment(date).format(`HH:mm`);
 };
 
 export const generateDate = (date) => {
-  const day = dateFormat(date.getDate());
-  const month = dateFormat(date.getMonth() + 1);
-  const year = date.getFullYear();
-
-  return `${day}/${month}/${year}`;
+  return moment(date).format(`DD/MM/YYYY`);
 };
 
 

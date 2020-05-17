@@ -1,5 +1,5 @@
 import AbstractComponent from "./abstract-component.js";
-import {capitalizeFirstLetter, generateTime, generateDate} from "../utils/common.js";
+import {capitalizeFirstLetter, getTime, generateDate} from "../utils/common.js";
 
 
 const createSelectedOffersMarkup = (selectedOffers) => {
@@ -23,9 +23,9 @@ const createTripEventTemplate = (event) => {
   const {type, postfix, destination, price, dateStart, dateEnd, duration, selectedOffers} = event;
 
   const dayStart = generateDate(dateStart);
-  const timeStart = generateTime(dateStart);
+  const timeStart = getTime(dateStart);
   const dayEnd = generateDate(dateEnd);
-  const timeEnd = generateTime(dateEnd);
+  const timeEnd = getTime(dateEnd);
 
   const selectedOffersMarkup = createSelectedOffersMarkup(selectedOffers);
 

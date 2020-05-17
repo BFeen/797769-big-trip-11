@@ -1,16 +1,15 @@
 import {eventType, destination, offers, getAllTypes} from "./add-event-form.js";
 import {getRandomArrayItem, getRandomInteger} from "../utils/common.js";
+import moment from "moment";
 
 
 const countDurationTime = (startDate, endDate) => {
-  const difference = endDate - startDate;
+  const difference = moment.duration(endDate - startDate);
 
-  const toMinutes = Math.floor(difference / (1000 * 60));
-
-  const days = Math.floor(toMinutes / (60 * 24));
-  const hours = Math.floor(toMinutes / 60) % 24;
-  const minutes = toMinutes % 60;
-
+  const days = difference.days();
+  const hours = difference.hours();
+  const minutes = difference.minutes();
+  
   return `${days ? `${days}D ` : ``}${hours ? `${hours}H ` : ``}${minutes ? `${minutes}M` : ``}`;
 };
 
