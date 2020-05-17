@@ -50,6 +50,7 @@ const generateEvent = () => {
   const duration = countDurationTime(dateStart, dateEnd);
 
   return {
+    id: String(new Date() + Math.random()),
     type,
     postfix: eventType.transfer.includes(type) ? `to` : `in`,
     destination: getRandomArrayItem(destination),
