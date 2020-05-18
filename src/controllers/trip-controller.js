@@ -94,8 +94,10 @@ export default class TripController {
     this._onDataChange = this._onDataChange.bind(this);
     this._onSortTypeChange = this._onSortTypeChange.bind(this);
     this._onViewChange = this._onViewChange.bind(this);
+    this._onFilterChange = this._onFilterChange.bind(this);
 
     this._sortingComponent.setSortTypeChangeHandler(this._onSortTypeChange);
+    this._tasksModel.setFilterChangeHandler(this._onFilterChange);
   }
 
   render() {
@@ -112,6 +114,15 @@ export default class TripController {
 
     const newEvents = renderDays(this._tripDaysComponent, events, this._onDataChange, this._onViewChange);
     this._eventControllers = this._eventControllers.concat(newEvents);
+  }
+
+  removeEvents() {
+    this._eventControllers.forEach((eventController) => eventController.destroy());
+    this._eventControllers = [];
+  }
+
+  _renderEvents(events) {
+    // const tripEventsListElement = this.getElement()
   }
 
   _onDataChange(eventController, oldData, newData) {
@@ -140,5 +151,10 @@ export default class TripController {
       newEvents = renderEvents(tripEventListElement, sortedEvents, this._onDataChange, this._onViewChange);
     }
     this._eventControllers = newEvents;
+  }
+
+  _updateEvents() {
+    this.removeEvents();
+    // Here render Events
   }
 }

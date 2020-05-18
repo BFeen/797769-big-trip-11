@@ -1,11 +1,21 @@
+import {getTasksByFilter, getEventsByFilter} from "../utils/filter.js";
+import {filterType, FilterType} from "../const.js";
+
+
 export default class EventsModel {
   constructor() {
     this._events = [];
+    this._activeFilter = FilterType.EVERYTHING;
     
     this._dataChangeHandlers = [];
+    this._filterChangeHandlers = [];
 }
 
   getEvents() {
+    return getEventsByFilter(this._events, this._activeFilter);
+  }
+
+  getEventsAll() {
     return this._events;
   }
 
@@ -30,6 +40,11 @@ export default class EventsModel {
 
   setDataChangeHandler(handler) {
     this._dataChangeHandlers.push(handler);
+  }
+
+  setFilter(filterType) {
+    this._activeFilter = filterType;
+    this._callHandlers(this._filterChangeHandlers);
   }
 
   _callHandlers(handlers) {

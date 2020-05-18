@@ -1,4 +1,5 @@
 import EventsModel from "./models/trip-events.js";
+import FilterController from "./controllers/filter-controller.js";
 import FiltersComponent from "./components/filters.js";
 import MenuComponent from "./components/menu.js";
 import TripController from "./controllers/trip-controller.js";
@@ -14,14 +15,17 @@ const EVENT_COUNT = 10;
 const headerMain = document.querySelector(`.trip-main`);
 const tripControls = headerMain.querySelector(`.trip-controls`);
 
-const filters = generateFilters();
+// const filters = generateFilters();
+const eventsModel = new EventsModel();
+const filterController = new FilterController(tripControls, eventsModel);
 
 render(tripControls, new MenuComponent(), RenderPosition.AFTERBEGIN);
-render(tripControls, new FiltersComponent(filters), RenderPosition.BEFOREEND);
+filterController.render();
+console.log(filterController.render());
+// render(tripControls, new FiltersComponent(filters), RenderPosition.BEFOREEND);
 
 const events = generateEvents(EVENT_COUNT);
 events.sort((a, b) => a.dateStart.getTime() - b.dateStart.getTime());
-const eventsModel = new EventsModel();
 eventsModel.setEvents(events);
 
 const main = document.querySelector(`.page-main`);
