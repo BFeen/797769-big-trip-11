@@ -3,9 +3,17 @@ import EventController from "./event-controller";
 import NoEventsComponent from "../components/no-events.js";
 import TripDaysComponent from "../components/trip-days.js";
 import SortingComponent, {SortType} from "../components/sorting.js";
-import {render, RenderPosition} from "../utils/render";
+import {render, remove, RenderPosition} from "../utils/render";
 import {formatDay} from "../utils/common.js";
+import moment from "moment";
 
+
+const getUniqueDays = (events) => {
+  const days = events.map((event) => {
+    return moment(event.dateStart).format(`MMM DD`);
+  });
+  return [...new Set(days)];
+};
 
 const renderEvents = (eventsListElement, events, onDataChange, onViewChange) => {
   return events.map((event) => {
@@ -16,49 +24,35 @@ const renderEvents = (eventsListElement, events, onDataChange, onViewChange) => 
   });
 };
 
-const renderDay = (tripDaysComponent, day, counter) => {
+const getRenderedDay = (tripDaysComponent, day, counter) => {
   const dayInfoComponent = new DayInfoComponent(day, counter);
   render(tripDaysComponent.getElement(), dayInfoComponent, RenderPosition.BEFOREEND);
 
   return dayInfoComponent.getElement().querySelector(`.trip-events__list`);
 };
 
-const renderDays = (tripDaysComponent, events, onDataChange, onViewChange) => {
+const generateEventsByDay = (events) => {
   const days = getUniqueDays(events);
-  let eventControllers = [];
 
-  const eventsByDay = days.map((day) => {
-    const getEventsByDay = (currentDay) => {
-      return events.filter((event) => formatDay(event.dateStart) === currentDay);
-    };
+  return days.map((day) => {
     return {
       day,
-      eventsGroup: getEventsByDay(day),
-    };
+      eventsGroup: events.filter((event) => formatDay(event.dateStart) === day),
+    }
   });
+}
+
+const renderDays = (tripDaysComponent, events, onDataChange, onViewChange) => {
+  const eventsByDay = generateEventsByDay(events);
+  let eventControllers = [];
 
   eventsByDay
-    .forEach((dayEvents, index) => {
+    .map((dayEvents, index) => {
       const {day, eventsGroup} = dayEvents;
-      const dayElement = renderDay(tripDaysComponent, day, index + 1);
-
+      const dayElement = getRenderedDay(tripDaysComponent, day, index + 1);
       eventControllers = eventControllers.concat(renderEvents(dayElement, eventsGroup, onDataChange, onViewChange));
     });
-
   return eventControllers;
-};
-
-const getUniqueDays = (events) => {
-  const days = [];
-
-  for (const event of events) {
-    const eventDay = formatDay(event.dateStart);
-    if (!days.includes(eventDay)) {
-      days.push(eventDay);
-    }
-  }
-
-  return days;
 };
 
 const getSortedEvents = (events, sortType) => {
@@ -97,7 +91,7 @@ export default class TripController {
     this._onFilterChange = this._onFilterChange.bind(this);
 
     this._sortingComponent.setSortTypeChangeHandler(this._onSortTypeChange);
-    this._tasksModel.setFilterChangeHandler(this._onFilterChange);
+    this._eventsModel.setFilterChangeHandler(this._onFilterChange);
   }
 
   render() {
@@ -114,6 +108,7 @@ export default class TripController {
 
     const newEvents = renderDays(this._tripDaysComponent, events, this._onDataChange, this._onViewChange);
     this._eventControllers = this._eventControllers.concat(newEvents);
+    console.log(this._tripDaysComponent)
   }
 
   removeEvents() {
@@ -122,7 +117,8 @@ export default class TripController {
   }
 
   _renderEvents(events) {
-    // const tripEventsListElement = this.getElement()
+    const newEvents = renderDays(this._tripDaysComponent, events, this._onDataChange, this._onViewChange);
+    this._eventControllers = newEvents;  //this._eventControllers.concat(newEvents);
   }
 
   _onDataChange(eventController, oldData, newData) {
@@ -131,6 +127,10 @@ export default class TripController {
     if (isSuccess) {
       eventController.render(newData);
     }
+  }
+
+  _onFilterChange() {
+    this._updateEvents();
   }
 
   _onViewChange() {
@@ -146,7 +146,8 @@ export default class TripController {
     if (sortType === SortType.EVENT) {
       newEvents = renderDays(this._tripDaysComponent, sortedEvents, this._onDataChange, this._onViewChange);
     } else {
-      const tripEventListElement = renderDay(this._tripDaysComponent);
+      // удаление "DAY" из сортировки
+      const tripEventListElement = getRenderedDay(this._tripDaysComponent);
 
       newEvents = renderEvents(tripEventListElement, sortedEvents, this._onDataChange, this._onViewChange);
     }
@@ -155,6 +156,6 @@ export default class TripController {
 
   _updateEvents() {
     this.removeEvents();
-    // Here render Events
+    this._renderEvents(this._eventsModel.getEvents());
   }
 }

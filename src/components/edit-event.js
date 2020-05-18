@@ -1,6 +1,6 @@
 import AbstractSmartComponent from "./abstract-smart-component.js";
 import {eventType, destination, offers} from "../mock/add-event-form.js";
-import {capitalizeFirstLetter, getTime, generateDate} from "../utils/common.js";
+import {capitalizeFirstLetter, getTime, getDate} from "../utils/common.js";
 import flatpicr from "flatpickr";
 
 import "flatpickr/dist/flatpickr.min.css";
@@ -77,9 +77,9 @@ const createOffersMarkup = (selectedOffers) => {
 export const createEditEventFormTemplate = (event) => {
   const {type, postfix, destination: eventDestination, price, dateStart, dateEnd, selectedOffers, isFavorite} = event;
 
-  const dayStart = generateDate(dateStart);
+  const dayStart = getDate(dateStart);
   const timeStart = getTime(dateStart);
-  const dayEnd = generateDate(dateEnd);
+  const dayEnd = getDate(dateEnd);
   const timeEnd = getTime(dateEnd);
 
   const typeSelectMarkup = createTypeSelectMarkup(type);

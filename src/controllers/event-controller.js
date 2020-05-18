@@ -1,6 +1,6 @@
 import EditFormComponent from "../components/edit-event";
 import TripEventComponent from "../components/trip-event";
-import {render, replace, RenderPosition} from "../utils/render";
+import {render, replace, remove, RenderPosition} from "../utils/render";
 
 
 const Mode = {
@@ -43,6 +43,12 @@ export default class EventController {
     } else {
       render(this._container, this._tripEventComponent, RenderPosition.BEFOREEND);
     }
+  }
+
+  destroy() {
+    remove(this._editFormComponent);
+    remove(this._tripEventComponent);
+    document.removeEventListener(`keydown`, this._onEscKeyDown);
   }
 
   setDefaultView() {

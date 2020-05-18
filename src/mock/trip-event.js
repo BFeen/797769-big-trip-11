@@ -1,17 +1,5 @@
 import {eventType, destination, offers, getAllTypes} from "./add-event-form.js";
 import {getRandomArrayItem, getRandomInteger} from "../utils/common.js";
-import moment from "moment";
-
-
-const countDurationTime = (startDate, endDate) => {
-  const difference = moment.duration(endDate - startDate);
-
-  const days = difference.days();
-  const hours = difference.hours();
-  const minutes = difference.minutes();
-
-  return `${days ? `${days}D ` : ``}${hours ? `${hours}H ` : ``}${minutes ? `${minutes}M` : ``}`;
-};
 
 const getRandomDate = () => {
   const targetDate = new Date();
@@ -40,6 +28,7 @@ const generateEvent = () => {
 
   const price = getRandomInteger(0, 200);
   const selectedOffers = generateRandomOffers();
+
   let totalPrice = price;
   selectedOffers.forEach((offer) => {
     totalPrice = totalPrice + offer.price;
@@ -47,7 +36,6 @@ const generateEvent = () => {
 
   const dateStart = getRandomDate();
   const dateEnd = new Date(dateStart.getTime() + getRandomInteger(100000, 172800000));
-  const duration = countDurationTime(dateStart, dateEnd);
 
   return {
     id: String(new Date() + Math.random()),
@@ -58,7 +46,6 @@ const generateEvent = () => {
     totalPrice,
     dateStart,
     dateEnd,
-    duration,
     selectedOffers,
     isFavorite: Math.random() > 0.5,
   };
@@ -67,7 +54,8 @@ const generateEvent = () => {
 const generateEvents = (count) => {
   return new Array(count)
     .fill(``)
-    .map(generateEvent);
+    .map(generateEvent)
+    .sort((a, b) => a.dateStart.getTime() - b.dateStart.getTime());
 };
 
 export {generateEvent, generateEvents};

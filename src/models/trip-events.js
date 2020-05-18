@@ -1,5 +1,5 @@
-import {getTasksByFilter, getEventsByFilter} from "../utils/filter.js";
-import {filterType, FilterType} from "../const.js";
+import {getEventsByFilter} from "../utils/filter.js";
+import {FilterType} from "../const.js";
 
 
 export default class EventsModel {
@@ -40,6 +40,10 @@ export default class EventsModel {
 
   setDataChangeHandler(handler) {
     this._dataChangeHandlers.push(handler);
+  }
+
+  setFilterChangeHandler(handler) {
+    this._filterChangeHandlers.push(handler);
   }
 
   setFilter(filterType) {
