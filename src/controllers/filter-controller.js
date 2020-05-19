@@ -20,11 +20,9 @@ export default class FilterController {
 
   render() {
     const container = this._container;
-    const allEvents = this._eventsModel.getEventsAll();
     const filters = Object.values(FilterType).map((filterType) => {
       return {
         name: filterType,
-        count: getEventsByFilter(allEvents, filterType).length,
         checked: filterType === this._activeFilter,
       }
     });

@@ -9,6 +9,7 @@ export default class EventsModel {
     
     this._dataChangeHandlers = [];
     this._filterChangeHandlers = [];
+    console.log(this._filterChangeHandlers)
 }
 
   getEvents() {

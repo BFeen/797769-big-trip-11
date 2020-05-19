@@ -1,11 +1,13 @@
 import {FilterType} from "../const";
 
 export const getFutureEvents = (events, today) => {
-  return events.filter((event) => event.startDate > today);
+  console.log(events)
+  console.log(today)
+  return events.filter((event) => event.dateStart > today);
 };
 
 export const getPastEvents = (events, today) => {
-  return events.filter((event) => event.startDate < today);
+  return events.filter((event) => event.dateStart < today);
 };
 
 export const getEventsByFilter = (events, filterType) => {

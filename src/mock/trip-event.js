@@ -3,9 +3,12 @@ import {getRandomArrayItem, getRandomInteger} from "../utils/common.js";
 
 const getRandomDate = () => {
   const targetDate = new Date();
+  const sign = Math.random > 0.5 ? 1 : -1;
+  const diffDays = getRandomInteger(0, 5) * sign;
   const diffHours = getRandomInteger(0, 24);
   const diffMinutes = getRandomInteger(0, 60);
 
+  targetDate.setDate(targetDate.getDate() + diffDays);
   targetDate.setHours(targetDate.getHours() + diffHours, targetDate.getMinutes() + diffMinutes);
 
   return targetDate;

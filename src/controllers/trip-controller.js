@@ -8,30 +8,7 @@ import {formatDay} from "../utils/common.js";
 import moment from "moment";
 
 
-const getUniqueDays = (events) => {
-  const days = events.map((event) => {
-    return moment(event.dateStart).format(`MMM DD`);
-  });
-  return [...new Set(days)];
-};
-
-const renderEvents = (eventsListElement, events, onDataChange, onViewChange) => {
-  return events.map((event) => {
-    const eventController = new EventController(eventsListElement, onDataChange, onViewChange);
-    eventController.render(event);
-
-    return eventController;
-  });
-};
-
-const getRenderedDay = (tripDaysComponent, day, counter) => {
-  const dayInfoComponent = new DayInfoComponent(day, counter);
-  render(tripDaysComponent.getElement(), dayInfoComponent, RenderPosition.BEFOREEND);
-
-  return dayInfoComponent.getElement().querySelector(`.trip-events__list`);
-};
-
-const generateEventsByDay = (events) => {
+const formatEventsByDay = (events) => {
   const days = getUniqueDays(events);
 
   return days.map((day) => {
@@ -42,17 +19,11 @@ const generateEventsByDay = (events) => {
   });
 }
 
-const renderDays = (tripDaysComponent, events, onDataChange, onViewChange) => {
-  const eventsByDay = generateEventsByDay(events);
-  let eventControllers = [];
+const getRenderedDay = (tripDaysComponent, day, counter) => {
+  const dayInfoComponent = new DayInfoComponent(day, counter);
+  render(tripDaysComponent.getElement(), dayInfoComponent, RenderPosition.BEFOREEND);
 
-  eventsByDay
-    .map((dayEvents, index) => {
-      const {day, eventsGroup} = dayEvents;
-      const dayElement = getRenderedDay(tripDaysComponent, day, index + 1);
-      eventControllers = eventControllers.concat(renderEvents(dayElement, eventsGroup, onDataChange, onViewChange));
-    });
-  return eventControllers;
+  return dayInfoComponent.getElement().querySelector(`.trip-events__list`);
 };
 
 const getSortedEvents = (events, sortType) => {
@@ -73,6 +44,35 @@ const getSortedEvents = (events, sortType) => {
   }
 
   return sortedEvents;
+};
+
+const getUniqueDays = (events) => {
+  const days = events.map((event) => {
+    return moment(event.dateStart).format(`MMM DD`);
+  });
+  return [...new Set(days)];
+};
+
+const renderEvents = (eventsListElement, events, onDataChange, onViewChange) => {
+  return events.map((event) => {
+    const eventController = new EventController(eventsListElement, onDataChange, onViewChange);
+    eventController.render(event);
+
+    return eventController;
+  });
+};
+
+const renderDays = (tripDaysComponent, events, onDataChange, onViewChange) => {
+  const eventsByDay = formatEventsByDay(events);
+  let eventControllers = [];
+
+  eventsByDay
+    .forEach((dayEvents, index) => {
+      const {day, eventsGroup} = dayEvents;
+      const dayElement = getRenderedDay(tripDaysComponent, day, index + 1);
+      eventControllers = eventControllers.concat(renderEvents(dayElement, eventsGroup, onDataChange, onViewChange));
+    });
+  return eventControllers;
 };
 
 export default class TripController {
@@ -106,19 +106,23 @@ export default class TripController {
     render(container, this._sortingComponent, RenderPosition.AFTERBEGIN);
     render(container, this._tripDaysComponent, RenderPosition.BEFOREEND);
 
-    const newEvents = renderDays(this._tripDaysComponent, events, this._onDataChange, this._onViewChange);
-    this._eventControllers = this._eventControllers.concat(newEvents);
-    console.log(this._tripDaysComponent)
+    this._renderEventsByDays(events);
   }
 
-  removeEvents() {
+  _removeEvents() {
     this._eventControllers.forEach((eventController) => eventController.destroy());
     this._eventControllers = [];
   }
 
-  _renderEvents(events) {
+  _renderEventsByDays(events) {
     const newEvents = renderDays(this._tripDaysComponent, events, this._onDataChange, this._onViewChange);
-    this._eventControllers = newEvents;  //this._eventControllers.concat(newEvents);
+    this._eventControllers = newEvents;  
+  }
+
+  _renderEventsWithoutDays(events) {
+    const tripEventListElement = getRenderedDay(this._tripDaysComponent);
+    const newEvents = renderEvents(tripEventListElement, events, this._onDataChange, this._onViewChange);
+    this._eventControllers = newEvents;
   }
 
   _onDataChange(eventController, oldData, newData) {
@@ -130,6 +134,10 @@ export default class TripController {
   }
 
   _onFilterChange() {
+    if (this._sortingComponent.getSortType() !== SortType.EVENT) {
+      this._sortingComponent.setDefaultType();
+      this._onSortTypeChange(SortType.EVENT);
+    }
     this._updateEvents();
   }
 
@@ -139,23 +147,21 @@ export default class TripController {
 
   _onSortTypeChange(sortType) {
     const sortedEvents = getSortedEvents(this._eventsModel.getEvents(), sortType);
-    let newEvents;
 
+    this._removeEvents();
     this._tripDaysComponent.getElement().innerHTML = ``;
 
     if (sortType === SortType.EVENT) {
-      newEvents = renderDays(this._tripDaysComponent, sortedEvents, this._onDataChange, this._onViewChange);
+      this._renderEventsByDays(sortedEvents);
     } else {
       // удаление "DAY" из сортировки
-      const tripEventListElement = getRenderedDay(this._tripDaysComponent);
-
-      newEvents = renderEvents(tripEventListElement, sortedEvents, this._onDataChange, this._onViewChange);
+      this._renderEventsWithoutDays(sortedEvents)
     }
-    this._eventControllers = newEvents;
   }
 
   _updateEvents() {
-    this.removeEvents();
-    this._renderEvents(this._eventsModel.getEvents());
+    this._tripDaysComponent.getElement().innerHTML = ``;
+    this._removeEvents();
+    this._renderEventsByDays(this._eventsModel.getEvents());
   }
 }
