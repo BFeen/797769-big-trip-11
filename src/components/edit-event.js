@@ -180,6 +180,18 @@ const getOfferIndex = (allOffers, currentOffer) => {
   return allOffers.findIndex((item) => item.desc === currentOffer);
 };
 
+const parseFormData = (formData) => {
+  return {
+    type: formData.get(),
+    destination: formData.get(`event-destination`),
+    dateStart: Date.parse(formData.get(`event-start-time`)),
+    dateEnd: Date.parse(formData.get(`event-end-time`)),
+    price: parseInt(formData.get(`event-price`), 10),
+
+    isFavorite: formData.get(`event-favorite`) === true,
+  };
+};
+
 export default class EditFormComponent extends AbstractSmartComponent {
   constructor(event) {
     super();
@@ -218,19 +230,38 @@ export default class EditFormComponent extends AbstractSmartComponent {
   recoveryListeners() {
     this.setCloseEditButtonClickHandler(this._closeHandler);
     this.setSubmitHandler(this._submitHandler);
+    this.setDeleteButtonClickHandler(this._deleteHandler);
     this._subscribeOnEvents();
   }
 
+  removeElement() {
+    if (this._flatpicr) {
+      this._flatpicr.destroy();
+      this._flatpicr = null;
+    }
+
+    super.removeElement();
+  }
+
+  getData() {
+    const form = this.getElement();
+    const formData = new FormData(form);
+
+    return parseFormData(formData);
+  }
+
   setCloseEditButtonClickHandler(handler) {
-    this._closeHandler = handler;
     const button = this.getElement().querySelector(`.event__rollup-btn`);
     button.addEventListener(`click`, handler);
+    
+    this._closeHandler = handler;
   }
 
   setDeleteButtonClickHandler(handler) {
-    this._deleteHandler = handler;
     const deleteButton = this.getElement().querySelector(`.event__reset-btn`);
     deleteButton.addEventListener(`click`, handler);
+
+    this._deleteHandler = handler;
   }
 
   setSubmitHandler(handler) {

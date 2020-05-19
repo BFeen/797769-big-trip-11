@@ -3,10 +3,12 @@ import TripEventComponent from "../components/trip-event";
 import {render, replace, remove, RenderPosition} from "../utils/render";
 
 
-const Mode = {
+export const Mode = {
   DEFAULT: `default`,
   EDIT: `edit`,
 };
+
+export const EmptyEvent = {};
 
 export default class EventController {
   constructor(container, onDataChange, onViewChange) {
@@ -23,9 +25,10 @@ export default class EventController {
     this._replaceEditToEvent = this._replaceEditToEvent.bind(this);
   }
 
-  render(event) {
+  render(event, mode) {
     const oldEventComponent = this._tripEventComponent;
     const oldEventEditComponent = this._editFormComponent;
+    this._mode = mode;
 
     this._tripEventComponent = new TripEventComponent(event);
     this._editFormComponent = new EditFormComponent(event);
@@ -35,11 +38,16 @@ export default class EventController {
 
     this._editFormComponent.setSubmitHandler((evt) => {
       evt.preventDefault();
+      const data = this._editFormComponent.getData();
+      this._onDataChange(this, event, data);
     });
+
+    this._editFormComponent.setDeleteButtonClickHandler(() => this._onDataChange(this, event, null));
 
     if (oldEventComponent && oldEventEditComponent) {
       replace(this._tripEventComponent, oldEventComponent);
       replace(this._editFormComponent, oldEventEditComponent);
+      this._replaceEditToEvent();
     } else {
       render(this._container, this._tripEventComponent, RenderPosition.BEFOREEND);
     }
@@ -66,8 +74,12 @@ export default class EventController {
 
   _replaceEditToEvent() {
     this._editFormComponent.reset();
-    replace(this._editFormComponent, this._tripEventComponent);
     document.removeEventListener(`keydown`, this._onEscKeyDown);
+
+    if (document.contains(this._editFormComponent.getElement())) {
+      replace(this._editFormComponent, this._tripEventComponent);
+    }
+
     this._mode = Mode.DEFAULT;
   }
 

@@ -9,8 +9,20 @@ export default class EventsModel {
     
     this._dataChangeHandlers = [];
     this._filterChangeHandlers = [];
-    console.log(this._filterChangeHandlers)
-}
+  }
+
+  addEvent(event) {
+    const index = this._events.findIndex((item) => item.dateStart > event.dateStart);
+
+    if (index === -1) {
+      this._events.push(event);
+    } else {
+      // проверить, не удаляется ли первый event
+      this._events = [].concat(this._events.slice(0, index), event, this._events(index + 1));
+    }
+
+    this._callHandlers(this._dataChangeHandlers);
+  }
 
   getEvents() {
     return getEventsByFilter(this._events, this._activeFilter);
@@ -23,6 +35,19 @@ export default class EventsModel {
   setEvents(events) {
     this._events = Array.from(events);
     this._callHandlers(this._dataChangeHandlers);
+  }
+
+  removeEvent(id) {
+    const index = this._events.findIndex((item) => item.id === id);
+
+    if (index === -1) {
+      return;
+    }
+
+    this._events = [].concat(this._events.slice(0, index), this._events.slice(index + 1));
+    this._callHandlers(this._dataChangeHandlers);
+
+    return true;
   }
 
   updateEvents(id, event) {

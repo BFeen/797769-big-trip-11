@@ -1,5 +1,5 @@
 import DayInfoComponent from "../components/day-info";
-import EventController from "./event-controller";
+import EventController, {Mode as EventControllerMode, EmptyEvent} from "./event-controller";
 import NoEventsComponent from "../components/no-events.js";
 import TripDaysComponent from "../components/trip-days.js";
 import SortingComponent, {SortType} from "../components/sorting.js";
@@ -56,7 +56,7 @@ const getUniqueDays = (events) => {
 const renderEvents = (eventsListElement, events, onDataChange, onViewChange) => {
   return events.map((event) => {
     const eventController = new EventController(eventsListElement, onDataChange, onViewChange);
-    eventController.render(event);
+    eventController.render(event, EventControllerMode.EVENT);
 
     return eventController;
   });
@@ -126,10 +126,33 @@ export default class TripController {
   }
 
   _onDataChange(eventController, oldData, newData) {
-    const isSuccess = this._eventsModel.updateEvent(oldData.id, newData);
+    console.log("приветик")
 
-    if (isSuccess) {
-      eventController.render(newData);
+    if (oldData === EmptyEvent) {
+      this._creatingEvent = null;
+      if (newData === null) {
+        eventController.destroy();
+        this._updateEvents();
+      } else {
+        this._eventsModel.addEvent(newData);
+        eventController.render(newData, EventControllerMode.DEFAULT);
+        
+        this._eventControllers = [].concat(eventController, this._eventControllers);
+        this._onFilterChange();
+      }
+    } else if (newData === null) {
+      this._eventsModel.removeEvent(oldData.id);
+      this._updateEvents();
+      
+      this._onSortTypeChange(this._sortingComponent.getSortType());
+    } else {
+      const isSuccess = this._eventsModel.updateEvent(oldData.id, newData);
+
+      if (isSuccess) {
+        eventController.render(newData);
+
+        this._onSortTypeChange(this._sortingComponent.getSortType());
+      }
     }
   }
 
@@ -138,6 +161,7 @@ export default class TripController {
       this._sortingComponent.setDefaultType();
       this._onSortTypeChange(SortType.EVENT);
     }
+
     this._updateEvents();
   }
 
