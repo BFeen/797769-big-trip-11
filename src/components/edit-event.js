@@ -1,10 +1,50 @@
 import AbstractSmartComponent from "./abstract-smart-component.js";
 import {eventType, destination, offers} from "../mock/add-event-form.js";
 import {capitalizeFirstLetter, getTime, getDate} from "../utils/common.js";
+import {Mode} from "../controllers/event-controller.js";
 import flatpicr from "flatpickr";
 
 import "flatpickr/dist/flatpickr.min.css";
 
+
+const createRollupButtonMarkup = (mode) => {
+  if (mode === Mode.ADDING) {
+    return ``;
+  }
+  return (
+    `<button class="event__rollup-btn" type="button">
+      <span class="visually-hidden">Open event</span>
+    </button>`
+  );
+};
+
+const createDeleteButtonMarkup = (mode) => {
+  const buttonText = mode === Mode.ADDING ? `Cancel` : `Delete`;
+  return `<button class="event__reset-btn" type="reset">${buttonText}</button>`
+};
+
+const createFavoriteButtonMarkup = (isFavorite, mode) => {
+  if (mode === Mode.ADDING) {
+    return ``;
+  }
+  
+  const isChecked = isFavorite ? `checked` : ``;
+  return (
+    `<input 
+    id="event-favorite-1" 
+    class="event__favorite-checkbox  visually-hidden" 
+    type="checkbox" 
+    name="event-favorite" 
+    ${isChecked}
+    >
+    <label class="event__favorite-btn" for="event-favorite-1">
+      <span class="visually-hidden">Add to favorite</span>
+      <svg class="event__favorite-icon" width="28" height="28" viewBox="0 0 28 28">
+      <path d="M14 21l-8.22899 4.3262 1.57159-9.1631L.685209 9.67376 9.8855 8.33688 14 0l4.1145 8.33688 9.2003 1.33688-6.6574 6.48934 1.5716 9.1631L14 21z"/>
+      </svg>
+    </label>`
+  );
+}
 
 const createTypeSelectMarkup = (currentType = `flight`) => {
   let markup = ``;
@@ -74,7 +114,7 @@ const createOffersMarkup = (selectedOffers) => {
     }).join(`\n`);
 };
 
-export const createEditEventFormTemplate = (event) => {
+export const createEditEventFormTemplate = (event, mode) => {
   const {type, postfix, destination: eventDestination, price, dateStart, dateEnd, selectedOffers, isFavorite} = event;
 
   const dayStart = getDate(dateStart);
@@ -85,10 +125,12 @@ export const createEditEventFormTemplate = (event) => {
   const typeSelectMarkup = createTypeSelectMarkup(type);
   const destinationSelectMarkup = createDestinationSelectMarkup();
   const offersMarkup = createOffersMarkup(selectedOffers);
-  const isChecked = isFavorite ? `checked` : ``;
+  const rollupButtonMarkup = createRollupButtonMarkup(mode);
+  const deleteButtonMarkup = createDeleteButtonMarkup(mode);
+  const FavoriteButtonMarkup = createFavoriteButtonMarkup(isFavorite, mode);
 
   return (
-    `<form class="event  event--edit" action="#" method="post">
+    `<form class="trip-events__item event  event--edit" action="#" method="post">
         <header class="event__header">
         <div class="event__type-wrapper">
             <label class="event__type  event__type-btn" for="event-type-toggle-1">
@@ -140,24 +182,11 @@ export const createEditEventFormTemplate = (event) => {
         </div>
 
         <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-        <button class="event__reset-btn" type="reset">Delete</button>
-
-        <input id="event-favorite-1" 
-        class="event__favorite-checkbox  visually-hidden" 
-        type="checkbox" 
-        name="event-favorite" 
-        ${isChecked}
-        >
-        <label class="event__favorite-btn" for="event-favorite-1">
-            <span class="visually-hidden">Add to favorite</span>
-            <svg class="event__favorite-icon" width="28" height="28" viewBox="0 0 28 28">
-            <path d="M14 21l-8.22899 4.3262 1.57159-9.1631L.685209 9.67376 9.8855 8.33688 14 0l4.1145 8.33688 9.2003 1.33688-6.6574 6.48934 1.5716 9.1631L14 21z"/>
-            </svg>
-        </label>
-
-        <button class="event__rollup-btn" type="button">
-            <span class="visually-hidden">Open event</span>
-        </button>
+        ${deleteButtonMarkup}
+        
+        ${FavoriteButtonMarkup}
+        
+        ${rollupButtonMarkup}
         </header>
 
         <section class="event__details">
@@ -182,7 +211,7 @@ const getOfferIndex = (allOffers, currentOffer) => {
 
 const parseFormData = (formData) => {
   return {
-    type: formData.get(),
+    type: formData.get(`.event__type-output`), // ТОЧНО НЕ ТО, "flight to"
     destination: formData.get(`event-destination`),
     dateStart: Date.parse(formData.get(`event-start-time`)),
     dateEnd: Date.parse(formData.get(`event-end-time`)),
@@ -193,10 +222,11 @@ const parseFormData = (formData) => {
 };
 
 export default class EditFormComponent extends AbstractSmartComponent {
-  constructor(event) {
+  constructor(event, eventControllerMode) {
     super();
 
     this._event = event;
+    this._mode = eventControllerMode;
 
     this._offers = offers;
     this._flatpicr = null;
@@ -211,7 +241,7 @@ export default class EditFormComponent extends AbstractSmartComponent {
   }
 
   getTemplate() {
-    return createEditEventFormTemplate(this._event);
+    return createEditEventFormTemplate(this._event, this._mode);
   }
 
   rerender() {
@@ -251,22 +281,25 @@ export default class EditFormComponent extends AbstractSmartComponent {
   }
 
   setCloseEditButtonClickHandler(handler) {
-    const button = this.getElement().querySelector(`.event__rollup-btn`);
-    button.addEventListener(`click`, handler);
-    
-    this._closeHandler = handler;
+    if (this.getElement().contains(this.getElement().querySelector(`.event__rollup-btn`))) {
+      this.getElement().querySelector(`.event__rollup-btn`)
+        .addEventListener(`click`, handler);
+      
+      this._closeHandler = handler;
+    }
   }
 
   setDeleteButtonClickHandler(handler) {
-    const deleteButton = this.getElement().querySelector(`.event__reset-btn`);
-    deleteButton.addEventListener(`click`, handler);
+    this.getElement().querySelector(`.event__reset-btn`)
+      .addEventListener(`click`, handler);
 
     this._deleteHandler = handler;
   }
 
   setSubmitHandler(handler) {
-    this._submitHandler = handler;
     this.getElement().addEventListener(`submit`, handler);
+
+    this._submitHandler = handler;
   }
 
   _applyFlatpicr() {
@@ -318,6 +351,13 @@ export default class EditFormComponent extends AbstractSmartComponent {
       this.rerender();
     });
 
+    const priceElement = element.querySelector(`#event-price-1`);
+    priceElement.addEventListener(`input`, (evt) => {
+      const price = evt.target.value;
+
+      // const saveButton.disable = !isAllowablePrice(price);
+    });
+
     const offersElements = element.querySelectorAll(`.event__offer-label`);
     offersElements.forEach((offer) => {
       offer.addEventListener(`click`, () => {
@@ -336,11 +376,13 @@ export default class EditFormComponent extends AbstractSmartComponent {
       });
     });
 
-    const favoriteElement = element.querySelector(`.event__favorite-btn`);
-    favoriteElement.addEventListener(`click`, () => {
-      this._event.isFavorite = !this._event.isFavorite;
-
-      this.rerender();
-    });
+    if (document.contains(element.querySelector(`.event__favorite-btn`))) {
+      const favoriteElement = element.querySelector(`.event__favorite-btn`);
+      favoriteElement.addEventListener(`click`, () => {
+        this._event.isFavorite = !this._event.isFavorite;
+  
+        this.rerender();
+      });
+    }
   }
 }

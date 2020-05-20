@@ -41,7 +41,7 @@ const generateEvent = () => {
   const dateEnd = new Date(dateStart.getTime() + getRandomInteger(100000, 172800000));
 
   return {
-    id: String(new Date() + Math.random()),
+    id: String(new Date().getMilliseconds() * Math.random()),
     type,
     postfix: eventType.transfer.includes(type) ? `to` : `in`,
     destination: getRandomArrayItem(destination),

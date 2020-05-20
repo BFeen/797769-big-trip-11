@@ -1,7 +1,6 @@
 import FilterComponent from "../components/filters.js";
 import {FilterType} from "../const.js";
 import {render, replace, RenderPosition} from "../utils/render.js";
-import {getEventsByFilter} from "../utils/filter.js";
 
 
 export default class FilterController {
@@ -34,7 +33,7 @@ export default class FilterController {
     if (oldComponent) {
       replace(oldComponent, this._filterComponent);
     } else {
-      render(container, this._filterComponent, RenderPosition.BEFOREEND);
+      render(container, this._filterComponent, RenderPosition.BEFORE_END);
     }
   }
 

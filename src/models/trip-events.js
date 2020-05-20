@@ -41,7 +41,7 @@ export default class EventsModel {
     const index = this._events.findIndex((item) => item.id === id);
 
     if (index === -1) {
-      return;
+      return false;
     }
 
     this._events = [].concat(this._events.slice(0, index), this._events.slice(index + 1));
@@ -50,11 +50,11 @@ export default class EventsModel {
     return true;
   }
 
-  updateEvents(id, event) {
+  updateEvent(id, event) {
     const index = this._events.findIndex((item) => item.id === id);
 
     if (index === -1) {
-      return;
+      return false;
     }
 
     this._events = [].concat(this._events.slice(0, index), event, this._events.slice(index + 1));

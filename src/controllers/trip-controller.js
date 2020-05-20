@@ -3,7 +3,7 @@ import EventController, {Mode as EventControllerMode, EmptyEvent} from "./event-
 import NoEventsComponent from "../components/no-events.js";
 import TripDaysComponent from "../components/trip-days.js";
 import SortingComponent, {SortType} from "../components/sorting.js";
-import {render, remove, RenderPosition} from "../utils/render";
+import {render, RenderPosition} from "../utils/render";
 import {formatDay} from "../utils/common.js";
 import moment from "moment";
 
@@ -21,7 +21,7 @@ const formatEventsByDay = (events) => {
 
 const getRenderedDay = (tripDaysComponent, day, counter) => {
   const dayInfoComponent = new DayInfoComponent(day, counter);
-  render(tripDaysComponent.getElement(), dayInfoComponent, RenderPosition.BEFOREEND);
+  render(tripDaysComponent.getElement(), dayInfoComponent, RenderPosition.BEFORE_END);
 
   return dayInfoComponent.getElement().querySelector(`.trip-events__list`);
 };
@@ -56,7 +56,7 @@ const getUniqueDays = (events) => {
 const renderEvents = (eventsListElement, events, onDataChange, onViewChange) => {
   return events.map((event) => {
     const eventController = new EventController(eventsListElement, onDataChange, onViewChange);
-    eventController.render(event, EventControllerMode.EVENT);
+    eventController.render(event, EventControllerMode.DEFAULT);
 
     return eventController;
   });
@@ -69,8 +69,8 @@ const renderDays = (tripDaysComponent, events, onDataChange, onViewChange) => {
   eventsByDay
     .forEach((dayEvents, index) => {
       const {day, eventsGroup} = dayEvents;
-      const dayElement = getRenderedDay(tripDaysComponent, day, index + 1);
-      eventControllers = eventControllers.concat(renderEvents(dayElement, eventsGroup, onDataChange, onViewChange));
+      const eventsListElement = getRenderedDay(tripDaysComponent, day, index + 1);
+      eventControllers = eventControllers.concat(renderEvents(eventsListElement, eventsGroup, onDataChange, onViewChange));
     });
   return eventControllers;
 };
@@ -81,6 +81,7 @@ export default class TripController {
     this._eventsModel = eventsModel;
 
     this._eventControllers = [];
+    this._creatingEvent = null;
     this._noEventsComponent = new NoEventsComponent();
     this._sortingComponent = new SortingComponent();
     this._tripDaysComponent = new TripDaysComponent();
@@ -99,14 +100,24 @@ export default class TripController {
     const events = this._eventsModel.getEvents();
 
     if (events.length === 0) {
-      render(container, this._noEventsComponent, RenderPosition.AFTERBEGIN);
+      render(container, this._noEventsComponent, RenderPosition.BEFORE_END);
       return;
     }
 
-    render(container, this._sortingComponent, RenderPosition.AFTERBEGIN);
-    render(container, this._tripDaysComponent, RenderPosition.BEFOREEND);
+    render(container, this._sortingComponent, RenderPosition.AFTER_BEGIN);
+    render(container, this._tripDaysComponent, RenderPosition.BEFORE_END);
 
     this._renderEventsByDays(events);
+  }
+
+  createEvent() {
+    if (this._creatingEvent) {
+      return;
+    }
+
+    const eventsListElement = this._container.getElement();
+    this._creatingEvent = new EventController(eventsListElement, this._onDataChange, this._onViewChange);
+    this._creatingEvent.render(EmptyEvent, EventControllerMode.ADDING);
   }
 
   _removeEvents() {
@@ -126,8 +137,6 @@ export default class TripController {
   }
 
   _onDataChange(eventController, oldData, newData) {
-    console.log("приветик")
-
     if (oldData === EmptyEvent) {
       this._creatingEvent = null;
       if (newData === null) {
@@ -138,7 +147,7 @@ export default class TripController {
         eventController.render(newData, EventControllerMode.DEFAULT);
         
         this._eventControllers = [].concat(eventController, this._eventControllers);
-        this._onFilterChange();
+        // this._onFilterChange();
       }
     } else if (newData === null) {
       this._eventsModel.removeEvent(oldData.id);
@@ -149,7 +158,7 @@ export default class TripController {
       const isSuccess = this._eventsModel.updateEvent(oldData.id, newData);
 
       if (isSuccess) {
-        eventController.render(newData);
+        eventController.render(newData, EventControllerMode.DEFAULT);
 
         this._onSortTypeChange(this._sortingComponent.getSortType());
       }

@@ -1,8 +1,6 @@
 import {FilterType} from "../const";
 
 export const getFutureEvents = (events, today) => {
-  console.log(events)
-  console.log(today)
   return events.filter((event) => event.dateStart > today);
 };
 
