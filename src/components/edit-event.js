@@ -3,6 +3,7 @@ import {eventType, destination, offers} from "../mock/add-event-form.js";
 import {capitalizeFirstLetter, getTime, getDate} from "../utils/common.js";
 import {Mode} from "../controllers/event-controller.js";
 import flatpicr from "flatpickr";
+import {encode} from "he";
 
 import "flatpickr/dist/flatpickr.min.css";
 
@@ -121,10 +122,11 @@ export const createEditEventFormTemplate = (event, mode) => {
   const timeStart = getTime(dateStart);
   const dayEnd = getDate(dateEnd);
   const timeEnd = getTime(dateEnd);
+  const encodeDestination = encode(eventDestination)
 
   const typeSelectMarkup = createTypeSelectMarkup(type);
-  const destinationSelectMarkup = createDestinationSelectMarkup();
-  const offersMarkup = createOffersMarkup(selectedOffers);
+  const destinationSelectMarkup = createDestinationSelectMarkup(); // destination ? info : ``
+  const offersMarkup = createOffersMarkup(selectedOffers); // type ? offers : ``
   const rollupButtonMarkup = createRollupButtonMarkup(mode);
   const deleteButtonMarkup = createDeleteButtonMarkup(mode);
   const FavoriteButtonMarkup = createFavoriteButtonMarkup(isFavorite, mode);
@@ -150,7 +152,7 @@ export const createEditEventFormTemplate = (event, mode) => {
             ${capitalizeFirstLetter(type)} ${postfix}
             </label>
             <input class="event__input  event__input--destination" id="event-destination-1" 
-            type="text" name="event-destination" value="${eventDestination}" list="destination-list-1">
+            type="text" name="event-destination" value="${encodeDestination}" list="destination-list-1">
             <datalist id="destination-list-1">
             
             ${destinationSelectMarkup}
@@ -344,7 +346,7 @@ export default class EditFormComponent extends AbstractSmartComponent {
     });
 
     const destinationElement = element.querySelector(`.event__input--destination`);
-    destinationElement.addEventListener(`change`, () => {
+    destinationElement.addEventListener(`input`, () => {
       this._event.destination = destinationElement.value;
       // изменение описания города
 

@@ -1,7 +1,7 @@
 export const RenderPosition = {
   AFTER_BEGIN: `afterbegin`,
   BEFORE_END: `beforeend`,
-  BEFORE_BEGIN: `beforeBegin`,
+  BEFORE_BEGIN: `beforebegin`,
 };
 
 export const createElement = (template) => {
@@ -20,7 +20,7 @@ export const render = (container, component, place) => {
       container.append(component.getElement());
       break;
     case RenderPosition.BEFORE_BEGIN:
-      container.insertAdjacentHTML(`beforeBegin`, component.getTemplate());
+      container.before(component.getElement());
       break;
   }
 };

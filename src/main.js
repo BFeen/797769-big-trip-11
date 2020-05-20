@@ -42,4 +42,5 @@ menuComponent.setOnChange((menuItem) => {
 
 addEventButtonComponent.setAddNewEventHandler(() => {
   tripController.createEvent();
+  addEventButtonComponent.getElement().disabled = true;
 });
