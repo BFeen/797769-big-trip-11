@@ -12,7 +12,7 @@ const generateRandomInfo = () => {
 
 const generateRandomPhotos = () => {
   let photos = [];
-  for (let i = 0; i < 5; i++) {
+  for (let i = 0; i < 4; i++) {
     photos.push(`http://picsum.photos/248/152?r=${Math.random()}`);
   }
 

@@ -17,8 +17,7 @@ export default class EventsModel {
     if (index === -1) {
       this._events.push(event);
     } else {
-      // проверить, не удаляется ли первый event
-      this._events = [].concat(this._events.slice(0, index), event, this._events(index + 1));
+      this._events = [].concat(this._events.slice(0, index), event, this._events(index));
     }
 
     this._callHandlers(this._dataChangeHandlers);
