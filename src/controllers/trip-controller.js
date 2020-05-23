@@ -15,9 +15,9 @@ const formatEventsByDay = (events) => {
     return {
       day,
       eventsGroup: events.filter((event) => formatDay(event.dateStart) === day),
-    }
+    };
   });
-}
+};
 
 const getRenderedDay = (tripDaysComponent, day, counter) => {
   const dayInfoComponent = new DayInfoComponent(day, counter);
@@ -76,7 +76,7 @@ const renderDays = (tripDaysComponent, events, onDataChange, onViewChange) => {
 };
 
 export default class TripController {
-  constructor(container, eventsModel) {
+  constructor(container, eventsModel, addEventButtonComponent) {
     this._container = container;
     this._eventsModel = eventsModel;
 
@@ -85,6 +85,7 @@ export default class TripController {
     this._noEventsComponent = new NoEventsComponent();
     this._sortingComponent = new SortingComponent();
     this._tripDaysComponent = new TripDaysComponent();
+    this._addEventButton = addEventButtonComponent.getElement();
 
     this._onDataChange = this._onDataChange.bind(this);
     this._onSortTypeChange = this._onSortTypeChange.bind(this);
@@ -104,6 +105,8 @@ export default class TripController {
       return;
     }
 
+    // const addEventButton = document.querySelector(`.trip-main__event-add-btn`);
+
     render(container, this._sortingComponent, RenderPosition.AFTER_BEGIN);
     render(container, this._tripDaysComponent, RenderPosition.BEFORE_END);
 
@@ -114,6 +117,9 @@ export default class TripController {
     if (this._creatingEvent) {
       return;
     }
+    this._addEventButton.disabled = !this._creatingEvent;
+
+    this._eventsModel.resetFilter();
 
     const eventsListElement = this._container.getElement();
     this._creatingEvent = new EventController(eventsListElement, this._onDataChange, this._onViewChange);
@@ -127,7 +133,7 @@ export default class TripController {
 
   _renderEventsByDays(events) {
     const newEvents = renderDays(this._tripDaysComponent, events, this._onDataChange, this._onViewChange);
-    this._eventControllers = newEvents;  
+    this._eventControllers = newEvents;
   }
 
   _renderEventsWithoutDays(events) {
@@ -139,20 +145,21 @@ export default class TripController {
   _onDataChange(eventController, oldData, newData) {
     if (oldData === EmptyEvent) {
       this._creatingEvent = null;
+      this._addEventButton.disabled = false;
       if (newData === null) {
         eventController.destroy();
         this._updateEvents();
       } else {
         this._eventsModel.addEvent(newData);
         eventController.render(newData, EventControllerMode.DEFAULT);
-        
+
         this._eventControllers = [].concat(eventController, this._eventControllers);
-        // this._onFilterChange();
+        this._updateEvents();
       }
     } else if (newData === null) {
       this._eventsModel.removeEvent(oldData.id);
       this._updateEvents();
-      
+
       this._onSortTypeChange(this._sortingComponent.getSortType());
     } else {
       const isSuccess = this._eventsModel.updateEvent(oldData.id, newData);
@@ -187,8 +194,7 @@ export default class TripController {
     if (sortType === SortType.EVENT) {
       this._renderEventsByDays(sortedEvents);
     } else {
-      // удаление "DAY" из сортировки
-      this._renderEventsWithoutDays(sortedEvents)
+      this._renderEventsWithoutDays(sortedEvents);
     }
   }
 

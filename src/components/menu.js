@@ -6,7 +6,7 @@ const ACTIVE_CLASS = `trip-tabs__btn--active`;
 export const MenuItem = {
   TABLE: `trip-tabs__table`,
   STATISTICS: `trip-tabs__statistics`,
-}
+};
 
 const createMenuTemplate = () => {
   return (
@@ -41,7 +41,7 @@ export default class MenuComponent extends AbstractComponent {
         return;
       }
 
-      const menuItem = evt.target.id
+      const menuItem = evt.target.id;
       handler(menuItem);
     });
   }

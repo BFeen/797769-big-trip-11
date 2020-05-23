@@ -1,4 +1,4 @@
-import {eventType, destination, offers, getAllTypes} from "./add-event-form.js";
+import {destinations, offers, getAllTypes} from "./add-event-form.js";
 import {getRandomArrayItem, getRandomInteger} from "../utils/common.js";
 
 const getRandomDate = () => {
@@ -43,8 +43,7 @@ const generateEvent = () => {
   return {
     id: String(new Date().getMilliseconds() * Math.random()),
     type,
-    postfix: eventType.transfer.includes(type) ? `to` : `in`,
-    destination: getRandomArrayItem(destination),
+    destination: getRandomArrayItem(destinations),
     price,
     totalPrice,
     dateStart,

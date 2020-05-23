@@ -1,7 +1,7 @@
 import AddEventButtonComponent from "./components/add-event-button.js";
 import EventsModel from "./models/trip-events.js";
 import FilterController from "./controllers/filter-controller.js";
-import MenuComponent, { MenuItem } from "./components/menu.js";
+import MenuComponent from "./components/menu.js";
 import TripController from "./controllers/trip-controller.js";
 import TripEventsComponent from "./components/trip-events.js";
 import TripInfoComponent from "./components/trip-info.js";
@@ -31,7 +31,7 @@ const mainContainer = main.querySelector(`.page-body__container`);
 const tripEventsComponent = new TripEventsComponent();
 render(mainContainer, tripEventsComponent, RenderPosition.BEFORE_END);
 
-const tripController = new TripController(tripEventsComponent, eventsModel);
+const tripController = new TripController(tripEventsComponent, eventsModel, addEventButtonComponent);
 tripController.render();
 
 render(tripMain, new TripInfoComponent(0), RenderPosition.AFTER_BEGIN);
@@ -42,5 +42,5 @@ menuComponent.setOnChange((menuItem) => {
 
 addEventButtonComponent.setAddNewEventHandler(() => {
   tripController.createEvent();
-  addEventButtonComponent.getElement().disabled = true;
+  // addEventButtonComponent.getElement().disabled = true;
 });

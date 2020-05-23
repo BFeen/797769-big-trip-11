@@ -6,7 +6,7 @@ export default class EventsModel {
   constructor() {
     this._events = [];
     this._activeFilter = FilterType.EVERYTHING;
-    
+
     this._dataChangeHandlers = [];
     this._filterChangeHandlers = [];
   }
@@ -17,7 +17,7 @@ export default class EventsModel {
     if (index === -1) {
       this._events.push(event);
     } else {
-      this._events = [].concat(this._events.slice(0, index), event, this._events(index));
+      this._events = [].concat(this._events.slice(0, index), event, this._events.slice(index));
     }
 
     this._callHandlers(this._dataChangeHandlers);
@@ -61,6 +61,12 @@ export default class EventsModel {
     this._callHandlers(this._dataChangeHandlers);
 
     return true;
+  }
+
+  resetFilter() {
+    this._activeFilter = FilterType.EVERYTHING;
+    document.querySelector(`#filter-everything`).checked = true;
+    this._callHandlers(this._filterChangeHandlers);
   }
 
   setDataChangeHandler(handler) {

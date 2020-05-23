@@ -7,14 +7,16 @@ const getFilterNameById = (tagId) => {
   return tagId.substring(FILTER_ID_PREFIX.length);
 };
 
-const createFilterMarkup = (filterName, isChecked) => {
+const createFilterMarkup = (filterName, currentFilter) => {
+  const isChecked = currentFilter ? `checked` : ``;
+
   return (
     `<div class="trip-filters__filter">
       <input 
       id="filter-${filterName}" 
       class="trip-filters__filter-input  visually-hidden" type="radio" 
       name="trip-filter" value="${filterName}" 
-      ${ isChecked ? `checked` : ``}
+      ${isChecked}
       >
       <label class="trip-filters__filter-label" for="filter-${filterName}">${filterName}</label>
     </div>`

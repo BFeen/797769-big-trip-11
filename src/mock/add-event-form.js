@@ -19,11 +19,12 @@ const generateRandomPhotos = () => {
   return photos;
 };
 
-const getAllTypes = () => {
-  let types = [];
-  Object.values(eventType).forEach((value) => types.push(...value));
+const getPrepositionFromType = (type) => {
+  return eventType.transfer.includes(type) ? `to` : `in`;
+};
 
-  return types;
+const getAllTypes = () => {
+  return Object.values(eventType).reduce((acc, value) => acc.concat(...value));
 };
 
 const eventType = {
@@ -69,7 +70,7 @@ const availableOffers = new Map([
   ]
 ]);
 
-const destination = [
+const destinations = [
   `Paris`, `Moscow`, `Berlin`, `Oslo`, `Amsterdam`, `Barcelona`, `Lissabon`, `Los Angeles`, `New York`, `London`
 ];
 
@@ -87,9 +88,17 @@ const info = [
   `In rutrum ac purus sit amet tempus.`
 ];
 
-const description = {
-  info: generateRandomInfo(),
-  photos: generateRandomPhotos()
+const generateDestination = (currentDestination) => {
+  let description = ``;
+  if (currentDestination) {
+    description = Math.random() > 0.5 ? generateRandomInfo() : ``;
+  }
+
+  return {
+    name: currentDestination,
+    description,
+    pictures: description ? generateRandomPhotos() : ``,
+  };
 };
 
-export {eventType, destination, offers, availableOffers, description, getAllTypes};
+export {eventType, destinations, offers, availableOffers, getAllTypes, generateDestination, getPrepositionFromType};

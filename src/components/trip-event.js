@@ -1,5 +1,6 @@
 import AbstractComponent from "./abstract-component.js";
 import {capitalizeFirstLetter, countDurationTime, getTime, getDate} from "../utils/common.js";
+import {getPrepositionFromType} from "../mock/add-event-form.js";
 
 
 const createSelectedOffersMarkup = (selectedOffers) => {
@@ -20,20 +21,16 @@ const createSelectedOffersMarkup = (selectedOffers) => {
 };
 
 const createTripEventTemplate = (event) => {
-  const {type, postfix, destination, price, dateStart, dateEnd, selectedOffers} = event;
+  const {type, destination, totalPrice, dateStart, dateEnd, selectedOffers} = event;
 
   const dayStart = getDate(dateStart);
   const timeStart = getTime(dateStart);
   const dayEnd = getDate(dateEnd);
   const timeEnd = getTime(dateEnd);
   const duration = countDurationTime(dateStart, dateEnd);
+  const preposition = getPrepositionFromType(type);
 
   const selectedOffersMarkup = createSelectedOffersMarkup(selectedOffers);
-
-  let totalPrice = price;
-  for (const offer of selectedOffers) {
-    totalPrice = totalPrice + offer.price;
-  }
 
   return (
     `<li class="trip-events__item">
@@ -41,7 +38,7 @@ const createTripEventTemplate = (event) => {
         <div class="event__type">
             <img class="event__type-icon" width="42" height="42" src="img/icons/${type}.png" alt="Event type icon">
         </div>
-        <h3 class="event__title">${capitalizeFirstLetter(type)} ${postfix} ${destination}</h3>
+        <h3 class="event__title">${capitalizeFirstLetter(type)} ${preposition} ${destination}</h3>
 
         <div class="event__schedule">
             <p class="event__time">

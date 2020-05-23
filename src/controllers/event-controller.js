@@ -10,9 +10,8 @@ export const Mode = {
 };
 
 export const EmptyEvent = {
-  id: String(new Date() + Math.random()),
+  // id: String(new Date().getMilliseconds() * Math.random()),
   type: `flight`,
-  postfix: `to`, 
   destination: ``,
   price: 0,
   totalPrice: 0,
@@ -33,8 +32,6 @@ export default class EventController {
     this._editFormComponent = null;
 
     this._onEscKeyDown = this._onEscKeyDown.bind(this);
-    this._replaceEventToEdit = this._replaceEventToEdit.bind(this);
-    this._replaceEditToEvent = this._replaceEditToEvent.bind(this);
   }
 
   render(event, mode) {
@@ -45,8 +42,13 @@ export default class EventController {
     this._tripEventComponent = new TripEventComponent(event);
     this._editFormComponent = new EditFormComponent(event, this._mode);
 
-    this._tripEventComponent.setEditButtonClickHandler(this._replaceEventToEdit);
-    this._editFormComponent.setCloseEditButtonClickHandler(this._replaceEditToEvent);
+    this._tripEventComponent.setEditButtonClickHandler(() => {
+      this._replaceEventToEdit();
+    });
+
+    this._editFormComponent.setCloseEditButtonClickHandler(() => {
+      this._replaceEditToEvent();
+    });
 
     this._editFormComponent.setSubmitHandler((evt) => {
       evt.preventDefault();
@@ -56,7 +58,7 @@ export default class EventController {
 
     this._editFormComponent.setDeleteButtonClickHandler(() => this._onDataChange(this, event, null));
 
-    switch(mode) {
+    switch (mode) {
       case Mode.DEFAULT:
         if (oldEventComponent && oldEventEditComponent) {
           replace(oldEventComponent, this._tripEventComponent);
@@ -72,7 +74,9 @@ export default class EventController {
           remove(oldEventEditComponent);
         }
         document.addEventListener(`keydown`, this._onEscKeyDown);
-        render(this._container.children[1], this._editFormComponent, RenderPosition.BEFORE_BEGIN);
+
+        const container = document.querySelector(`.trip-events__trip-sort`);
+        render(container, this._editFormComponent, RenderPosition.AFTER_END);
         break;
     }
   }
@@ -93,16 +97,17 @@ export default class EventController {
     this._onViewChange();
     document.addEventListener(`keydown`, this._onEscKeyDown);
     replace(this._tripEventComponent, this._editFormComponent);
+    this._mode = Mode.EDIT;
   }
 
   _replaceEditToEvent() {
     this._editFormComponent.reset();
-    document.removeEventListener(`keydown`, this._onEscKeyDown);
 
     if (document.contains(this._editFormComponent.getElement())) {
       replace(this._editFormComponent, this._tripEventComponent);
     }
 
+    document.removeEventListener(`keydown`, this._onEscKeyDown);
     this._mode = Mode.DEFAULT;
   }
 
