@@ -1,5 +1,5 @@
 import AbstractSmartComponent from "./abstract-smart-component.js";
-import {eventType, destinations, offers, generateDestination, getPrepositionFromType} from "../mock/add-event-form.js";
+import {eventType, destinations, offers, generateDestination, getPrepositionFromType} from "../mock/trip-event.js";
 import {capitalizeFirstLetter, getTime, getDate} from "../utils/common.js";
 import {Mode} from "../controllers/event-controller.js";
 import {encode} from "he";
@@ -342,6 +342,7 @@ export default class EditFormComponent extends AbstractSmartComponent {
     this._price = event.price;
     this._selectedOffers = event.selectedOffers.slice();
 
+    this._destroyFlatpicr();
     this.rerender();
   }
 

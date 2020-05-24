@@ -73,10 +73,9 @@ export default class EventController {
           remove(oldEventComponent);
           remove(oldEventEditComponent);
         }
-        document.addEventListener(`keydown`, this._onEscKeyDown);
 
-        const container = document.querySelector(`.trip-events__trip-sort`);
-        render(container, this._editFormComponent, RenderPosition.AFTER_END);
+        document.addEventListener(`keydown`, this._onEscKeyDown);
+        render(this._container.firstChild, this._editFormComponent, RenderPosition.AFTER_END);
         break;
     }
   }

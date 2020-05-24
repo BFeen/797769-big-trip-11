@@ -9,7 +9,7 @@ import {generateEvents} from "./mock/trip-event.js";
 import {render, RenderPosition} from "./utils/render.js";
 
 
-const EVENT_COUNT = 10;
+const EVENT_COUNT = 3;
 
 const tripMain = document.querySelector(`.trip-main`);
 const tripControls = tripMain.querySelector(`.trip-controls`);
@@ -42,5 +42,4 @@ menuComponent.setOnChange((menuItem) => {
 
 addEventButtonComponent.setAddNewEventHandler(() => {
   tripController.createEvent();
-  // addEventButtonComponent.getElement().disabled = true;
 });

@@ -3,7 +3,7 @@ import EventController, {Mode as EventControllerMode, EmptyEvent} from "./event-
 import NoEventsComponent from "../components/no-events.js";
 import TripDaysComponent from "../components/trip-days.js";
 import SortingComponent, {SortType} from "../components/sorting.js";
-import {render, RenderPosition} from "../utils/render";
+import {render, RenderPosition, remove} from "../utils/render";
 import {formatDay} from "../utils/common.js";
 import moment from "moment";
 
@@ -105,8 +105,6 @@ export default class TripController {
       return;
     }
 
-    // const addEventButton = document.querySelector(`.trip-main__event-add-btn`);
-
     render(container, this._sortingComponent, RenderPosition.AFTER_BEGIN);
     render(container, this._tripDaysComponent, RenderPosition.BEFORE_END);
 
@@ -120,10 +118,11 @@ export default class TripController {
     this._addEventButton.disabled = !this._creatingEvent;
 
     this._eventsModel.resetFilter();
-
+    this._onViewChange();
     const eventsListElement = this._container.getElement();
     this._creatingEvent = new EventController(eventsListElement, this._onDataChange, this._onViewChange);
     this._creatingEvent.render(EmptyEvent, EventControllerMode.ADDING);
+    // this._eventControllers = [].concat(this._eventControllers, this._creatingEvent);
   }
 
   _removeEvents() {
@@ -146,12 +145,18 @@ export default class TripController {
     if (oldData === EmptyEvent) {
       this._creatingEvent = null;
       this._addEventButton.disabled = false;
+
       if (newData === null) {
         eventController.destroy();
         this._updateEvents();
       } else {
+        if (this._eventControllers.length === 0) {
+          remove(this._noEventsComponent);
+        }
+
         this._eventsModel.addEvent(newData);
         eventController.render(newData, EventControllerMode.DEFAULT);
+        this.render();
 
         this._eventControllers = [].concat(eventController, this._eventControllers);
         this._updateEvents();
@@ -159,6 +164,11 @@ export default class TripController {
     } else if (newData === null) {
       this._eventsModel.removeEvent(oldData.id);
       this._updateEvents();
+
+      if (this._eventControllers.length === 0) {
+        this.render();
+        return;
+      }
 
       this._onSortTypeChange(this._sortingComponent.getSortType());
     } else {
