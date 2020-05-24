@@ -1,5 +1,6 @@
 import AbstractSmartComponent from "./abstract-smart-component.js";
-import {eventType, destinations, offers, generateDestination, getPrepositionFromType} from "../mock/trip-event.js";
+import {generateDestination, getPrepositionFromType} from "../mock/trip-event.js";
+import {EventTypes, Offers, Destinations} from "../const.js";
 import {capitalizeFirstLetter, getTime, getDate} from "../utils/common.js";
 import {Mode} from "../controllers/event-controller.js";
 import {encode} from "he";
@@ -56,7 +57,7 @@ const createSaveButtonMarkup = () => {
 const createTypeSelectMarkup = (currentType = `flight`) => {
   let markup = ``;
 
-  for (const [key, values] of Object.entries(eventType)) {
+  for (const [key, values] of Object.entries(EventTypes)) {
     markup += `<fieldset class="event__type-group">
                 <legend class="visually-hidden">${key}</legend> 
                 ${values.map((item) => {
@@ -80,7 +81,7 @@ const createTypeSelectMarkup = (currentType = `flight`) => {
 };
 
 const createDestinationSelectMarkup = () => {
-  return destinations
+  return Destinations
     .map((city) => {
       return (
         `<option value="${city}"></option>`
@@ -109,7 +110,7 @@ const createOffersMarkup = (selectedOffers) => {
       <h3 class="event__section-title  event__section-title--offers">Offers</h3>
       <div class="event__available-offers">`;
 
-  markup = markup + offers
+  markup = markup + Offers
     .map((offer) => {
       const {type, desc, price} = offer;
       isChecked = ``;
@@ -186,8 +187,8 @@ export const createEditEventFormTemplate = (event, mode, options = {}) => {
   const favoriteButtonMarkup = createFavoriteButtonMarkup(isFavorite, mode);
   const saveButtonMarkup = createSaveButtonMarkup(mode);
 
-  const offersMarkup = createOffersMarkup(selectedOffers); // type ? offers : ``
-  const descriptionMarkup = createDescriptionMarkup(eventDestination); // destination ? info : ``
+  const offersMarkup = createOffersMarkup(selectedOffers);
+  const descriptionMarkup = createDescriptionMarkup(eventDestination);
 
   const detailsMarkup = createDetailsContainerMarkup(offersMarkup, descriptionMarkup);
 
@@ -259,8 +260,8 @@ const isSelectedOffer = (selectedOffers, currentOffer) => {
   return selectedOffers.some((offer) => offer.desc === currentOffer);
 };
 
-const getOfferIndex = (allOffers, currentOffer) => {
-  return allOffers.findIndex((offer) => offer.desc === currentOffer);
+const getOfferIndex = (currentOffer) => {
+  return Offers.findIndex((offer) => offer.desc === currentOffer);
 };
 
 const parseFormData = (formData) => {
@@ -271,8 +272,8 @@ const parseFormData = (formData) => {
   for (let key of formData.keys()) {
     if (key.startsWith(`event-offer`)) {
       const currentOffer = key.substring(12);
-      const index = offers.findIndex((offer) => offer.type === currentOffer);
-      selectedOffers.push(offers[index]);
+      const index = Offers.findIndex((offer) => offer.type === currentOffer);
+      selectedOffers.push(Offers[index]);
     }
   }
 
@@ -442,15 +443,13 @@ export default class EditFormComponent extends AbstractSmartComponent {
 
   _subscribeOnEvents() {
 
-    const canISaveIt = () => {
+    const checkSaveButtonDisabling = () => {
       element.querySelector(`.event__save-btn`)
         .disabled = !Number.isInteger(this._price) || !this._destination;
     };
 
-    const offersAll = offers.slice();
     const element = this.getElement();
-
-    canISaveIt();
+    checkSaveButtonDisabling();
 
     const eventTypeElements = element.querySelectorAll(`.event__type-label`);
     eventTypeElements.forEach((item) => {
@@ -472,7 +471,7 @@ export default class EditFormComponent extends AbstractSmartComponent {
     priceElement.addEventListener(`input`, (evt) => {
       this._price = Number(evt.target.value);
 
-      canISaveIt();
+      checkSaveButtonDisabling();
     });
 
     const offersElements = element.querySelectorAll(`.event__offer-label`);
@@ -484,8 +483,8 @@ export default class EditFormComponent extends AbstractSmartComponent {
           const index = getOfferIndex(this._selectedOffers, offerDesc);
           this._selectedOffers = [].concat(this._selectedOffers.slice(0, index), this._selectedOffers.slice(index + 1));
         } else {
-          const index = getOfferIndex(offersAll, offerDesc);
-          this._selectedOffers.push(offersAll[index]);
+          const index = getOfferIndex(offerDesc);
+          this._selectedOffers.push(Offers[index]);
         }
       });
     });

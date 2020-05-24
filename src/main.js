@@ -1,7 +1,8 @@
 import AddEventButtonComponent from "./components/add-event-button.js";
 import EventsModel from "./models/trip-events.js";
 import FilterController from "./controllers/filter-controller.js";
-import MenuComponent from "./components/menu.js";
+import MenuComponent, { MenuItem } from "./components/menu.js";
+import StatisticsComponent from "./components/statistics.js";
 import TripController from "./controllers/trip-controller.js";
 import TripEventsComponent from "./components/trip-events.js";
 import TripInfoComponent from "./components/trip-info.js";
@@ -36,7 +37,21 @@ tripController.render();
 
 render(tripMain, new TripInfoComponent(0), RenderPosition.AFTER_BEGIN);
 
+const statisticsComponent = new StatisticsComponent();
+render(mainContainer, statisticsComponent, RenderPosition.BEFORE_END);
+statisticsComponent.hide();
+
 menuComponent.setOnChange((menuItem) => {
+  switch (menuItem) {
+    case MenuItem.TABLE:
+      statisticsComponent.hide();
+      tripController.show();
+      break;
+    case MenuItem.STATISTICS:
+      tripController.hide();
+      statisticsComponent.show();
+      break;
+  }
   menuComponent.setActiveItem(menuItem);
 });
 
