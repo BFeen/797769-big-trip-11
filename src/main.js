@@ -1,7 +1,7 @@
 import AddEventButtonComponent from "./components/add-event-button.js";
 import EventsModel from "./models/trip-events.js";
 import FilterController from "./controllers/filter-controller.js";
-import MenuComponent, { MenuItem } from "./components/menu.js";
+import MenuComponent, {MenuItem} from "./components/menu.js";
 import StatisticsComponent from "./components/statistics.js";
 import TripController from "./controllers/trip-controller.js";
 import TripEventsComponent from "./components/trip-events.js";
@@ -26,7 +26,6 @@ filterController.render();
 
 const events = generateEvents(EVENT_COUNT);
 eventsModel.setEvents(events);
-console.log(events);
 
 const main = document.querySelector(`.page-main`);
 const mainContainer = main.querySelector(`.page-body__container`);

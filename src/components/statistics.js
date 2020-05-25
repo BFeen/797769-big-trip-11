@@ -12,8 +12,8 @@ const getTypesFromEvents = (events) => {
   return events.map((event) => {
     const preposition = getPrepositionFromType(event.type);
     return `${event.type} ${preposition} ${event.destination}`.toUpperCase();
-  })
-}
+  });
+};
 
 const getUniqueTypes = (events) => {
   return [...new Set(events.map((item) => item.type.toUpperCase()))];
@@ -58,10 +58,6 @@ const renderMoneyChart = (moneyCtx, events) => {
   const types = getUniqueTypes(events);
   const prices = countPrices(events, types);
 
-  const img = new Image();
-  img.src = `img/icons/bus.png`;
-  console.log(img)
-  
   return new Chart(moneyCtx, {
     plugins: [ChartDataLabels],
     type: `horizontalBar`,
@@ -201,75 +197,75 @@ const renderTransportChart = (transportCtx, events) => {
 };
 
 const renderTimeSpendChart = (timeSpendCtx, events) => {
-    const types = getTypesFromEvents(events);
-    const durations = countDurationHours(events);
-  
-    return new Chart(timeSpendCtx, {
-      plugins: [ChartDataLabels],
-      type: `horizontalBar`,
-      data: {
-        labels: types,
-        datasets: [{
-          data: durations,
-          backgroundColor: `#ffffff`,
-          hoverBackgroundColor: `#ffffff`,
-          anchor: `start`,
-          barThickness: 44,
-          minBarLength: 50,
-        }]
-      },
-      options: {
-        plugins: {
-          datalabels: {
-            font: {
-              size: 13
-            },
-            color: `#000000`,
-            anchor: `end`,
-            align: `start`,
-            formatter: (val) => `${val}H`
-          }
-        },
-        title: {
-          display: true,
-          text: `TIME SPENT`,
-          fontColor: `#000000`,
-          fontSize: 23,
-          position: `left`,
-          padding: 70,
-        },
-        scales: {
-          yAxes: [{
-            ticks: {
-              fontColor: `#000000`,
-              padding: 5,
-              fontSize: 13,
-            },
-            gridLines: {
-              display: false,
-              drawBorder: false
-            }
-          }],
-          xAxes: [{
-            ticks: {
-              display: false,
-              beginAtZero: true,
-            },
-            gridLines: {
-              display: false,
-              drawBorder: false
-            }
-          }],
-        },
-        legend: {
-          display: false
-        },
-        tooltips: {
-          enabled: false,
+  const types = getTypesFromEvents(events);
+  const durations = countDurationHours(events);
+
+  return new Chart(timeSpendCtx, {
+    plugins: [ChartDataLabels],
+    type: `horizontalBar`,
+    data: {
+      labels: types,
+      datasets: [{
+        data: durations,
+        backgroundColor: `#ffffff`,
+        hoverBackgroundColor: `#ffffff`,
+        anchor: `start`,
+        barThickness: 44,
+        minBarLength: 50,
+      }]
+    },
+    options: {
+      plugins: {
+        datalabels: {
+          font: {
+            size: 13
+          },
+          color: `#000000`,
+          anchor: `end`,
+          align: `start`,
+          formatter: (val) => `${val}H`
         }
+      },
+      title: {
+        display: true,
+        text: `TIME SPENT`,
+        fontColor: `#000000`,
+        fontSize: 23,
+        position: `left`,
+        padding: 70,
+      },
+      scales: {
+        yAxes: [{
+          ticks: {
+            fontColor: `#000000`,
+            padding: 5,
+            fontSize: 13,
+          },
+          gridLines: {
+            display: false,
+            drawBorder: false
+          }
+        }],
+        xAxes: [{
+          ticks: {
+            display: false,
+            beginAtZero: true,
+          },
+          gridLines: {
+            display: false,
+            drawBorder: false
+          }
+        }],
+      },
+      legend: {
+        display: false
+      },
+      tooltips: {
+        enabled: false,
       }
-    });
-  };
+    }
+  });
+};
 
 const createStatisticTemplate = () => {
   return (
@@ -291,7 +287,7 @@ const createStatisticTemplate = () => {
   );
 };
 
-export default class StatisticsComponent extends AbstractSmartComponent  {
+export default class StatisticsComponent extends AbstractSmartComponent {
   constructor(events) {
     super();
 
@@ -335,7 +331,7 @@ export default class StatisticsComponent extends AbstractSmartComponent  {
 
     const moneyCtx = element.querySelector(`.statistics__chart--money`);
     const transportCtx = element.querySelector(`.statistics__chart--transport`);
-    const timeSpendCtx = element.querySelector(`.statistics__chart--time`); 
+    const timeSpendCtx = element.querySelector(`.statistics__chart--time`);
 
     this._resetCharts();
     moneyCtx.height = BAR_HEIGHT * getUniqueTypes(events).length + 1;
