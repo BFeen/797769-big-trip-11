@@ -10,7 +10,7 @@ import {generateEvents} from "./mock/trip-event.js";
 import {render, RenderPosition} from "./utils/render.js";
 
 
-const EVENT_COUNT = 3;
+const EVENT_COUNT = 6;
 
 const tripMain = document.querySelector(`.trip-main`);
 const tripControls = tripMain.querySelector(`.trip-controls`);
@@ -26,6 +26,7 @@ filterController.render();
 
 const events = generateEvents(EVENT_COUNT);
 eventsModel.setEvents(events);
+console.log(events);
 
 const main = document.querySelector(`.page-main`);
 const mainContainer = main.querySelector(`.page-body__container`);
@@ -37,9 +38,10 @@ tripController.render();
 
 render(tripMain, new TripInfoComponent(0), RenderPosition.AFTER_BEGIN);
 
-const statisticsComponent = new StatisticsComponent();
+const statisticsComponent = new StatisticsComponent(eventsModel);
+// statisticsComponent.hide();
+tripController.hide();
 render(mainContainer, statisticsComponent, RenderPosition.BEFORE_END);
-statisticsComponent.hide();
 
 menuComponent.setOnChange((menuItem) => {
   switch (menuItem) {

@@ -1,3 +1,4 @@
+import {EventTypes} from "../const.js";
 import moment from "moment";
 
 
@@ -25,6 +26,10 @@ export const getRandomArrayItem = (array) => {
   const randomIndex = getRandomInteger(0, array.length);
 
   return array[randomIndex];
+};
+
+export const getPrepositionFromType = (type) => {
+  return EventTypes.TRANSFER.includes(type) ? `to` : `in`;
 };
 
 export const countDurationTime = (startDate, endDate) => {

@@ -95,7 +95,3 @@ export const generateDestination = (currentDestination) => {
     pictures: description ? generateRandomPhotos() : ``,
   };
 };
-
-export const getPrepositionFromType = (type) => {
-  return EventTypes.TRANSFER.includes(type) ? `to` : `in`;
-};

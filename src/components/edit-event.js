@@ -1,7 +1,7 @@
 import AbstractSmartComponent from "./abstract-smart-component.js";
-import {generateDestination, getPrepositionFromType} from "../mock/trip-event.js";
+import {generateDestination} from "../mock/trip-event.js";
 import {EventTypes, Offers, Destinations} from "../const.js";
-import {capitalizeFirstLetter, getTime, getDate} from "../utils/common.js";
+import {capitalizeFirstLetter, getPrepositionFromType, getTime, getDate} from "../utils/common.js";
 import {Mode} from "../controllers/event-controller.js";
 import {encode} from "he";
 import flatpicr from "flatpickr";

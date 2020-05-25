@@ -1,6 +1,5 @@
 import AbstractComponent from "./abstract-component.js";
-import {capitalizeFirstLetter, countDurationTime, getTime, getDate} from "../utils/common.js";
-import {getPrepositionFromType} from "../mock/trip-event.js";
+import {capitalizeFirstLetter, countDurationTime, getTime, getDate, getPrepositionFromType} from "../utils/common.js";
 
 
 const createSelectedOffersMarkup = (selectedOffers) => {
