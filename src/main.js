@@ -12,35 +12,33 @@ import {render, RenderPosition} from "./utils/render.js";
 
 const EVENT_COUNT = 6;
 
+const events = generateEvents(EVENT_COUNT);
+
+const eventsModel = new EventsModel();
+eventsModel.setEvents(events);
+
 const tripMain = document.querySelector(`.trip-main`);
 const tripControls = tripMain.querySelector(`.trip-controls`);
+const main = document.querySelector(`.page-main`);
+const mainContainer = main.querySelector(`.page-body__container`);
 
 const menuComponent = new MenuComponent();
 const addEventButtonComponent = new AddEventButtonComponent();
-render(tripControls, menuComponent, RenderPosition.AFTER_BEGIN);
-render(tripMain, addEventButtonComponent, RenderPosition.BEFORE_END);
-
-const eventsModel = new EventsModel();
-const filterController = new FilterController(tripControls, eventsModel);
-filterController.render();
-
-const events = generateEvents(EVENT_COUNT);
-eventsModel.setEvents(events);
-
-const main = document.querySelector(`.page-main`);
-const mainContainer = main.querySelector(`.page-body__container`);
 const tripEventsComponent = new TripEventsComponent();
-render(mainContainer, tripEventsComponent, RenderPosition.BEFORE_END);
 
 const tripController = new TripController(tripEventsComponent, eventsModel, addEventButtonComponent);
+const filterController = new FilterController(tripControls, eventsModel);
+const statisticsComponent = new StatisticsComponent(eventsModel);
+
+render(tripControls, menuComponent, RenderPosition.AFTER_BEGIN);
+filterController.render();
+render(tripMain, addEventButtonComponent, RenderPosition.BEFORE_END);
+render(mainContainer, tripEventsComponent, RenderPosition.BEFORE_END);
 tripController.render();
+render(mainContainer, statisticsComponent, RenderPosition.BEFORE_END);
+statisticsComponent.hide();
 
 render(tripMain, new TripInfoComponent(0), RenderPosition.AFTER_BEGIN);
-
-const statisticsComponent = new StatisticsComponent(eventsModel);
-// statisticsComponent.hide();
-tripController.hide();
-render(mainContainer, statisticsComponent, RenderPosition.BEFORE_END);
 
 menuComponent.setOnChange((menuItem) => {
   switch (menuItem) {
