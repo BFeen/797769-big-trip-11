@@ -1,5 +1,4 @@
 import AbstractSmartComponent from "./abstract-smart-component.js";
-import {generateDestination} from "../mock/trip-event.js";
 import {EventTypes, Offers, Destinations} from "../const.js";
 import {capitalizeFirstLetter, getPrepositionFromType, getTime, getDate} from "../utils/common.js";
 import {Mode} from "../controllers/event-controller.js";
@@ -103,7 +102,6 @@ const createDetailsContainerMarkup = (offersMarkup, descriptionMarkup) => {
 };
 
 const createOffersMarkup = (selectedOffers) => {
-  let isChecked;
 
   let markup = `
     <section class="event__section  event__section--offers ">
@@ -113,7 +111,7 @@ const createOffersMarkup = (selectedOffers) => {
   markup = markup + Offers
     .map((offer) => {
       const {type, desc, price} = offer;
-      isChecked = ``;
+      let isChecked = ``;
 
       for (const element of selectedOffers) {
         if (element.desc === desc) {
@@ -148,11 +146,10 @@ const createOffersMarkup = (selectedOffers) => {
 };
 
 const createDescriptionMarkup = (currentDestination) => {
-  const destinationInfo = generateDestination(currentDestination);
-  if (!destinationInfo.description) {
+  const {description, pictures} = currentDestination;
+  if (!description) {
     return ``;
   }
-  const {description, pictures} = destinationInfo;
 
   return (`
     <section class="event__section  event__section--destination">
@@ -161,7 +158,8 @@ const createDescriptionMarkup = (currentDestination) => {
       <div class="event__photos-container">
       <div class="event__photos-tape">
     ${pictures.map((photo) => {
-      return `<img class="event__photo" src="${photo}">`;
+      const {src, description: pictureInfo} = photo;
+      return `<img class="event__photo" alt="${pictureInfo}" title="${pictureInfo}" src="${src}">`;
     }).join(`\n`)}
       </div>
       </div>
@@ -172,12 +170,13 @@ const createDescriptionMarkup = (currentDestination) => {
 export const createEditEventFormTemplate = (event, mode, options = {}) => {
   const {isFavorite} = event;
   const {type, destination: eventDestination, price, dateStart, dateEnd, selectedOffers} = options;
+  const {name: destinationName} = eventDestination;
 
   const dayStart = getDate(dateStart);
   const timeStart = getTime(dateStart);
   const dayEnd = getDate(dateEnd);
   const timeEnd = getTime(dateEnd);
-  const encodeDestination = encode(eventDestination);
+  const encodeDestination = encode(destinationName);
   const preposition = getPrepositionFromType(type);
 
   const typeSelectMarkup = createTypeSelectMarkup(type);
@@ -297,11 +296,12 @@ const parseFormData = (formData) => {
 };
 
 export default class EditFormComponent extends AbstractSmartComponent {
-  constructor(event, eventControllerMode) {
+  constructor(event, eventControllerMode, offersAll) {
     super();
 
     this._event = event;
     this._mode = eventControllerMode;
+    this._offersAll = offersAll;
 
     this._eventType = event.type;
     this._destination = event.destination;
@@ -343,7 +343,7 @@ export default class EditFormComponent extends AbstractSmartComponent {
     this._price = event.price;
     this._selectedOffers = event.selectedOffers.slice();
 
-    this._destroyFlatpicr();
+    this.destroyFlatpicr();
     this.rerender();
   }
 
@@ -355,7 +355,7 @@ export default class EditFormComponent extends AbstractSmartComponent {
   }
 
   removeElement() {
-    this._destroyFlatpicr();
+    this.destroyFlatpicr();
 
     super.removeElement();
   }
@@ -392,13 +392,7 @@ export default class EditFormComponent extends AbstractSmartComponent {
     this._submitHandler = handler;
   }
 
-  _generateDestinationInfo(city = ``) {
-    if (city) {
-      return;
-    }
-  }
-
-  _destroyFlatpicr() {
+  destroyFlatpicr() {
     if (this._flatpicrStart) {
       this._flatpicrStart.destroy();
       this._flatpicrStart = null;
@@ -410,7 +404,7 @@ export default class EditFormComponent extends AbstractSmartComponent {
   }
 
   _applyFlatpicr() {
-    this._destroyFlatpicr();
+    this.destroyFlatpicr();
 
     const dateStartElement = this.getElement().querySelector(`#event-start-time-1`);
     const dateEndElement = this.getElement().querySelector(`#event-end-time-1`);

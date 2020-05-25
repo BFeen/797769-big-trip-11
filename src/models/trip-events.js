@@ -5,6 +5,8 @@ import {FilterType} from "../const.js";
 export default class EventsModel {
   constructor() {
     this._events = [];
+    this._offers = null;
+    this._destinations = null;
     this._activeFilter = FilterType.EVERYTHING;
 
     this._dataChangeHandlers = [];
@@ -31,9 +33,12 @@ export default class EventsModel {
     return this._events;
   }
 
-  setEvents(events) {
-    this._events = Array.from(events);
-    this._callHandlers(this._dataChangeHandlers);
+  getOffers() {
+    return this._offers;
+  }
+  
+  getDestinations() {
+    return this._destinations
   }
 
   removeEvent(id) {
@@ -49,24 +54,23 @@ export default class EventsModel {
     return true;
   }
 
-  updateEvent(id, event) {
-    const index = this._events.findIndex((item) => item.id === id);
-
-    if (index === -1) {
-      return false;
-    }
-
-    this._events = [].concat(this._events.slice(0, index), event, this._events.slice(index + 1));
-
-    this._callHandlers(this._dataChangeHandlers);
-
-    return true;
-  }
-
   resetFilter() {
     this._activeFilter = FilterType.EVERYTHING;
     document.querySelector(`#filter-everything`).checked = true;
     this._callHandlers(this._filterChangeHandlers);
+  }
+
+  setEvents(events) {
+    this._events = Array.from(events);
+    this._callHandlers(this._dataChangeHandlers);
+  }
+
+  setOffers(offers) {
+    this._offers = Array.from(offers);
+  }
+
+  setDestinations(destinations) {
+    this._destinations = Array.from(destinations);
   }
 
   setDataChangeHandler(handler) {
@@ -80,6 +84,20 @@ export default class EventsModel {
   setFilter(filterType) {
     this._activeFilter = filterType;
     this._callHandlers(this._filterChangeHandlers);
+  }
+
+  updateEvent(id, event) {
+    const index = this._events.findIndex((item) => item.id === id);
+
+    if (index === -1) {
+      return false;
+    }
+
+    this._events = [].concat(this._events.slice(0, index), event, this._events.slice(index + 1));
+
+    this._callHandlers(this._dataChangeHandlers);
+
+    return true;
   }
 
   _callHandlers(handlers) {

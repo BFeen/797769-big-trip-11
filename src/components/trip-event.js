@@ -8,10 +8,10 @@ const createSelectedOffersMarkup = (selectedOffers) => {
   }
   return selectedOffers
     .map((offer) => {
-      const {desc, price} = offer;
+      const {title, price} = offer;
       return (
         `<li class="event__offer">
-          <span class="event__offer-title">${desc}</span>
+          <span class="event__offer-title">${title}</span>
           &plus;
           &euro;&nbsp;<span class="event__offer-price">${price}</span>
         </li>`
@@ -21,13 +21,15 @@ const createSelectedOffersMarkup = (selectedOffers) => {
 
 const createTripEventTemplate = (event) => {
   const {type, destination, totalPrice, dateStart, dateEnd, selectedOffers} = event;
-
+  const {name: destinationName} = destination;
   const dayStart = getDate(dateStart);
   const timeStart = getTime(dateStart);
   const dayEnd = getDate(dateEnd);
   const timeEnd = getTime(dateEnd);
   const duration = countDurationTime(dateStart, dateEnd);
   const preposition = getPrepositionFromType(type);
+
+  console.log(event)
 
   const selectedOffersMarkup = createSelectedOffersMarkup(selectedOffers);
 
@@ -37,7 +39,7 @@ const createTripEventTemplate = (event) => {
         <div class="event__type">
             <img class="event__type-icon" width="42" height="42" src="img/icons/${type}.png" alt="Event type icon">
         </div>
-        <h3 class="event__title">${capitalizeFirstLetter(type)} ${preposition} ${destination}</h3>
+        <h3 class="event__title">${capitalizeFirstLetter(type)} ${preposition} ${destinationName}</h3>
 
         <div class="event__schedule">
             <p class="event__time">

@@ -26,6 +26,7 @@ export default class EventController {
     this._container = container;
     this._onDataChange = onDataChange;
     this._onViewChange = onViewChange;
+    this.offers = null;
 
     this._mode = Mode.DEFAULT;
     this._tripEventComponent = null;

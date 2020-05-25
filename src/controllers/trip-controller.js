@@ -107,6 +107,8 @@ export default class TripController {
   render() {
     const container = this._container.getElement();
     const events = this._eventsModel.getEvents();
+    const offers = this._eventsModel.getOffers(); // ПРОТАСКИВАНИЕ
+    const destinations = this._eventsModel.getDestinations(); // ПРОТАСКИВАНИЕ
 
     if (events.length === 0) {
       render(container, this._noEventsComponent, RenderPosition.BEFORE_END);
@@ -127,6 +129,7 @@ export default class TripController {
 
     this._eventsModel.resetFilter();
     this._onViewChange();
+
     const eventsListElement = this._container.getElement();
     this._creatingEvent = new EventController(eventsListElement, this._onDataChange, this._onViewChange);
     this._creatingEvent.render(EmptyEvent, EventControllerMode.ADDING);
