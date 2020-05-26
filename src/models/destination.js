@@ -1,6 +1,6 @@
 export default class Destination {
     constructor(data) {
-      this.destination = data[`description`];
+      this.description = data[`description`];
       this.name = data[`name`];
       this.pictures = data[`pictures`];
     }

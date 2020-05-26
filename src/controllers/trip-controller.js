@@ -70,9 +70,10 @@ const renderDays = (tripDaysComponent, events, offers, destinations, onDataChang
 };
 
 export default class TripController {
-  constructor(container, eventsModel, addEventButtonComponent) {
+  constructor(container, eventsModel, addEventButtonComponent, api) {
     this._container = container;
     this._eventsModel = eventsModel;
+    this._api = api;
 
     this._sortType = SortType.EVENT;
     this._eventControllers = [];
@@ -102,8 +103,8 @@ export default class TripController {
   render() {
     const container = this._container.getElement();
     const events = getSortedEvents(this._eventsModel.getEvents(), this._sortType);
-    const offers = this._eventsModel.getOffers(); // ПРОТАСКИВАНИЕ
-    const destinations = this._eventsModel.getDestinations(); // ПРОТАСКИВАНИЕ
+    const offers = this._eventsModel.getOffers();
+    const destinations = this._eventsModel.getDestinations();
 
     if (events.length === 0) {
       render(container, this._noEventsComponent, RenderPosition.BEFORE_END);
@@ -178,7 +179,7 @@ export default class TripController {
         }
 
         this._eventsModel.addEvent(newData);
-        eventController.render(newData, EventControllerMode.DEFAULT);
+        eventController.render(newData, EventControllerMode.DEFAULT); // Это переданный контроллер
         this.render();
 
         this._eventControllers = [].concat(eventController, this._eventControllers);
@@ -195,13 +196,16 @@ export default class TripController {
 
       this._onSortTypeChange(this._sortingComponent.getSortType());
     } else {
-      const isSuccess = this._eventsModel.updateEvent(oldData.id, newData);
-
-      if (isSuccess) {
-        eventController.render(newData, EventControllerMode.DEFAULT);
-
-        this._onSortTypeChange(this._sortingComponent.getSortType());
-      }
+      this._api.updateEvent(oldData.id, newData)
+        .then((updatingEvent) => {
+          const isSuccess = this._eventsModel.updateEvent(oldData.id, updatingEvent);
+    
+          if (isSuccess) {
+            eventController.render(updatingEvent, EventControllerMode.DEFAULT);
+    
+            this._onSortTypeChange(this._sortingComponent.getSortType());
+          }
+        });
     }
   }
 

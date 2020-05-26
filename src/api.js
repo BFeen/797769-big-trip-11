@@ -3,8 +3,17 @@ import Offer from "./models/offer.js"
 import Destination from "./models/destination.js";
 
 
+const checkStatus = (response) => {
+  if (response.status >= 200 && response.status <= 300) {
+    return response;
+  } else {
+    throw new Error(`${response.status}: ${response.statusText}`);
+  }
+}
+
 const Method = {
   GET: `GET`,
+  PUT: `PUT`,
 }
 
 const Url = {
@@ -58,23 +67,38 @@ const API = class {
       .then(Destination.parseDestinations);
   }
 
+  updateEvent(id, data) {
+    const headers = new Headers();
+    headers.append(`Authorization`, this._authorization);
+    headers.append(`Content-type`, `application/json`);
+
+    return fetch(`https://11.ecmascript.pages.academy/big-trip/points/${id}`, {
+      method: `PUT`,
+      body: JSON.stringify(data.toRAW()),
+      headers,
+    })
+      .then(checkStatus)
+      .then((response) => response.json())
+      .then(Event.parseEvent);
+    // return this._loadData({
+    //   url: `${Url.EVENTS}/${id}`,
+    //   method: Method.PUT,
+    //   body: JSON.stringify(data.toRAW())
+    // })
+    //   .then(this._checkStatus)
+    //   .then((response) => response.json())
+    //   .then(Event.parseEvent);
+  }
+
   _loadData({url, method = `GET`, body = null, headers = new Headers()}) {
     headers.append(`Authorization`, this._authorization);
     headers.append(`Content-Type`, `application/json`);
 
     return fetch(url, {method, body, headers})
-      .then(this._checkStatus) 
+      .then(checkStatus) 
       .catch((error) => {
         throw error;
       });
-  }
-
-  _checkStatus(response) {
-    if (response.status >= 200 && response.status <= 300) {
-      return response;
-    } else {
-      throw new Error(`${response.status}: ${response.statusText}`);
-    }
   }
 };
 

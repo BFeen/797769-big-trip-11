@@ -1,9 +1,7 @@
-import {createOfferType} from "../utils/common.js";
-
 export default class Offer {
   constructor(data) {
     this.type = data[`type`];
-    this.offers = createOfferType(data[`offers`]);
+    this.offers = data[`offers`];
   }
 
   static parseOffer(data) {

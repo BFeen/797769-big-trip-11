@@ -24,7 +24,7 @@ const addEventButtonComponent = new AddEventButtonComponent();
 const tripEventsComponent = new TripEventsComponent();
 
 const eventsModel = new EventsModel();
-const tripController = new TripController(tripEventsComponent, eventsModel, addEventButtonComponent);
+const tripController = new TripController(tripEventsComponent, eventsModel, addEventButtonComponent, api);
 const filterController = new FilterController(tripControls, eventsModel);
 const statisticsComponent = new StatisticsComponent(eventsModel);
 const noEventsComponent = new NoEventsComponent();
@@ -67,7 +67,7 @@ api.getData()
   .then(() => {
     remove(noEventsComponent);
     tripController.render();
-  })
-  .catch((error) => {
-    noEventsComponent.setErrorView(error);
   });
+  // .catch((error) => {
+  //   noEventsComponent.setErrorView(error);
+  // });

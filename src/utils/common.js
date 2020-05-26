@@ -42,15 +42,6 @@ export const countDurationTime = (startDate, endDate) => {
   return `${days ? `${days}D ` : ``}${hours ? `${hours}H ` : ``}${minutes ? `${minutes}M` : ``}`;
 };
 
-export const getFirstWordFromString = (string) => {
-  return string.substring(0, string.indexOf(` `));
+export const createOfferType = (offerTitle) => { 
+  return offerTitle.replace(/\s/ig, '-').toLowerCase();
 };
-
-export const createOfferType = (offers) => {
-  const myOffers = offers.slice();
-
-  for (let offer of myOffers) {
-    offer.type = offer.title.replace(/\s/ig, '-').toLowerCase();
-  }
-  return myOffers;
-}

@@ -1,5 +1,3 @@
-import {createOfferType} from "../utils/common.js";
-
 const createTotalPrice = (offers) => {
   let sum = 0;
   for (let offer of offers) {
@@ -16,9 +14,22 @@ export default class Event {
     this.price = data[`base_price`];
     this.dateStart = new Date(data[`date_from`]);
     this.dateEnd = new Date(data[`date_to`]);
-    this.selectedOffers = createOfferType(data[`offers`])
-    this.totalPrice = this.selectedOffers.length ? createTotalPrice(this.selectedOffers) + this.price : this.price;
+    this.selectedOffers = data[`offers`];
+    this.totalPrice = this.selectedOffers.length ? (createTotalPrice(this.selectedOffers) + this.price) : this.price;
     this.isFavorite = Boolean(data[`is_favorite`]);
+  }
+
+  toRAW() {
+    return {
+      "id": this.id,
+      "type": this.type,
+      "destination": this.destination,
+      "base_price": this.price,
+      "date_from": this.dateStart.toISOString(),
+      "date_to": this.dateEnd.toISOString(),
+      "offers": this.selectedOffers,
+      "is_favorite": this.isFavorite,
+    }
   }
 
   static parseEvent(data) {
@@ -28,5 +39,9 @@ export default class Event {
 
   static parseEvents(data) {
     return data.map(Event.parseEvent);
+  }
+
+  static clone(data) {
+    return new Event(data.toRAW());
   }
 }
