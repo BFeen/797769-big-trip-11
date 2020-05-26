@@ -29,8 +29,6 @@ const createTripEventTemplate = (event) => {
   const duration = countDurationTime(dateStart, dateEnd);
   const preposition = getPrepositionFromType(type);
 
-  console.log(event)
-
   const selectedOffersMarkup = createSelectedOffersMarkup(selectedOffers);
 
   return (

@@ -1,11 +1,4 @@
-const createOfferType = (offers) => {
-  const myOffers = offers.slice();
-
-  for (let offer of myOffers) {
-    offer.type = offer.title.replace(/\s/ig, '-').toLowerCase();
-  }
-  return myOffers;
-}
+import {createOfferType} from "../utils/common.js";
 
 const createTotalPrice = (offers) => {
   let sum = 0;

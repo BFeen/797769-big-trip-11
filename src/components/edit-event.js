@@ -7,6 +7,7 @@ import flatpicr from "flatpickr";
 
 import "flatpickr/dist/flatpickr.min.css";
 
+
 const createRollupButtonMarkup = (mode) => {
   if (mode === Mode.ADDING) {
     return ``;
@@ -79,9 +80,10 @@ const createTypeSelectMarkup = (currentType = `flight`) => {
   return markup;
 };
 
-const createDestinationSelectMarkup = () => {
-  return Destinations
-    .map((city) => {
+const createDestinationSelectMarkup = (destinations) => {
+  return destinations
+    .map((destination) => {
+      const {name: city} = destination;
       return (
         `<option value="${city}"></option>`
       );
@@ -101,20 +103,21 @@ const createDetailsContainerMarkup = (offersMarkup, descriptionMarkup) => {
   return ``;
 };
 
-const createOffersMarkup = (selectedOffers) => {
+const createOffersMarkup = (availableOffers, selectedOffers) => {
+  const {offers} = availableOffers;
 
   let markup = `
     <section class="event__section  event__section--offers ">
       <h3 class="event__section-title  event__section-title--offers">Offers</h3>
       <div class="event__available-offers">`;
 
-  markup = markup + Offers
+  markup = markup + offers
     .map((offer) => {
-      const {type, desc, price} = offer;
+      const {type, title, price} = offer;
       let isChecked = ``;
 
       for (const element of selectedOffers) {
-        if (element.desc === desc) {
+        if (element.title === title) {
           isChecked = `checked`;
           break;
         }
@@ -130,7 +133,7 @@ const createOffersMarkup = (selectedOffers) => {
 
           <label class="event__offer-label" 
           for="event-offer-${type}-1">
-          <span class="event__offer-title">${desc}</span>
+          <span class="event__offer-title">${title}</span>
           &plus;
           &euro;&nbsp;<span class="event__offer-price">${price}</span>
           </label>
@@ -169,7 +172,7 @@ const createDescriptionMarkup = (currentDestination) => {
 
 export const createEditEventFormTemplate = (event, mode, options = {}) => {
   const {isFavorite} = event;
-  const {type, destination: eventDestination, price, dateStart, dateEnd, selectedOffers} = options;
+  const {type, destination: eventDestination, price, dateStart, dateEnd, selectedOffers, availableOffers, Destinations} = options;
   const {name: destinationName} = eventDestination;
 
   const dayStart = getDate(dateStart);
@@ -180,13 +183,13 @@ export const createEditEventFormTemplate = (event, mode, options = {}) => {
   const preposition = getPrepositionFromType(type);
 
   const typeSelectMarkup = createTypeSelectMarkup(type);
-  const destinationSelectMarkup = createDestinationSelectMarkup();
+  const destinationSelectMarkup = createDestinationSelectMarkup(Destinations); 
   const rollupButtonMarkup = createRollupButtonMarkup(mode);
   const deleteButtonMarkup = createDeleteButtonMarkup(mode);
   const favoriteButtonMarkup = createFavoriteButtonMarkup(isFavorite, mode);
   const saveButtonMarkup = createSaveButtonMarkup(mode);
 
-  const offersMarkup = createOffersMarkup(selectedOffers);
+  const offersMarkup = createOffersMarkup(availableOffers, selectedOffers); 
   const descriptionMarkup = createDescriptionMarkup(eventDestination);
 
   const detailsMarkup = createDetailsContainerMarkup(offersMarkup, descriptionMarkup);
@@ -256,11 +259,11 @@ export const createEditEventFormTemplate = (event, mode, options = {}) => {
 };
 
 const isSelectedOffer = (selectedOffers, currentOffer) => {
-  return selectedOffers.some((offer) => offer.desc === currentOffer);
+  return selectedOffers.some((offer) => offer.title === currentOffer);
 };
 
-const getOfferIndex = (currentOffer) => {
-  return Offers.findIndex((offer) => offer.desc === currentOffer);
+const getOfferIndex = (offersAll, currentOffer) => { // Другая структура
+  return offersAll.findIndex((offer) => offer.title === currentOffer);
 };
 
 const parseFormData = (formData) => {
@@ -296,16 +299,18 @@ const parseFormData = (formData) => {
 };
 
 export default class EditFormComponent extends AbstractSmartComponent {
-  constructor(event, eventControllerMode, offersAll) {
+  constructor(event, offers, destinations, eventControllerMode) {
     super();
 
     this._event = event;
     this._mode = eventControllerMode;
-    this._offersAll = offersAll;
+    this._offersAll = offers;
+    this._destinationsAll = destinations;
 
     this._eventType = event.type;
     this._destination = event.destination;
     this._price = event.price;
+    this._availableOffers = this._offersAll.find((item) => item.type === this._eventType);
     this._selectedOffers = event.selectedOffers.slice();
     this._flatpicrStart = null;
     this._flatpicrEnd = null;
@@ -327,6 +332,8 @@ export default class EditFormComponent extends AbstractSmartComponent {
       dateEnd: this._flatpicrEnd,
       price: this._price,
       selectedOffers: this._selectedOffers,
+      availableOffers: this._availableOffers,
+      Destinations: this._destinationsAll,
     });
   }
 
@@ -342,6 +349,7 @@ export default class EditFormComponent extends AbstractSmartComponent {
     this._destination = event.destination;
     this._price = event.price;
     this._selectedOffers = event.selectedOffers.slice();
+    this._availableOffers = this._offersAll.find((item) => item.type === this._eventType);
 
     this.destroyFlatpicr();
     this.rerender();
@@ -449,6 +457,7 @@ export default class EditFormComponent extends AbstractSmartComponent {
     eventTypeElements.forEach((item) => {
       item.addEventListener(`click`, () => {
         this._eventType = item.textContent.toLowerCase();
+        // изменение доступных предложений offers
 
         this.rerender();
       });
@@ -471,14 +480,14 @@ export default class EditFormComponent extends AbstractSmartComponent {
     const offersElements = element.querySelectorAll(`.event__offer-label`);
     offersElements.forEach((offer) => {
       offer.addEventListener(`click`, () => {
-        const offerDesc = offer.querySelector(`span`).textContent;
+        const offerTitle = offer.querySelector(`span`).textContent;
 
-        if (isSelectedOffer(this._selectedOffers, offerDesc)) {
-          const index = getOfferIndex(this._selectedOffers, offerDesc);
+        if (isSelectedOffer(this._selectedOffers, offerTitle)) {
+          const index = getOfferIndex(this._selectedOffers, offerTitle);
           this._selectedOffers = [].concat(this._selectedOffers.slice(0, index), this._selectedOffers.slice(index + 1));
         } else {
-          const index = getOfferIndex(offerDesc);
-          this._selectedOffers.push(Offers[index]);
+          const index = getOfferIndex(this._availableOffers, offerTitle);
+          this._selectedOffers.push(this._offersAll[index]);
         }
       });
     });

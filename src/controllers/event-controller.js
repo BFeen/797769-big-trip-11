@@ -22,11 +22,12 @@ export const EmptyEvent = {
 };
 
 export default class EventController {
-  constructor(container, onDataChange, onViewChange) {
+  constructor(container, offers, destinations, onDataChange, onViewChange) {
     this._container = container;
     this._onDataChange = onDataChange;
     this._onViewChange = onViewChange;
-    this.offers = null;
+    this._offers = offers;
+    this._destinations = destinations
 
     this._mode = Mode.DEFAULT;
     this._tripEventComponent = null;
@@ -41,7 +42,7 @@ export default class EventController {
     const oldEventEditComponent = this._editFormComponent;
 
     this._tripEventComponent = new TripEventComponent(event);
-    this._editFormComponent = new EditFormComponent(event, this._mode);
+    this._editFormComponent = new EditFormComponent(event, this._offers, this._destinations, this._mode);
 
     this._tripEventComponent.setEditButtonClickHandler(() => {
       this._replaceEventToEdit();

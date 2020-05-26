@@ -45,3 +45,12 @@ export const countDurationTime = (startDate, endDate) => {
 export const getFirstWordFromString = (string) => {
   return string.substring(0, string.indexOf(` `));
 };
+
+export const createOfferType = (offers) => {
+  const myOffers = offers.slice();
+
+  for (let offer of myOffers) {
+    offer.type = offer.title.replace(/\s/ig, '-').toLowerCase();
+  }
+  return myOffers;
+}

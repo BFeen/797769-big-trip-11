@@ -1,8 +1,9 @@
 import AbstractComponent from "./abstract-component.js";
 
 const StatusMessages = {
-  NO_EVENTS: `Click New Event to create your first point`,
+  NO_EVENTS: `Click New Event to create your first point.`,
   LOADING: `Loading...`,
+  ERROR: `Something went wrong.`,
 }
 
 const createNoEventsTemplate = () => {
@@ -22,5 +23,9 @@ export default class NoEventsComponent extends AbstractComponent {
 
   setLoadingView() {
     this.getElement().textContent = StatusMessages.LOADING;
+  }
+
+  setErrorView(msg) {
+    this.getElement().textContent = `${StatusMessages.ERROR}. ${msg}`;
   }
 }
