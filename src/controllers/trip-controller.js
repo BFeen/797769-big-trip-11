@@ -64,7 +64,8 @@ const renderDays = (tripDaysComponent, events, offers, destinations, onDataChang
     .forEach((dayEvents, index) => {
       const {day, eventsGroup} = dayEvents;
       const eventsListElement = getRenderedDay(tripDaysComponent, day, index + 1);
-      eventControllers = eventControllers.concat(renderEvents(eventsListElement, eventsGroup, offers, destinations, onDataChange, onViewChange));
+      eventControllers = eventControllers
+        .concat(renderEvents(eventsListElement, eventsGroup, offers, destinations, onDataChange, onViewChange));
     });
   return eventControllers;
 };
@@ -142,7 +143,6 @@ export default class TripController {
     const eventsListElement = this._container.getElement();
     this._creatingEvent = new EventController(eventsListElement, offers, destinations, this._onDataChange, this._onViewChange);
     this._creatingEvent.render(EmptyEvent, EventControllerMode.ADDING);
-    // this._eventControllers = [].concat(this._eventControllers, this._creatingEvent);
   }
 
   setSortType(sortType) {
@@ -166,7 +166,7 @@ export default class TripController {
   }
 
   _onDataChange(eventController, oldData, newData) {
-    if (oldData === EmptyEvent) {
+    if (oldData === EmptyEvent) { // создание
       this._creatingEvent = null;
       this._addEventButton.disabled = false;
 
@@ -185,7 +185,7 @@ export default class TripController {
         this._eventControllers = [].concat(eventController, this._eventControllers);
         this._updateEvents(); // ??? апдейт сразу удаляет только что созданный контроллер
       }
-    } else if (newData === null) {
+    } else if (newData === null) { // удаление
       this._eventsModel.removeEvent(oldData.id);
       this._updateEvents();
 
@@ -195,13 +195,13 @@ export default class TripController {
       }
 
       this._onSortTypeChange(this._sortingComponent.getSortType());
-    } else {
+    } else { // Обновление
       this._api.updateEvent(oldData.id, newData)
-        .then((updatingEvent) => {
-          const isSuccess = this._eventsModel.updateEvent(oldData.id, updatingEvent);
+        .then((EventModel) => {
+          const isSuccess = this._eventsModel.updateEvent(oldData.id, EventModel);
     
           if (isSuccess) {
-            eventController.render(updatingEvent, EventControllerMode.DEFAULT);
+            eventController.render(EventModel, EventControllerMode.DEFAULT);
     
             this._onSortTypeChange(this._sortingComponent.getSortType());
           }

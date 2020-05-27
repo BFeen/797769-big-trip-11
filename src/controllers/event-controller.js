@@ -1,4 +1,5 @@
 import EditFormComponent from "../components/edit-event";
+import EventModel from "../models/event.js";
 import TripEventComponent from "../components/trip-event";
 import {render, replace, remove, RenderPosition} from "../utils/render";
 
@@ -51,16 +52,30 @@ export default class EventController {
       this._replaceEditToEvent();
     });
 
+    this._editFormComponent.setFavoriteButtonClickHandler(() => {
+      const newEvent = EventModel.clone(event);
+      newEvent.isFavorite = !newEvent.isFavorite;
+
+      this._onDataChange(this, event, newEvent);
+    });
+
     this._editFormComponent.setSubmitHandler((evt) => {
       evt.preventDefault();
-
+      this._editFormComponent.disablingSaveButton();
       const formData = this._editFormComponent.getData();
       const data = this._editFormComponent.parseFormData(formData);
 
       this._onDataChange(this, event, data);
     });
 
-    this._editFormComponent.setDeleteButtonClickHandler(() => this._onDataChange(this, event, null));
+    this._editFormComponent.setDeleteButtonClickHandler(() => {
+      if (this._mode === Mode.ADDING) {
+        remove(this._editFormComponent);
+      } else {
+        this._onDataChange(this, event, null);
+        this._editFormComponent.disablingDeleteButton();
+      }
+    });
 
     switch (mode) {
       case Mode.DEFAULT:
@@ -97,9 +112,12 @@ export default class EventController {
   }
 
   _replaceEventToEdit() {
+    if (document.contains(this._tripEventComponent.getElement())) {
+      replace(this._tripEventComponent, this._editFormComponent);
+    }
     this._onViewChange();
     document.addEventListener(`keydown`, this._onEscKeyDown);
-    replace(this._tripEventComponent, this._editFormComponent);
+    this._editFormComponent.applyFlatpicr();
     this._mode = Mode.EDIT;
   }
 
@@ -109,7 +127,7 @@ export default class EventController {
     if (document.contains(this._editFormComponent.getElement())) {
       replace(this._editFormComponent, this._tripEventComponent);
     }
-
+    this._editFormComponent.destroyFlatpicr();
     document.removeEventListener(`keydown`, this._onEscKeyDown);
     this._mode = Mode.DEFAULT;
   }

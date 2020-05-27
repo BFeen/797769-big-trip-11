@@ -292,7 +292,9 @@ export default class EditFormComponent extends AbstractSmartComponent {
     this._favoriteHandler = null;
     this._submitHandler = null;
 
-    this._applyFlatpicr();
+    this._savebutton = null;
+    this._deleteButton = null;
+
     this._subscribeOnEvents();
   }
 
@@ -311,7 +313,7 @@ export default class EditFormComponent extends AbstractSmartComponent {
 
   rerender() {
     super.rerender();
-    this._applyFlatpicr();
+    this.applyFlatpicr();
   }
 
   reset() {
@@ -331,6 +333,7 @@ export default class EditFormComponent extends AbstractSmartComponent {
     this.setCloseEditButtonClickHandler(this._closeHandler);
     this.setSubmitHandler(this._submitHandler);
     this.setDeleteButtonClickHandler(this._deleteHandler);
+    this.setFavoriteButtonClickHandler(this._favoriteHandler);
     this._subscribeOnEvents();
   }
 
@@ -384,17 +387,43 @@ export default class EditFormComponent extends AbstractSmartComponent {
     this._closeHandler = handler;
   }
 
+  setFavoriteButtonClickHandler(handler) {
+    if (this._mode === Mode.ADDING) {
+      return;
+    }
+
+    this.getElement().querySelector(`.event__favorite-checkbox`)
+      .addEventListener(`change`, handler);
+
+    this._favoriteHandler = handler;
+  }
+
   setDeleteButtonClickHandler(handler) {
-    this.getElement().querySelector(`.event__reset-btn`)
-      .addEventListener(`click`, handler);
+    this._deleteButton = this.getElement().querySelector(`.event__reset-btn`);
+    this._deleteButton.addEventListener(`click`, handler);
 
     this._deleteHandler = handler;
   }
 
   setSubmitHandler(handler) {
+    this._savebutton = this.getElement().querySelector(`.event__save-btn`);
     this.getElement().addEventListener(`submit`, handler);
 
     this._submitHandler = handler;
+  }
+
+  disablingSaveButton() {
+    this._savebutton.textContent = `Saving...`;
+    this._savebutton.disabled = true;
+
+    this._deleteButton.disabled = true;
+  }
+
+  disablingDeleteButton() {
+    this._deleteButton.textContent = `Deleting...`;
+    this._deleteButton.disabled = true;
+    
+    this._savebutton.disabled = true;
   }
 
   destroyFlatpicr() {
@@ -408,7 +437,7 @@ export default class EditFormComponent extends AbstractSmartComponent {
     }
   }
 
-  _applyFlatpicr() {
+  applyFlatpicr() {
     this.destroyFlatpicr();
 
     const dateStartElement = this.getElement().querySelector(`#event-start-time-1`);
@@ -496,12 +525,5 @@ export default class EditFormComponent extends AbstractSmartComponent {
         }
       });
     });
-
-    if (this._mode !== Mode.ADDING) { // обработка favorits выйдет в отдельную функцию и будет вызывать событие _onDataChange
-      const favoriteElement = element.querySelector(`.event__favorite-btn`);
-      favoriteElement.addEventListener(`click`, () => {
-        this._event.isFavorite = !this._event.isFavorite;
-      });
-    }
   }
 }

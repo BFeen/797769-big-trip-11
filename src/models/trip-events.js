@@ -24,7 +24,7 @@ export default class EventsModel {
 
     this._callHandlers(this._dataChangeHandlers);
   }
-
+  
   getEvents() {
     return getEventsByFilter(this._events, this._activeFilter);
   }

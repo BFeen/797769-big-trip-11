@@ -6,7 +6,7 @@ const createTotalPrice = (offers) => {
   return sum;
 }
 
-export default class Point {
+export default class Event {
   constructor(data) {
     this.id = data[`id`];
     this.type = data[`type`];
@@ -33,14 +33,15 @@ export default class Point {
   }
 
   static parseEvent(data) {
-    return new Point(data);
+    return new Event(data);
   }
 
   static parseEvents(data) {
-    return data.map(Point.parseEvent);
+    return data.map(Event.parseEvent);
   }
 
   static clone(data) {
-    return new Point(data.toRAW());
+    console.log(`э`)
+    return new Event(data.toRAW());
   }
 }
