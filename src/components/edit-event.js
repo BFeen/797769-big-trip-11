@@ -1,18 +1,13 @@
 import AbstractSmartComponent from "./abstract-smart-component.js";
-import {EventTypes, Offers, Destinations} from "../const.js";
+import EventModel from "../models/event.js";
 import {capitalizeFirstLetter, createOfferType, getPrepositionFromType, getTime, getDate} from "../utils/common.js";
+import {EventTypes, EmptyDestination} from "../const.js";
 import {Mode} from "../controllers/event-controller.js";
 import {encode} from "he";
 import flatpicr from "flatpickr";
 
 import "flatpickr/dist/flatpickr.min.css";
 
-
-const EmptyDestination = {
-  name: ``,
-  description: ``,
-  pictures: [],
-};
 
 const createRollupButtonMarkup = (mode) => {
   if (mode === Mode.ADDING) {
@@ -347,6 +342,35 @@ export default class EditFormComponent extends AbstractSmartComponent {
   getData() {
     const form = this.getElement();
     return new FormData(form);
+  }
+
+  parseFormData(formData) {
+    const type = formData.get(`event-type`);
+    const destination = this._destinationsAll.find((item) => item.name === formData.get(`event-destination`));
+    const isFavorite = formData.get(`event-favorite`) === `on`;
+
+    const availableOffers = this._offersAll.find((item) => item.type === type);
+    const {offers} = availableOffers;
+    const selectedOffers = [];
+  
+    for (const key of formData.keys()) {
+      if (key.startsWith(`event-offer`)) {
+        const currentOffer = key.substring(12);
+        const index = offers.findIndex((offer) => createOfferType(offer.title) === currentOffer);
+        selectedOffers.push(offers[index]);
+      }
+    }
+  
+    return new EventModel ({
+      "id": this._event.id,
+      "type": type,
+      "destination": destination,
+      "base_price": Number(formData.get(`event-price`)),
+      "date_from": new Date(formData.get(`event-start-time`)),
+      "date_to": new Date(formData.get(`event-end-time`)),
+      "offers": selectedOffers,
+      "is_favorite": isFavorite,
+    })
   }
 
   setCloseEditButtonClickHandler(handler) {

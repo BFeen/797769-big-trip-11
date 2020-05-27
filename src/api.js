@@ -68,26 +68,14 @@ const API = class {
   }
 
   updateEvent(id, data) {
-    const headers = new Headers();
-    headers.append(`Authorization`, this._authorization);
-    headers.append(`Content-type`, `application/json`);
-
-    return fetch(`https://11.ecmascript.pages.academy/big-trip/points/${id}`, {
-      method: `PUT`,
-      body: JSON.stringify(data.toRAW()),
-      headers,
+    return this._loadData({
+      url: `${Url.EVENTS}/${id}`,
+      method: Method.PUT,
+      body: JSON.stringify(data.toRAW())
     })
-      .then(checkStatus)
+      .then(this._checkStatus)
       .then((response) => response.json())
       .then(Event.parseEvent);
-    // return this._loadData({
-    //   url: `${Url.EVENTS}/${id}`,
-    //   method: Method.PUT,
-    //   body: JSON.stringify(data.toRAW())
-    // })
-    //   .then(this._checkStatus)
-    //   .then((response) => response.json())
-    //   .then(Event.parseEvent);
   }
 
   _loadData({url, method = `GET`, body = null, headers = new Headers()}) {

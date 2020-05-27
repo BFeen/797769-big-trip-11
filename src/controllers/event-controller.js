@@ -1,8 +1,6 @@
 import EditFormComponent from "../components/edit-event";
-import EventModel from "../models/event.js";
 import TripEventComponent from "../components/trip-event";
 import {render, replace, remove, RenderPosition} from "../utils/render";
-import {createOfferType} from "../utils/common.js";
 
 
 export const Mode = {
@@ -57,7 +55,7 @@ export default class EventController {
       evt.preventDefault();
 
       const formData = this._editFormComponent.getData();
-      const data = this._parseFormData(formData);
+      const data = this._editFormComponent.parseFormData(formData);
 
       this._onDataChange(this, event, data);
     });
@@ -96,34 +94,6 @@ export default class EventController {
     if (this._mode !== Mode.DEFAULT) {
       this._replaceEditToEvent();
     }
-  }
-
-  _parseFormData(formData) {
-    const type = formData.get(`event-type`);
-    const isFavorite = formData.get(`event-favorite`) === `on`;
-    const price = Number(formData.get(`event-price`));
-    
-    const availableOffers = this._offers.find((item) => item.type === type);
-    const {offers} = availableOffers;
-    const selectedOffers = [];
-  
-    for (const key of formData.keys()) {
-      if (key.startsWith(`event-offer`)) {
-        const currentOffer = key.substring(12);
-        const index = offers.findIndex((offer) => createOfferType(offer.title) === currentOffer);
-        selectedOffers.push(offers[index]);
-      }
-    }
-  
-    return new EventModel ({
-      "type": type,
-      "destination": formData.get(`event-destination`),
-      "base_price": price,
-      "date_from": new Date(formData.get(`event-start-time`)),
-      "date_to": new Date(formData.get(`event-end-time`)),
-      "offers": selectedOffers,
-      "is_favorite": isFavorite,
-    })
   }
 
   _replaceEventToEdit() {
