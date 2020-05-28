@@ -67,7 +67,7 @@ api.getData()
   .then(() => {
     remove(noEventsComponent);
     tripController.render();
+  })
+  .catch((error) => {
+    noEventsComponent.setErrorView(error);
   });
-  // .catch((error) => {
-  //   noEventsComponent.setErrorView(error);
-  // });

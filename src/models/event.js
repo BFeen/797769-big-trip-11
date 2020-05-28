@@ -1,10 +1,4 @@
-const createTotalPrice = (offers) => {
-  let sum = 0;
-  for (let offer of offers) {
-    sum += offer.price;
-  }
-  return sum;
-}
+import {createTotalPrice} from "../utils/common.js";
 
 export default class Event {
   constructor(data) {
@@ -29,7 +23,7 @@ export default class Event {
       "date_to": this.dateEnd.toISOString(),
       "offers": this.selectedOffers,
       "is_favorite": this.isFavorite,
-    }
+    };
   }
 
   static parseEvent(data) {
@@ -41,7 +35,6 @@ export default class Event {
   }
 
   static clone(data) {
-    console.log(`э`)
     return new Event(data.toRAW());
   }
 }

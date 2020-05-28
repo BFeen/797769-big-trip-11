@@ -107,7 +107,7 @@ const createDetailsContainerMarkup = (offersMarkup, descriptionMarkup) => {
 const createOffersMarkup = (availableOffers, selectedOffers) => {
   const {offers} = availableOffers;
   if (offers.length === 0) {
-    return ``
+    return ``;
   }
 
   let markup = `
@@ -187,13 +187,13 @@ export const createEditEventFormTemplate = (event, mode, options = {}) => {
   const preposition = getPrepositionFromType(type);
 
   const typeSelectMarkup = createTypeSelectMarkup(type);
-  const destinationSelectMarkup = createDestinationSelectMarkup(Destinations); 
+  const destinationSelectMarkup = createDestinationSelectMarkup(Destinations);
   const rollupButtonMarkup = createRollupButtonMarkup(mode);
   const deleteButtonMarkup = createDeleteButtonMarkup(mode);
   const favoriteButtonMarkup = createFavoriteButtonMarkup(isFavorite, mode);
   const saveButtonMarkup = createSaveButtonMarkup(mode);
 
-  const offersMarkup = createOffersMarkup(availableOffers, selectedOffers); 
+  const offersMarkup = createOffersMarkup(availableOffers, selectedOffers);
   const descriptionMarkup = createDescriptionMarkup(eventDestination);
 
   const detailsMarkup = createDetailsContainerMarkup(offersMarkup, descriptionMarkup);
@@ -355,7 +355,7 @@ export default class EditFormComponent extends AbstractSmartComponent {
     const availableOffers = this._offersAll.find((item) => item.type === type);
     const {offers} = availableOffers;
     const selectedOffers = [];
-  
+
     for (const key of formData.keys()) {
       if (key.startsWith(`event-offer`)) {
         const currentOffer = key.substring(12);
@@ -363,8 +363,8 @@ export default class EditFormComponent extends AbstractSmartComponent {
         selectedOffers.push(offers[index]);
       }
     }
-  
-    return new EventModel ({
+
+    return new EventModel({
       "id": this._event.id,
       "type": type,
       "destination": destination,
@@ -373,7 +373,7 @@ export default class EditFormComponent extends AbstractSmartComponent {
       "date_to": new Date(formData.get(`event-end-time`)),
       "offers": selectedOffers,
       "is_favorite": isFavorite,
-    })
+    });
   }
 
   setCloseEditButtonClickHandler(handler) {
@@ -414,16 +414,18 @@ export default class EditFormComponent extends AbstractSmartComponent {
 
   disablingSaveButton() {
     this._savebutton.textContent = `Saving...`;
-    this._savebutton.disabled = true;
-
-    this._deleteButton.disabled = true;
+    this._disablingForm();
   }
 
   disablingDeleteButton() {
     this._deleteButton.textContent = `Deleting...`;
-    this._deleteButton.disabled = true;
-    
-    this._savebutton.disabled = true;
+    this._disablingForm();
+  }
+
+  _disablingForm() {
+    const formElements = this.getElement()
+      .querySelectorAll(`.event__save-btn, .event__reset-btn, .event__rollup-btn`);
+    formElements.forEach((item) => item.setAttribute(`disabled`, `disabled`));
   }
 
   destroyFlatpicr() {
@@ -484,17 +486,16 @@ export default class EditFormComponent extends AbstractSmartComponent {
     eventTypeElements.forEach((item) => {
       item.addEventListener(`click`, () => {
         this._eventType = item.textContent.toLowerCase();
-        this._availableOffers = this._offersAll.find((item) => item.type === this._eventType);
+        this._availableOffers = this._offersAll.find((offer) => offer.type === this._eventType);
         this._selectedOffers = [];
 
         this.rerender();
       });
     });
 
-    
     destinationElement.addEventListener(`change`, () => {
       const cityFromDestinations = this._destinationsAll.find((item) => item.name.toLowerCase() === destinationElement.value.toLowerCase());
-      if (!!cityFromDestinations) {
+      if (cityFromDestinations) {
         this._destination = cityFromDestinations;
       } else {
         this._destination = Object.assign({}, EmptyDestination, {name: encode(destinationElement.value)});

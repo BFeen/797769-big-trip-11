@@ -6,7 +6,7 @@ const createDayInfoTemplate = (day, counter) => {
     `<li class="trip-days__item  day">
       <div class="day__info">
         <span class="day__counter">${counter}</span>
-        <time class="day__date" datetime="">${day}</time>
+        <time class="day__date">${day}</time>
       </div>
       <ul class="trip-events__list"></ul>
     </li>`

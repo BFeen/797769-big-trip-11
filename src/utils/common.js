@@ -32,6 +32,18 @@ export const getPrepositionFromType = (type) => {
   return EventTypes.TRANSFER.includes(type) ? `to` : `in`;
 };
 
+export const getFirstWord = (string) => {
+  return string.substring(0, string.indexOf(` `));
+};
+
+export const createTotalPrice = (offers) => {
+  let sum = 0;
+  for (let offer of offers) {
+    sum += offer.price;
+  }
+  return sum;
+};
+
 export const countDurationTime = (startDate, endDate) => {
   const difference = moment.duration(endDate - startDate);
 
@@ -42,6 +54,6 @@ export const countDurationTime = (startDate, endDate) => {
   return `${days ? `${days}D ` : ``}${hours ? `${hours}H ` : ``}${minutes ? `${minutes}M` : ``}`;
 };
 
-export const createOfferType = (offerTitle) => { 
-  return offerTitle.replace(/\s/ig, '-').toLowerCase();
+export const createOfferType = (offerTitle) => {
+  return offerTitle.replace(/\s/ig, `-`).toLowerCase();
 };

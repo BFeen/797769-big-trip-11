@@ -24,7 +24,7 @@ export default class EventsModel {
 
     this._callHandlers(this._dataChangeHandlers);
   }
-  
+
   getEvents() {
     return getEventsByFilter(this._events, this._activeFilter);
   }
@@ -36,9 +36,9 @@ export default class EventsModel {
   getOffers() {
     return this._offers;
   }
-  
+
   getDestinations() {
-    return this._destinations
+    return this._destinations;
   }
 
   removeEvent(id) {

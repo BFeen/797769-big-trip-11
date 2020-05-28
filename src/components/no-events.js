@@ -4,7 +4,7 @@ const StatusMessages = {
   NO_EVENTS: `Click New Event to create your first point.`,
   LOADING: `Loading...`,
   ERROR: `Something went wrong.`,
-}
+};
 
 const createNoEventsTemplate = () => {
   return (

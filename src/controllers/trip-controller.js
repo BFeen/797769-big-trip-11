@@ -29,8 +29,6 @@ const getRenderedDay = (tripDaysComponent, day, counter) => {
 const getSortedEvents = (events, sortType) => {
   const unsortedEvents = events.slice();
   switch (sortType) {
-    case SortType.EVENT:
-      return unsortedEvents;
     case SortType.TIME:
       return unsortedEvents
         .sort((a, b) => (b.dateEnd - b.dateStart) - (a.dateEnd - a.dateStart));
@@ -38,6 +36,7 @@ const getSortedEvents = (events, sortType) => {
       return unsortedEvents
         .sort((a, b) => b.totalPrice - a.totalPrice);
   }
+  return unsortedEvents;
 };
 
 const getUniqueDays = (events) => {
@@ -165,24 +164,24 @@ export default class TripController {
     this._eventControllers = newEvents;
   }
 
-  _onDataChange(eventController, oldData, newData) {
+  _onDataChange(eventController, oldData, newData, isChangeView = true) {
     if (oldData === EmptyEvent) { // создание
       this._creatingEvent = null;
       this._addEventButton.disabled = false;
 
-      if (newData === null) {
+      if (newData === null) { // закрытие создания без сохранения
         eventController.destroy();
         this._updateEvents();
-      } else {
+      } else { // сохранение нового маршрута
         if (this._eventControllers.length === 0) {
           remove(this._noEventsComponent);
         }
 
         this._eventsModel.addEvent(newData);
-        eventController.render(newData, EventControllerMode.DEFAULT); // Это переданный контроллер
+        eventController.render(newData, EventControllerMode.DEFAULT); // Это переданный контроллер. Кажется эта тоже бессмысленна
         this.render();
 
-        this._eventControllers = [].concat(eventController, this._eventControllers);
+        this._eventControllers = [].concat(eventController, this._eventControllers); // кажется, эта строчка бессмысленна
         this._updateEvents(); // ??? апдейт сразу удаляет только что созданный контроллер
       }
     } else if (newData === null) { // удаление
@@ -193,17 +192,18 @@ export default class TripController {
         this.render();
         return;
       }
-
-      this._onSortTypeChange(this._sortingComponent.getSortType());
     } else { // Обновление
       this._api.updateEvent(oldData.id, newData)
         .then((EventModel) => {
           const isSuccess = this._eventsModel.updateEvent(oldData.id, EventModel);
-    
+
           if (isSuccess) {
-            eventController.render(EventModel, EventControllerMode.DEFAULT);
-    
-            this._onSortTypeChange(this._sortingComponent.getSortType());
+            if (isChangeView) {
+              eventController.render(EventModel, EventControllerMode.DEFAULT);
+              this._updateEvents();
+            } else {
+              eventController.render(EventModel, EventControllerMode.EDIT);
+            }
           }
         });
     }

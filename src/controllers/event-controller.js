@@ -37,18 +37,18 @@ export default class EventController {
   }
 
   render(event, mode) {
-    this._mode = mode;
     const oldEventComponent = this._tripEventComponent;
     const oldEventEditComponent = this._editFormComponent;
+    this._mode = mode;
 
     this._tripEventComponent = new TripEventComponent(event);
     this._editFormComponent = new EditFormComponent(event, this._offers, this._destinations, this._mode);
-
     this._tripEventComponent.setEditButtonClickHandler(() => {
       this._replaceEventToEdit();
     });
 
     this._editFormComponent.setCloseEditButtonClickHandler(() => {
+      this._mode = Mode.DEFAULT;
       this._replaceEditToEvent();
     });
 
@@ -56,7 +56,7 @@ export default class EventController {
       const newEvent = EventModel.clone(event);
       newEvent.isFavorite = !newEvent.isFavorite;
 
-      this._onDataChange(this, event, newEvent);
+      this._onDataChange(this, event, newEvent, false);
     });
 
     this._editFormComponent.setSubmitHandler((evt) => {
@@ -72,9 +72,10 @@ export default class EventController {
       if (this._mode === Mode.ADDING) {
         remove(this._editFormComponent);
       } else {
-        this._onDataChange(this, event, null);
         this._editFormComponent.disablingDeleteButton();
+        this._onDataChange(this, event, null);
       }
+      this._mode = Mode.DEFAULT;
     });
 
     switch (mode) {
@@ -86,6 +87,11 @@ export default class EventController {
         } else {
           render(this._container, this._tripEventComponent, RenderPosition.BEFORE_END);
         }
+        break;
+      case Mode.EDIT:
+        this._replaceEventToEdit();
+        replace(oldEventComponent, this._tripEventComponent);
+        replace(oldEventEditComponent, this._editFormComponent);
         break;
       case Mode.ADDING:
         if (oldEventComponent && oldEventEditComponent) {
@@ -118,7 +124,6 @@ export default class EventController {
     this._onViewChange();
     document.addEventListener(`keydown`, this._onEscKeyDown);
     this._editFormComponent.applyFlatpicr();
-    this._mode = Mode.EDIT;
   }
 
   _replaceEditToEvent() {

@@ -1,5 +1,5 @@
 import Event from "./models/event.js";
-import Offer from "./models/offer.js"
+import Offer from "./models/offer.js";
 import Destination from "./models/destination.js";
 
 
@@ -9,18 +9,18 @@ const checkStatus = (response) => {
   } else {
     throw new Error(`${response.status}: ${response.statusText}`);
   }
-}
+};
 
 const Method = {
   GET: `GET`,
   PUT: `PUT`,
-}
+};
 
 const Url = {
   EVENTS: `https://11.ecmascript.pages.academy/big-trip/points`,
   OFFERS: `https://11.ecmascript.pages.academy/big-trip/offers`,
   DESTINATIONS: `https://11.ecmascript.pages.academy/big-trip/destinations`,
-}
+};
 
 const API = class {
   constructor(authorization) {
@@ -83,7 +83,7 @@ const API = class {
     headers.append(`Content-Type`, `application/json`);
 
     return fetch(url, {method, body, headers})
-      .then(checkStatus) 
+      .then(checkStatus)
       .catch((error) => {
         throw error;
       });

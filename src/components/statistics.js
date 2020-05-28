@@ -8,6 +8,12 @@ import moment from "moment";
 
 const BAR_HEIGHT = 55;
 
+const Postfixes = {
+  "MONEY": `€`,
+  "TRANSPORT": `x`,
+  "TIME_SPEND": `H`,
+};
+
 const getTypesFromEvents = (events) => {
   return events.map((event) => {
     const preposition = getPrepositionFromType(event.type);
@@ -54,48 +60,43 @@ const countDurationHours = (events) => {
   });
 };
 
-const Postfixes = {
-  "MONEY": `€`,
-  "TRANSPORT": `x`,
-  "TIME_SPEND": `H`,
-}
-
 const generateData = (chartType, events) => {
   switch (chartType) {
     case `MONEY`:
-      const moneyLabels = getUniqueTypes(events);
-      console.log(moneyLabels)
+      const uniqueTypes = getUniqueTypes(events);
       return {
-        labels: moneyLabels,
-        data: countPrices(events, moneyLabels),
+        labels: uniqueTypes,
+        counts: countPrices(events, uniqueTypes),
         postfix: Postfixes[chartType],
-      }
+      };
     case `TRANSPORT`:
-      const Transportlabels = getUniqueTransferTypes(events)
+      const uniqueTransportTypes = getUniqueTransferTypes(events);
       return {
-        labels: Transportlabels,
-        data: countTransportTypes(events, Transportlabels),
+        labels: uniqueTransportTypes,
+        counts: countTransportTypes(events, uniqueTransportTypes),
         postfix: Postfixes[chartType],
-      }
+      };
     case `TIME_SPEND`:
+      const uniqueEventTypes = getTypesFromEvents(events);
       return {
-        labels: getTypesFromEvents(events),
-        data: countDurationHours(events),
+        labels: uniqueEventTypes,
+        counts: countDurationHours(events, uniqueEventTypes),
         postfix: Postfixes[chartType],
-      }
+      };
   }
-}
+  return false;
+};
 
 const renderChart = (ctx, chartName, events) => {
-  const {labels, data, postfix} = generateData(chartName, events);
+  const data = generateData(chartName, events);
 
   return new Chart(ctx, {
     plugins: [ChartDataLabels],
     type: `horizontalBar`,
     data: {
-      labels: labels,
+      labels: data.labels,
       datasets: [{
-        data: data,
+        data: data.counts,
         backgroundColor: `#ffffff`,
         hoverBackgroundColor: `#ffffff`,
         anchor: `start`,
@@ -112,7 +113,7 @@ const renderChart = (ctx, chartName, events) => {
           color: `#000000`,
           anchor: `end`,
           align: `start`,
-          formatter: (val) => `${val} ${postfix}`
+          formatter: (val) => `${val} ${data.postfix}`
         }
       },
       title: {
@@ -211,7 +212,7 @@ export default class StatisticsComponent extends AbstractSmartComponent {
     super.hide();
     this.getElement().classList.remove(`statistics`);
   }
-  
+
   recoveryListeners() {}
 
   _renderCharts() {
@@ -225,8 +226,7 @@ export default class StatisticsComponent extends AbstractSmartComponent {
     this._resetCharts();
     moneyCtx.height = BAR_HEIGHT * getUniqueTypes(events).length + 1;
     transportCtx.height = BAR_HEIGHT * getUniqueTransferTypes(events).length + 1;
-    timeSpendCtx.height = BAR_HEIGHT * events.length + 1;
-
+    timeSpendCtx.height = BAR_HEIGHT * getTypesFromEvents(events).length + 1;
 
     this._moneyChart = renderChart(moneyCtx, `MONEY`, events);
     this._transportChart = renderChart(transportCtx, `TRANSPORT`, events);
