@@ -14,17 +14,14 @@ const checkStatus = (response) => {
 const Method = {
   GET: `GET`,
   PUT: `PUT`,
-};
-
-const Url = {
-  EVENTS: `https://11.ecmascript.pages.academy/big-trip/points`,
-  OFFERS: `https://11.ecmascript.pages.academy/big-trip/offers`,
-  DESTINATIONS: `https://11.ecmascript.pages.academy/big-trip/destinations`,
+  POST: `POST`,
+  DELETE: `DELETE`
 };
 
 const API = class {
-  constructor(authorization) {
+  constructor(authorization, endPoint) {
     this._authorization = authorization;
+    this._endPoint = endPoint;
   }
 
   getData() {
@@ -44,45 +41,42 @@ const API = class {
   }
 
   getEvents() {
-    return this._loadData({
-      url: Url.EVENTS,
-    })
+    return this._load({url: `points`})
       .then((response) => response.json())
       .then(Event.parseEvents);
   }
 
   getOffers() {
-    return this._loadData({
-      url: Url.OFFERS,
-    })
+    return this._load({url: `offers`})
       .then((response) => response.json())
       .then(Offer.parseOffers);
   }
 
   getDestinations() {
-    return this._loadData({
-      url: Url.DESTINATIONS,
-    })
+    return this._load({url: `destinations`})
       .then((response) => response.json())
       .then(Destination.parseDestinations);
   }
 
   updateEvent(id, data) {
-    return this._loadData({
-      url: `${Url.EVENTS}/${id}`,
+    return this._load({
+      url: `points/${id}`,
       method: Method.PUT,
-      body: JSON.stringify(data.toRAW())
+      body: JSON.stringify(data.toRAW()),
+      headers: new Headers({"Content-type": `application/json`})
     })
-      .then(this._checkStatus)
       .then((response) => response.json())
       .then(Event.parseEvent);
   }
 
-  _loadData({url, method = `GET`, body = null, headers = new Headers()}) {
-    headers.append(`Authorization`, this._authorization);
-    headers.append(`Content-Type`, `application/json`);
+  createEvent(data) {
+    return this._load();
+  }
 
-    return fetch(url, {method, body, headers})
+  _load({url, method = Method.GET, body = null, headers = new Headers()}) {
+    headers.append(`Authorization`, this._authorization);
+
+    return fetch(`${this._endPoint}/${url}`, {method, body, headers})
       .then(checkStatus)
       .catch((error) => {
         throw error;

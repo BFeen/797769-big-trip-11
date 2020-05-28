@@ -11,8 +11,9 @@ import TripInfoComponent from "./components/trip-info.js";
 import {render, RenderPosition, remove} from "./utils/render.js";
 
 const AUTHORIZATION = `Basic JDKSL3sd!au-hjs=sEIQW`;
+const END_POINT = `https://11.ecmascript.pages.academy/big-trip/`;
 
-const api = new API(AUTHORIZATION);
+const api = new API(AUTHORIZATION, END_POINT);
 
 const tripMain = document.querySelector(`.trip-main`);
 const tripControls = tripMain.querySelector(`.trip-controls`);
