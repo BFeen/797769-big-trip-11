@@ -1,9 +1,12 @@
 import EditFormComponent from "../components/edit-event";
 import EventModel from "../models/event.js";
 import {EmptyDestination} from "../const.js";
+import {createOfferType} from "../utils/common.js";
 import TripEventComponent from "../components/trip-event";
 import {render, replace, remove, RenderPosition} from "../utils/render";
 
+
+const SHAKE_ANIMATION_TIMEOUT = 600;
 
 export const Mode = {
   ADDING: `adding`,
@@ -22,13 +25,42 @@ export const EmptyEvent = {
   isFavorite: false,
 };
 
+const parseFormData = (formData, offersAll, destinationsAll) => { // вали в event-controller
+  const type = formData.get(`event-type`);
+  const destination = destinationsAll.find((item) => item.name === formData.get(`event-destination`));
+  const isFavorite = formData.get(`event-favorite`) === `on`;
+
+  const availableOffers = offersAll.find((item) => item.type === type);
+  const {offers} = availableOffers;
+  const selectedOffers = [];
+
+  for (const key of formData.keys()) {
+    if (key.startsWith(`event-offer`)) {
+      const currentOffer = key.substring(12);
+      const index = offers.findIndex((item) => createOfferType(item.title) === currentOffer);
+      selectedOffers.push(offers[index]);
+    }
+  }
+
+  return new EventModel({
+    "id": formData.get(`event-id`),
+    "type": type,
+    "destination": destination,
+    "base_price": Number(formData.get(`event-price`)),
+    "date_from": new Date(formData.get(`event-start-time`)),
+    "date_to": new Date(formData.get(`event-end-time`)),
+    "offers": selectedOffers,
+    "is_favorite": isFavorite,
+  });
+};
+
 export default class EventController {
   constructor(container, offers, destinations, onDataChange, onViewChange) {
     this._container = container;
     this._onDataChange = onDataChange;
     this._onViewChange = onViewChange;
     this._offers = offers.slice();
-    this._destinations = destinations;
+    this._destinations = destinations.slice();
 
     this._mode = Mode.DEFAULT;
     this._tripEventComponent = null;
@@ -55,7 +87,7 @@ export default class EventController {
 
     this._editFormComponent.setFavoriteButtonClickHandler(() => {
       const newEvent = EventModel.clone(event);
-      newEvent.isFavorite = !newEvent.isFavorite;
+      // newEvent.isFavorite = !newEvent.isFavorite;
 
       this._onDataChange(this, event, newEvent, false);
     });
@@ -64,7 +96,7 @@ export default class EventController {
       evt.preventDefault();
       this._editFormComponent.disablingSaveButton();
       const formData = this._editFormComponent.getData();
-      const data = this._editFormComponent.parseFormData(formData);
+      const data = parseFormData(formData, this._offers, this._destinations);
 
       this._onDataChange(this, event, data);
     });
@@ -113,6 +145,17 @@ export default class EventController {
     document.removeEventListener(`keydown`, this._onEscKeyDown);
   }
 
+  shake() {
+    this._editFormComponent.getElement().classList.add(`shake`);
+    this._editFormComponent.getElement().classList.add(`box-error`);
+
+    setTimeout(() => {
+      this._editFormComponent.getElement().classList.remove(`shake`);
+      this._editFormComponent.getElement().classList.remove(`box-error`);
+      this._editFormComponent.enablingForm();
+    }, SHAKE_ANIMATION_TIMEOUT);
+  }
+
   setDefaultView() {
     if (this._mode !== Mode.DEFAULT) {
       this._replaceEditToEvent();
@@ -144,7 +187,6 @@ export default class EventController {
 
     if (isEscKey) {
       if (this._mode === Mode.ADDING) {
-        // this._addEventButton.disabled = false;
         this._onDataChange(this, EmptyEvent, null);
       }
       this._replaceEditToEvent();

@@ -1,5 +1,4 @@
 import AbstractSmartComponent from "./abstract-smart-component.js";
-import EventModel from "../models/event.js";
 import {capitalizeFirstLetter, createOfferType, getPrepositionFromType, getTime, getDate} from "../utils/common.js";
 import {EventTypes, EmptyDestination} from "../const.js";
 import {Mode} from "../controllers/event-controller.js";
@@ -199,7 +198,7 @@ export const createEditEventFormTemplate = (event, mode, options = {}) => {
   const detailsMarkup = createDetailsContainerMarkup(offersMarkup, descriptionMarkup);
 
   return (
-    `<form class="trip-events__item event  event--edit" action="#" method="post">
+    `<form class="event  event--edit" action="#" method="post">
       <header class="event__header">
       <div class="event__type-wrapper">
           <label class="event__type  event__type-btn" for="event-type-toggle-1">
@@ -292,8 +291,8 @@ export default class EditFormComponent extends AbstractSmartComponent {
     this._favoriteHandler = null;
     this._submitHandler = null;
 
-    this._savebutton = null;
-    this._deleteButton = null;
+    this.savebutton = null;
+    this.deleteButton = null;
 
     this._subscribeOnEvents();
   }
@@ -309,6 +308,81 @@ export default class EditFormComponent extends AbstractSmartComponent {
       availableOffers: this._availableOffers,
       Destinations: this._destinationsAll,
     });
+  }
+
+  applyFlatpicr() {
+    this.destroyFlatpicr();
+
+    const dateStartElement = this.getElement().querySelector(`#event-start-time-1`);
+    const dateEndElement = this.getElement().querySelector(`#event-end-time-1`);
+    let eventDateStart = this._event.dateStart;
+
+    this._flatpicrStart = flatpicr(dateStartElement, {
+      "altFormat": `d/m/y H:i`,
+      "altInput": true,
+      "allowInput": true,
+      "enableTime": true,
+      "time_24hr": true,
+      "defaultDate": this._event.dateStart || `today`,
+      onChange(selectedDates, dateStr) {
+        eventDateStart = dateStr;
+      }
+    });
+
+    this._flatpicrEnd = flatpicr(dateEndElement, {
+      "altFormat": `d/m/y H:i`,
+      "altInput": true,
+      "allowInput": true,
+      "enableTime": true,
+      "time_24hr": true,
+      "defaultDate": this._event.dateEnd || `today`,
+      onOpen() {
+        this.set(`minDate`, eventDateStart);
+      }
+    });
+  }
+
+  _disablingForm() {
+    const formElements = this.getElement()
+      .querySelectorAll(`.event__save-btn, .event__reset-btn, .event__rollup-btn`);
+    formElements.forEach((item) => item.setAttribute(`disabled`, `disabled`));
+  }
+
+  enablingForm() {
+    this._deleteButton.textContent = `Delete`;
+    this._savebutton.textContent = `Save`;
+    const formElements = this.getElement()
+      .querySelectorAll(`.event__save-btn, .event__reset-btn, .event__rollup-btn`);
+    formElements.forEach((item) => item.removeAttribute(`disabled`));
+  }
+
+  disablingSaveButton() {
+    this._savebutton.textContent = `Saving...`;
+    this._disablingForm();
+  }
+
+  disablingDeleteButton() {
+    this._deleteButton.textContent = `Deleting...`;
+    this._disablingForm();
+  }
+
+  destroyFlatpicr() {
+    if (this._flatpicrStart) {
+      this._flatpicrStart.destroy();
+      this._flatpicrStart = null;
+    }
+    if (this._flatpicrEnd) {
+      this._flatpicrEnd.destroy();
+      this._flatpicrEnd = null;
+    }
+  }
+
+  getData() {
+    const form = this.getElement();
+    const formData = new FormData(form);
+    formData.append(`event-id`, this._event.id);
+    
+    return formData;
   }
 
   rerender() {
@@ -340,40 +414,6 @@ export default class EditFormComponent extends AbstractSmartComponent {
   removeElement() {
     this.destroyFlatpicr();
     super.removeElement();
-  }
-
-  getData() {
-    const form = this.getElement();
-    return new FormData(form);
-  }
-
-  parseFormData(formData) {// вали в event-controller
-    const type = formData.get(`event-type`);
-    const destination = this._destinationsAll.find((item) => item.name === formData.get(`event-destination`));
-    const isFavorite = formData.get(`event-favorite`) === `on`;
-
-    const availableOffers = this._offersAll.find((item) => item.type === type);
-    const {offers} = availableOffers;
-    const selectedOffers = [];
-
-    for (const key of formData.keys()) {
-      if (key.startsWith(`event-offer`)) {
-        const currentOffer = key.substring(12);
-        const index = offers.findIndex((offer) => createOfferType(offer.title) === currentOffer);
-        selectedOffers.push(offers[index]);
-      }
-    }
-
-    return new EventModel({
-      "id": null,
-      "type": type,
-      "destination": destination,
-      "base_price": Number(formData.get(`event-price`)),
-      "date_from": new Date(formData.get(`event-start-time`)),
-      "date_to": new Date(formData.get(`event-end-time`)),
-      "offers": selectedOffers,
-      "is_favorite": isFavorite,
-    });
   }
 
   setCloseEditButtonClickHandler(handler) {
@@ -410,65 +450,6 @@ export default class EditFormComponent extends AbstractSmartComponent {
     this.getElement().addEventListener(`submit`, handler);
 
     this._submitHandler = handler;
-  }
-
-  disablingSaveButton() {
-    this._savebutton.textContent = `Saving...`;
-    this._disablingForm();
-  }
-
-  disablingDeleteButton() {
-    this._deleteButton.textContent = `Deleting...`;
-    this._disablingForm();
-  }
-
-  _disablingForm() {
-    const formElements = this.getElement()
-      .querySelectorAll(`.event__save-btn, .event__reset-btn, .event__rollup-btn`);
-    formElements.forEach((item) => item.setAttribute(`disabled`, `disabled`));
-  }
-
-  destroyFlatpicr() {
-    if (this._flatpicrStart) {
-      this._flatpicrStart.destroy();
-      this._flatpicrStart = null;
-    }
-    if (this._flatpicrEnd) {
-      this._flatpicrEnd.destroy();
-      this._flatpicrEnd = null;
-    }
-  }
-
-  applyFlatpicr() {
-    this.destroyFlatpicr();
-
-    const dateStartElement = this.getElement().querySelector(`#event-start-time-1`);
-    const dateEndElement = this.getElement().querySelector(`#event-end-time-1`);
-    let eventDateStart = this._event.dateStart;
-
-    this._flatpicrStart = flatpicr(dateStartElement, {
-      "altFormat": `d/m/y H:i`,
-      "altInput": true,
-      "allowInput": true,
-      "enableTime": true,
-      "time_24hr": true,
-      "defaultDate": this._event.dateStart || `today`,
-      onChange(selectedDates, dateStr) {
-        eventDateStart = dateStr;
-      }
-    });
-
-    this._flatpicrEnd = flatpicr(dateEndElement, {
-      "altFormat": `d/m/y H:i`,
-      "altInput": true,
-      "allowInput": true,
-      "enableTime": true,
-      "time_24hr": true,
-      "defaultDate": this._event.dateEnd || `today`,
-      onOpen() {
-        this.set(`minDate`, eventDateStart);
-      }
-    });
   }
 
   _subscribeOnEvents() {

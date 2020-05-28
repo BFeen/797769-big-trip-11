@@ -129,16 +129,11 @@ export default class TripController {
   }
 
   createEvent() {
-    if (this._creatingEvent) { // наверное, это услоие не нужно, вместо него блокируется кнопка просто.
-      return;
-    }
-
     this._addEventButton.disabled = true;
-    
+
     if (this._eventsModel.getActiveFilter() !== FilterType.EVERYTHING) {
       this._eventsModel.resetFilter();
     }
-    // this._onViewChange();
 
     const offers = this._eventsModel.getOffers();
     const destinations = this._eventsModel.getDestinations();
@@ -169,6 +164,7 @@ export default class TripController {
   }
 
   _onDataChange(eventController, oldData, newData, isChangeView = true) {
+    console.log(`DataChange`)
     this._addEventButton.disabled = false;
     if (oldData === EmptyEvent) { // создание
       this._creatingEvent = null;
@@ -191,19 +187,24 @@ export default class TripController {
     
             this._eventControllers = [].concat(eventController, this._eventControllers); // кажется, эта строчка бессмысленна
             this._updateEvents(); // ??? апдейт сразу удаляет только что созданный контроллер
+          })
+          .catch(() => {
+            eventController.shake();
           });
-
       }
     } else if (newData === null) { // удаление
       this._api.deleteEvent(oldData.id)
         .then(() => {
           this._eventsModel.removeEvent(oldData.id);
           this._updateEvents();
-    
+
           if (this._eventControllers.length === 0) {
             this.render();
           }
         })
+        .catch(() => {
+          eventController.shake();
+        });
     } else { // Обновление
       this._api.updateEvent(oldData.id, newData)
         .then((EventModel) => {
@@ -214,9 +215,13 @@ export default class TripController {
               eventController.render(EventModel, EventControllerMode.DEFAULT);
               this._updateEvents();
             } else {
+              eventModel.isFavorite = !eventModel.isFavorite
               eventController.render(EventModel, EventControllerMode.EDIT);
             }
           }
+        })
+        .catch(() => {
+          eventController.shake();
         });
     }
   }
