@@ -1,5 +1,6 @@
 import EditFormComponent from "../components/edit-event";
 import EventModel from "../models/event.js";
+import {EmptyDestination} from "../const.js";
 import TripEventComponent from "../components/trip-event";
 import {render, replace, remove, RenderPosition} from "../utils/render";
 
@@ -12,11 +13,11 @@ export const Mode = {
 
 export const EmptyEvent = {
   type: `flight`,
-  destination: ``,
+  destination: EmptyDestination,
   price: 0,
   totalPrice: 0,
-  dateStart: Date.now(),
-  dateEnd: Date.now(),
+  dateStart: new Date(),
+  dateEnd: new Date(),
   selectedOffers: [],
   isFavorite: false,
 };
@@ -71,6 +72,7 @@ export default class EventController {
     this._editFormComponent.setDeleteButtonClickHandler(() => {
       if (this._mode === Mode.ADDING) {
         remove(this._editFormComponent);
+        this._onDataChange(this, EmptyEvent, null);
       } else {
         this._editFormComponent.disablingDeleteButton();
         this._onDataChange(this, event, null);
@@ -98,7 +100,7 @@ export default class EventController {
           remove(oldEventComponent);
           remove(oldEventEditComponent);
         }
-
+        this._editFormComponent.applyFlatpicr();
         document.addEventListener(`keydown`, this._onEscKeyDown);
         render(this._container.firstChild, this._editFormComponent, RenderPosition.AFTER_END);
         break;
@@ -142,6 +144,7 @@ export default class EventController {
 
     if (isEscKey) {
       if (this._mode === Mode.ADDING) {
+        // this._addEventButton.disabled = false;
         this._onDataChange(this, EmptyEvent, null);
       }
       this._replaceEditToEvent();

@@ -41,6 +41,10 @@ export default class EventsModel {
     return this._destinations;
   }
 
+  getActiveFilter() {
+    return this._activeFilter;
+  }
+
   removeEvent(id) {
     const index = this._events.findIndex((item) => item.id === id);
 

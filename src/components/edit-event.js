@@ -347,7 +347,7 @@ export default class EditFormComponent extends AbstractSmartComponent {
     return new FormData(form);
   }
 
-  parseFormData(formData) {
+  parseFormData(formData) {// вали в event-controller
     const type = formData.get(`event-type`);
     const destination = this._destinationsAll.find((item) => item.name === formData.get(`event-destination`));
     const isFavorite = formData.get(`event-favorite`) === `on`;
@@ -365,7 +365,7 @@ export default class EditFormComponent extends AbstractSmartComponent {
     }
 
     return new EventModel({
-      "id": this._event.id,
+      "id": null,
       "type": type,
       "destination": destination,
       "base_price": Number(formData.get(`event-price`)),

@@ -1,4 +1,5 @@
 import DayInfoComponent from "../components/day-info";
+import {FilterType} from "../const.js";
 import EventController, {Mode as EventControllerMode, EmptyEvent} from "./event-controller";
 import NoEventsComponent from "../components/no-events.js";
 import TripDaysComponent from "../components/trip-days.js";
@@ -128,13 +129,16 @@ export default class TripController {
   }
 
   createEvent() {
-    if (this._creatingEvent) {
+    if (this._creatingEvent) { // наверное, это услоие не нужно, вместо него блокируется кнопка просто.
       return;
     }
-    this._addEventButton.disabled = !this._creatingEvent;
 
-    this._eventsModel.resetFilter();
-    this._onViewChange();
+    this._addEventButton.disabled = true;
+    
+    if (this._eventsModel.getActiveFilter() !== FilterType.EVERYTHING) {
+      this._eventsModel.resetFilter();
+    }
+    // this._onViewChange();
 
     const offers = this._eventsModel.getOffers();
     const destinations = this._eventsModel.getDestinations();
@@ -165,33 +169,41 @@ export default class TripController {
   }
 
   _onDataChange(eventController, oldData, newData, isChangeView = true) {
+    this._addEventButton.disabled = false;
     if (oldData === EmptyEvent) { // создание
       this._creatingEvent = null;
-      this._addEventButton.disabled = false;
 
       if (newData === null) { // закрытие создания без сохранения
         eventController.destroy();
-        this._updateEvents();
+        // this._updateEvents(); // кажется, не нужен апдейт
+        
       } else { // сохранение нового маршрута
         if (this._eventControllers.length === 0) {
           remove(this._noEventsComponent);
         }
 
-        this._eventsModel.addEvent(newData);
-        eventController.render(newData, EventControllerMode.DEFAULT); // Это переданный контроллер. Кажется эта тоже бессмысленна
-        this.render();
+        this._api.createEvent(newData)
+          .then((eventModel) => {
+            this._eventsModel.addEvent(eventModel);
+            eventController.render(eventModel, EventControllerMode.DEFAULT);
+            
+            this.render(); // зачем?
+    
+            this._eventControllers = [].concat(eventController, this._eventControllers); // кажется, эта строчка бессмысленна
+            this._updateEvents(); // ??? апдейт сразу удаляет только что созданный контроллер
+          });
 
-        this._eventControllers = [].concat(eventController, this._eventControllers); // кажется, эта строчка бессмысленна
-        this._updateEvents(); // ??? апдейт сразу удаляет только что созданный контроллер
       }
     } else if (newData === null) { // удаление
-      this._eventsModel.removeEvent(oldData.id);
-      this._updateEvents();
-
-      if (this._eventControllers.length === 0) {
-        this.render();
-        return;
-      }
+      this._api.deleteEvent(oldData.id)
+        .then(() => {
+          this._eventsModel.removeEvent(oldData.id);
+          this._updateEvents();
+    
+          if (this._eventControllers.length === 0) {
+            this.render();
+          }
+        })
     } else { // Обновление
       this._api.updateEvent(oldData.id, newData)
         .then((EventModel) => {
