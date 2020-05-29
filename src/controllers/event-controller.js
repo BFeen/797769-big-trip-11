@@ -87,7 +87,7 @@ export default class EventController {
 
     this._editFormComponent.setFavoriteButtonClickHandler(() => {
       const newEvent = EventModel.clone(event);
-      // newEvent.isFavorite = !newEvent.isFavorite;
+      newEvent.isFavorite = !newEvent.isFavorite;
 
       this._onDataChange(this, event, newEvent, false);
     });
@@ -123,10 +123,10 @@ export default class EventController {
         }
         break;
       case Mode.EDIT:
-        this._replaceEventToEdit();
-        replace(oldEventComponent, this._tripEventComponent);
-        replace(oldEventEditComponent, this._editFormComponent);
-        break;
+        // this._replaceEventToEdit();
+        // replace(oldEventComponent, this._tripEventComponent);
+        // replace(oldEventEditComponent, this._editFormComponent);
+        // break;
       case Mode.ADDING:
         if (oldEventComponent && oldEventEditComponent) {
           remove(oldEventComponent);
@@ -163,12 +163,15 @@ export default class EventController {
   }
 
   _replaceEventToEdit() {
+    this._onViewChange();
+
     if (document.contains(this._tripEventComponent.getElement())) {
       replace(this._tripEventComponent, this._editFormComponent);
     }
-    this._onViewChange();
+
     document.addEventListener(`keydown`, this._onEscKeyDown);
     this._editFormComponent.applyFlatpicr();
+    this._mode = Mode.EDIT;
   }
 
   _replaceEditToEvent() {
@@ -177,6 +180,7 @@ export default class EventController {
     if (document.contains(this._editFormComponent.getElement())) {
       replace(this._editFormComponent, this._tripEventComponent);
     }
+    
     this._editFormComponent.destroyFlatpicr();
     document.removeEventListener(`keydown`, this._onEscKeyDown);
     this._mode = Mode.DEFAULT;

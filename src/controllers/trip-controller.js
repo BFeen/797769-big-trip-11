@@ -79,7 +79,7 @@ export default class TripController {
     this._sortType = SortType.EVENT;
     this._eventControllers = [];
     this._creatingEvent = null;
-    this._noEventsComponent = new NoEventsComponent();
+    this._noEventsComponent = null;
     this._sortingComponent = new SortingComponent();
     this._tripDaysComponent = new TripDaysComponent();
     this._addEventButton = addEventButtonComponent.getElement();
@@ -104,19 +104,20 @@ export default class TripController {
   render() {
     const container = this._container.getElement();
     const events = getSortedEvents(this._eventsModel.getEvents(), this._sortType);
-    const offers = this._eventsModel.getOffers();
-    const destinations = this._eventsModel.getDestinations();
 
     if (events.length === 0) {
+      this._noEventsComponent = new NoEventsComponent();
       render(container, this._noEventsComponent, RenderPosition.BEFORE_END);
       return;
+    } else if (this._noEventsComponent) {
+      remove(this._noEventsComponent);
     }
-
+    
     render(container, this._sortingComponent, RenderPosition.AFTER_BEGIN);
     render(container, this._tripDaysComponent, RenderPosition.BEFORE_END);
 
-    this._removeEvents();
-    this._tripDaysComponent.getElement().innerHTML = ``;
+    const offers = this._eventsModel.getOffers();
+    const destinations = this._eventsModel.getDestinations();
     const dayElement = this._sortingComponent.getElement().querySelector(`.trip-sort__item--day`);
 
     if (this._sortType === SortType.EVENT) {
@@ -137,6 +138,8 @@ export default class TripController {
 
     const offers = this._eventsModel.getOffers();
     const destinations = this._eventsModel.getDestinations();
+
+    this._onViewChange();
 
     const eventsListElement = this._container.getElement();
     this._creatingEvent = new EventController(eventsListElement, offers, destinations, this._onDataChange, this._onViewChange);
@@ -171,22 +174,15 @@ export default class TripController {
 
       if (newData === null) { // закрытие создания без сохранения
         eventController.destroy();
-        // this._updateEvents(); // кажется, не нужен апдейт
         
       } else { // сохранение нового маршрута
-        if (this._eventControllers.length === 0) {
-          remove(this._noEventsComponent);
-        }
 
         this._api.createEvent(newData)
           .then((eventModel) => {
             this._eventsModel.addEvent(eventModel);
             eventController.render(eventModel, EventControllerMode.DEFAULT);
-            
-            this.render(); // зачем?
     
-            this._eventControllers = [].concat(eventController, this._eventControllers); // кажется, эта строчка бессмысленна
-            this._updateEvents(); // ??? апдейт сразу удаляет только что созданный контроллер
+            this._updateEvents();
           })
           .catch(() => {
             eventController.shake();
@@ -214,9 +210,10 @@ export default class TripController {
             if (isChangeView) {
               eventController.render(EventModel, EventControllerMode.DEFAULT);
               this._updateEvents();
-            } else {
-              eventModel.isFavorite = !eventModel.isFavorite
-              eventController.render(EventModel, EventControllerMode.EDIT);
+            } 
+            else {
+              // eventController.render(EventModel, EventControllerMode.DEFAULT); // костыль, который копит флатпикерсы
+              // eventController._replaceEventToEdit();
             }
           }
         })
@@ -236,10 +233,17 @@ export default class TripController {
   }
 
   _onViewChange() {
+    if (this._creatingEvent) {
+      this._creatingEvent.destroy();
+      this._creatingEvent = null;
+      this._addEventButton.disabled = false;
+    }
     this._eventControllers.forEach((item) => item.setDefaultView());
   }
 
   _onSortTypeChange(sortType) {
+    this._removeEvents();
+    this._tripDaysComponent.getElement().innerHTML = ``;
     this.setSortType(sortType);
     this.render();
   }
@@ -247,6 +251,6 @@ export default class TripController {
   _updateEvents() {
     this._tripDaysComponent.getElement().innerHTML = ``;
     this._removeEvents();
-    this._renderEventsByDays(this._eventsModel.getEvents(), this._eventsModel.getOffers(), this._eventsModel.getDestinations());
+    this.render()
   }
 }
