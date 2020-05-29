@@ -194,7 +194,7 @@ export default class TripController {
         .catch(() => {
           eventController.shake();
         });
-    } else { // Обновление
+    } else {
       this._api.updateEvent(oldData.id, newData)
         .then((EventModel) => {
           const isSuccess = this._eventsModel.updateEvent(oldData.id, EventModel);
