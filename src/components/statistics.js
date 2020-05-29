@@ -26,8 +26,8 @@ const getUniqueTypes = (events) => {
 };
 
 const getUniqueTransferTypes = (events) => {
-  let uniqueList = new Set();
-  for (let event of events) {
+  const uniqueList = new Set();
+  for (const event of events) {
     if (EventTypes.TRANSFER.includes(event.type)) {
       uniqueList.add(event.type.toUpperCase());
     }
@@ -47,8 +47,8 @@ const countPrices = (events, eventTypes) => {
 };
 
 const countTransportTypes = (events, transferTypes) => {
-  let counts = [];
-  for (let item of transferTypes) {
+  const counts = [];
+  for (const item of transferTypes) {
     counts.push(events.filter((event) => event.type.toUpperCase() === item).length);
   }
   return counts;

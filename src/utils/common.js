@@ -38,7 +38,7 @@ export const getFirstWord = (string) => {
 
 export const createTotalPrice = (offers) => {
   let sum = 0;
-  for (let offer of offers) {
+  for (const offer of offers) {
     sum += offer.price;
   }
   return sum;
