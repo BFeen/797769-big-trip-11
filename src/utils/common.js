@@ -4,9 +4,9 @@ import moment from "moment";
 
 const formatSimpleNum = (num) => {
   if (num === 0) {
-    return;
+    return ``;
   }
-  return String(num).padStart(2,0);
+  return String(num).padStart(2, 0);
 };
 
 export const capitalizeFirstLetter = (string) => {
