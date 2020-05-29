@@ -187,6 +187,7 @@ export const createEditEventFormTemplate = (event, mode, options = {}) => {
 
   const typeSelectMarkup = createTypeSelectMarkup(type);
   const destinationSelectMarkup = createDestinationSelectMarkup(Destinations);
+
   const rollupButtonMarkup = createRollupButtonMarkup(mode);
   const deleteButtonMarkup = createDeleteButtonMarkup(mode);
   const favoriteButtonMarkup = createFavoriteButtonMarkup(isFavorite, mode);
@@ -194,11 +195,12 @@ export const createEditEventFormTemplate = (event, mode, options = {}) => {
 
   const offersMarkup = createOffersMarkup(availableOffers, selectedOffers);
   const descriptionMarkup = createDescriptionMarkup(eventDestination);
-
   const detailsMarkup = createDetailsContainerMarkup(offersMarkup, descriptionMarkup);
 
+  const itemClass = mode === Mode.ADDING ? `trip-events__item` : ``;
+
   return (
-    `<form class="trip-events__item event  event--edit" action="#" method="post">
+    `<form class="event ${itemClass} event--edit" action="#" method="post">
       <header class="event__header">
       <div class="event__type-wrapper">
           <label class="event__type  event__type-btn" for="event-type-toggle-1">
@@ -349,7 +351,9 @@ export default class EditFormComponent extends AbstractSmartComponent {
   }
 
   enablingForm() {
-    this._deleteButton.textContent = `Delete`;
+    const buttonText = this._mode === Mode.ADDING ? `Cancel` : `Delete`;
+
+    this._deleteButton.textContent = buttonText;
     this._savebutton.textContent = `Save`;
     const formElements = this.getElement()
       .querySelectorAll(`.event__save-btn, .event__reset-btn, .event__rollup-btn`);
@@ -381,7 +385,7 @@ export default class EditFormComponent extends AbstractSmartComponent {
     const form = this.getElement();
     const formData = new FormData(form);
     formData.append(`event-id`, this._event.id);
-    
+
     return formData;
   }
 

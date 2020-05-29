@@ -112,7 +112,7 @@ export default class TripController {
     } else if (this._noEventsComponent) {
       remove(this._noEventsComponent);
     }
-    
+
     render(container, this._sortingComponent, RenderPosition.AFTER_BEGIN);
     render(container, this._tripDaysComponent, RenderPosition.BEFORE_END);
 
@@ -167,36 +167,29 @@ export default class TripController {
   }
 
   _onDataChange(eventController, oldData, newData, isChangeView = true) {
-    console.log(`DataChange`)
     this._addEventButton.disabled = false;
-    if (oldData === EmptyEvent) { // создание
+    if (oldData === EmptyEvent) {
       this._creatingEvent = null;
 
-      if (newData === null) { // закрытие создания без сохранения
+      if (newData === null) {
         eventController.destroy();
-        
-      } else { // сохранение нового маршрута
 
+      } else {
         this._api.createEvent(newData)
           .then((eventModel) => {
             this._eventsModel.addEvent(eventModel);
-            eventController.render(eventModel, EventControllerMode.DEFAULT);
-    
+            this._eventControllers = [].concat(eventController, this._eventControllers);
             this._updateEvents();
           })
           .catch(() => {
             eventController.shake();
           });
       }
-    } else if (newData === null) { // удаление
+    } else if (newData === null) {
       this._api.deleteEvent(oldData.id)
         .then(() => {
           this._eventsModel.removeEvent(oldData.id);
           this._updateEvents();
-
-          if (this._eventControllers.length === 0) {
-            this.render();
-          }
         })
         .catch(() => {
           eventController.shake();
@@ -210,10 +203,8 @@ export default class TripController {
             if (isChangeView) {
               eventController.render(EventModel, EventControllerMode.DEFAULT);
               this._updateEvents();
-            } 
-            else {
-              // eventController.render(EventModel, EventControllerMode.DEFAULT); // костыль, который копит флатпикерсы
-              // eventController._replaceEventToEdit();
+            } else {
+              eventController.render(EventModel, EventControllerMode.EDIT);
             }
           }
         })
@@ -251,6 +242,6 @@ export default class TripController {
   _updateEvents() {
     this._tripDaysComponent.getElement().innerHTML = ``;
     this._removeEvents();
-    this.render()
+    this.render();
   }
 }
