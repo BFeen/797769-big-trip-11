@@ -2,6 +2,13 @@ import {EventTypes} from "../const.js";
 import moment from "moment";
 
 
+const formatSimpleNum = (num) => {
+  if (num === 0) {
+    return;
+  }
+  return String(num).padStart(2,0);
+}
+
 export const capitalizeFirstLetter = (string) => {
   return string.charAt(0).toUpperCase() + string.slice(1);
 };
@@ -47,9 +54,9 @@ export const createTotalPrice = (offers) => {
 export const countDurationTime = (startDate, endDate) => {
   const difference = moment.duration(endDate - startDate);
 
-  const days = difference.days();
-  const hours = difference.hours();
-  const minutes = difference.minutes();
+  const days = formatSimpleNum(difference.days());
+  const hours = formatSimpleNum(difference.hours());
+  const minutes = formatSimpleNum(difference.minutes());
 
   return `${days ? `${days}D ` : ``}${hours ? `${hours}H ` : ``}${minutes ? `${minutes}M` : ``}`;
 };
