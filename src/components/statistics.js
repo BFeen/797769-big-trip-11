@@ -7,10 +7,10 @@ import moment from "moment";
 
 const BAR_HEIGHT = 55;
 
-const Postfixes = {
-  "MONEY": `€`,
-  "TRANSPORT": `x`,
-  "TIME_SPEND": `H`,
+const ChartTypes = {
+  MONEY: { name: `MONEY`, postfix: `€` },
+  TRANSPORT: { name: `TRANSPORT`, postfix: `x`},
+  TIME_SPEND: { name: `TIME SPEND`, postfix: `H` },
 };
 
 const getUniqueTypes = (events) => {
@@ -64,26 +64,26 @@ const countDurationHours = (events, uniqueEventTypes) => {
 
 const generateData = (chartType, events) => {
   switch (chartType) {
-    case `MONEY`:
+    case ChartTypes.MONEY.name:
       const uniqueTypes = getUniqueTypes(events);
       return {
         labels: uniqueTypes,
         counts: countPrices(events, uniqueTypes),
-        postfix: Postfixes[chartType],
+        postfix: ChartTypes.MONEY.postfix,
       };
-    case `TRANSPORT`:
+    case ChartTypes.TRANSPORT.name:
       const uniqueTransportTypes = getUniqueTransferTypes(events);
       return {
         labels: uniqueTransportTypes,
         counts: countTransportTypes(events, uniqueTransportTypes),
-        postfix: Postfixes[chartType],
+        postfix: ChartTypes.TRANSPORT.postfix,
       };
-    case `TIME_SPEND`:
+    case ChartTypes.TIME_SPEND.name:
       const uniqueEventTypes = getUniqueTypes(events);
       return {
         labels: uniqueEventTypes,
         counts: countDurationHours(events, uniqueEventTypes),
-        postfix: Postfixes[chartType],
+        postfix: ChartTypes.TIME_SPEND.postfix,
       };
   }
   return false;
