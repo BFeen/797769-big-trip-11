@@ -163,12 +163,12 @@ export default class EventController {
   }
 
   shake() {
-    this._editFormComponent.getElement().classList.add(`shake`);
-    this._editFormComponent.getElement().classList.add(`box-error`);
+    this._editFormComponent.toggleClass(`shake`);
+    this._editFormComponent.toggleClass(`box-error`);
 
     setTimeout(() => {
-      this._editFormComponent.getElement().classList.remove(`shake`);
-      this._editFormComponent.getElement().classList.remove(`box-error`);
+      this._editFormComponent.toggleClass(`shake`);
+      this._editFormComponent.toggleClass(`box-error`);
       this._editFormComponent.enablingForm();
     }, SHAKE_ANIMATION_TIMEOUT);
   }

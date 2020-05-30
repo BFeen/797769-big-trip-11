@@ -347,6 +347,10 @@ export default class EditFormComponent extends AbstractSmartComponent {
     });
   }
 
+  toggleClass(className) {
+    this.getElement().classList.toggle(`${className}`);
+  }
+
   enablingForm() {
     const buttonText = this._mode === Mode.ADDING ? `Cancel` : `Delete`;
 
