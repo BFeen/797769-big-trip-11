@@ -1,5 +1,4 @@
 import AbstractSmartComponent from "./abstract-smart-component.js";
-import {getPrepositionFromType} from "../utils/common.js";
 import {EventTypes} from "../const.js";
 import Chart from "chart.js";
 import ChartDataLabels from 'chartjs-plugin-datalabels';
@@ -12,13 +11,6 @@ const Postfixes = {
   "MONEY": `€`,
   "TRANSPORT": `x`,
   "TIME_SPEND": `H`,
-};
-
-const getTypesFromEvents = (events) => {
-  return events.map((event) => {
-    const preposition = getPrepositionFromType(event.type);
-    return `${event.type} ${preposition} ${event.destination.name}`.toUpperCase();
-  });
 };
 
 const getUniqueTypes = (events) => {
@@ -41,7 +33,7 @@ const countPrices = (events, eventTypes) => {
       return events
         .filter((event) => event.type.toUpperCase() === eventType)
         .reduce((acc, item) => {
-          return acc + item.totalPrice;
+          return acc + item.price;
         }, 0);
     });
 };
@@ -54,10 +46,20 @@ const countTransportTypes = (events, transferTypes) => {
   return counts;
 };
 
-const countDurationHours = (events) => {
-  return events.map((event) => {
-    return Math.floor(moment.duration(event.dateEnd - event.dateStart) / (1000 * 60 * 60));
-  });
+const countDurationHours = (events, uniqueEventTypes) => {
+  let durationsList = [];
+
+  for (const eventType of uniqueEventTypes) {
+    durationsList.push(events
+        .filter((event) => event.type === eventType.toLowerCase())
+        .reduce((acc, item) => {
+          const duration = Math.floor(moment.duration(item.dateEnd - item.dateStart) / (1000 * 60 * 60));
+          return acc + duration;
+        }, 0)
+    );
+  }
+
+  return durationsList;
 };
 
 const generateData = (chartType, events) => {
@@ -77,7 +79,7 @@ const generateData = (chartType, events) => {
         postfix: Postfixes[chartType],
       };
     case `TIME_SPEND`:
-      const uniqueEventTypes = getTypesFromEvents(events);
+      const uniqueEventTypes = getUniqueTypes(events);
       return {
         labels: uniqueEventTypes,
         counts: countDurationHours(events, uniqueEventTypes),
@@ -226,7 +228,7 @@ export default class StatisticsComponent extends AbstractSmartComponent {
     this._resetCharts();
     moneyCtx.height = BAR_HEIGHT * getUniqueTypes(events).length + 1;
     transportCtx.height = BAR_HEIGHT * getUniqueTransferTypes(events).length + 1;
-    timeSpendCtx.height = BAR_HEIGHT * getTypesFromEvents(events).length + 1;
+    timeSpendCtx.height = BAR_HEIGHT * getUniqueTypes(events).length + 1;
 
     this._moneyChart = renderChart(moneyCtx, `MONEY`, events);
     this._transportChart = renderChart(transportCtx, `TRANSPORT`, events);

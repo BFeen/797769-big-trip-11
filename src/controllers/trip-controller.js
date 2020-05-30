@@ -1,5 +1,4 @@
 import DayInfoComponent from "../components/day-info";
-import {FilterType} from "../const.js";
 import EventController, {Mode as EventControllerMode, EmptyEvent} from "./event-controller";
 import NoEventsComponent from "../components/no-events.js";
 import TripDaysComponent from "../components/trip-days.js";
