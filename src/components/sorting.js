@@ -46,6 +46,14 @@ export default class SortingComponent extends AbstractComponent {
     return this._currentSortType;
   }
 
+  setDayContent() {
+    this.getElement().querySelector(`.trip-sort__item--day`).textContent = `Day`;
+  }
+
+  removeDayContent() {
+    this.getElement().querySelector(`.trip-sort__item--day`).textContent = ``;
+  }
+
   setDefaultType() {
     this.getElement().querySelector(`#sort-event`).click();
     this._currentSortType = SortType.EVENT;
