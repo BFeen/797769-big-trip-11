@@ -10,7 +10,7 @@ import TripEventsComponent from "./components/trip-events.js";
 import TripInfoComponent from "./components/trip-info.js";
 import {render, RenderPosition, remove} from "./utils/render.js";
 
-const AUTHORIZATION = `Basic JDKSL3sd!au-hjs=sEIQW`;
+const AUTHORIZATION = `Basic JDKSL3sd!au-hjs=sEIQW777`;
 const END_POINT = `https://11.ecmascript.pages.academy/big-trip/`;
 
 const api = new API(AUTHORIZATION, END_POINT);
@@ -28,6 +28,7 @@ const eventsModel = new EventsModel();
 const tripController = new TripController(tripEventsComponent, eventsModel, addEventButtonComponent, api);
 const filterController = new FilterController(tripControls, eventsModel);
 const statisticsComponent = new StatisticsComponent(eventsModel);
+const tripInfoComponent = new TripInfoComponent();
 const noEventsComponent = new NoEventsComponent();
 
 render(tripControls, menuComponent, RenderPosition.AFTER_BEGIN);
@@ -37,7 +38,7 @@ render(mainContainer, tripEventsComponent, RenderPosition.BEFORE_END);
 render(mainContainer, statisticsComponent, RenderPosition.BEFORE_END);
 statisticsComponent.hide();
 
-render(tripMain, new TripInfoComponent(0), RenderPosition.AFTER_BEGIN);
+render(tripMain, tripInfoComponent, RenderPosition.AFTER_BEGIN);
 render(mainContainer, noEventsComponent, RenderPosition.BEFORE_END);
 noEventsComponent.setLoadingView();
 
@@ -67,6 +68,7 @@ api.getData()
   })
   .then(() => {
     remove(noEventsComponent);
+    tripInfoComponent.setEvents(eventsModel.getEvents());
     tripController.render();
   })
   .catch((error) => {

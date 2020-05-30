@@ -18,13 +18,17 @@ const createTripInfoTemplate = (price) => {
 };
 
 export default class TripInfoComponent extends AbstractComponent {
-  constructor(price) {
+  constructor() {
     super();
 
-    this._price = price;
+    this._events = null;
   }
 
   getTemplate() {
     return createTripInfoTemplate(this._price);
+  }
+
+  setEvents(events) {
+    this._events = events;
   }
 }
