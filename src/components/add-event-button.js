@@ -8,11 +8,6 @@ const createAddEventButtonTemplate = () => {
 };
 
 export default class AddEventButton extends AbstractComponent {
-  constructor() {
-    super();
-
-    this._disable = false;
-  }
   getTemplate() {
     return createAddEventButtonTemplate();
   }
@@ -21,7 +16,11 @@ export default class AddEventButton extends AbstractComponent {
     this.getElement().addEventListener(`click`, handler);
   }
 
-  changeButtonStatus() {
-    this.getElement().disabled = !this._disable;
+  disableButton() {
+    this.getElement().disabled = true;
+  }
+
+  enableButton() {
+    this.getElement().disabled = false;
   }
 }

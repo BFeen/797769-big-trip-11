@@ -275,7 +275,7 @@ export default class EditFormComponent extends AbstractSmartComponent {
   constructor(event, offers, destinations, eventControllerMode) {
     super();
 
-    this._event = event;
+    this._event = Object.assign({}, event);
     this._mode = eventControllerMode;
     this._offersAll = offers.slice();
     this._destinationsAll = destinations.slice();
@@ -285,6 +285,9 @@ export default class EditFormComponent extends AbstractSmartComponent {
     this._price = event.price;
     this._availableOffers = this._offersAll.find((item) => item.type === this._eventType);
     this._selectedOffers = event.selectedOffers.slice();
+    this._dateStart = event.dateStart;
+    this._dateEnd = event.dateEnd;
+
     this._flatpicrStart = null;
     this._flatpicrEnd = null;
 
@@ -317,7 +320,7 @@ export default class EditFormComponent extends AbstractSmartComponent {
 
     const dateStartElement = this.getElement().querySelector(`#event-start-time-1`);
     const dateEndElement = this.getElement().querySelector(`#event-end-time-1`);
-    let eventDateStart = this._event.dateStart;
+    let eventDateStart = this._dateStart;
 
     this._flatpicrStart = flatpicr(dateStartElement, {
       "altFormat": `d/m/y H:i`,
@@ -325,7 +328,7 @@ export default class EditFormComponent extends AbstractSmartComponent {
       "allowInput": true,
       "enableTime": true,
       "time_24hr": true,
-      "defaultDate": this._event.dateStart || `today`,
+      "defaultDate": this._dateStart || `today`,
       onChange(selectedDates, dateStr) {
         eventDateStart = dateStr;
       }
@@ -337,17 +340,11 @@ export default class EditFormComponent extends AbstractSmartComponent {
       "allowInput": true,
       "enableTime": true,
       "time_24hr": true,
-      "defaultDate": this._event.dateEnd || `today`,
+      "defaultDate": this._dateEnd || `today`,
       onOpen() {
         this.set(`minDate`, eventDateStart);
       }
     });
-  }
-
-  _disablingForm() {
-    const formElements = this.getElement()
-      .querySelectorAll(`.event__save-btn, .event__reset-btn, .event__rollup-btn`);
-    formElements.forEach((item) => item.setAttribute(`disabled`, `disabled`));
   }
 
   enablingForm() {
@@ -402,6 +399,8 @@ export default class EditFormComponent extends AbstractSmartComponent {
     this._price = event.price;
     this._selectedOffers = event.selectedOffers.slice();
     this._availableOffers = this._offersAll.find((item) => item.type === this._eventType);
+    this._dateStart = event.dateStart;
+    this._dateEnd = event.dateEnd;
 
     this.destroyFlatpicr();
     this.rerender();
@@ -456,6 +455,12 @@ export default class EditFormComponent extends AbstractSmartComponent {
     this._submitHandler = handler;
   }
 
+  _disablingForm() {
+    const formElements = this.getElement()
+      .querySelectorAll(`.event__save-btn, .event__reset-btn, .event__rollup-btn`);
+    formElements.forEach((item) => item.setAttribute(`disabled`, `disabled`));
+  }
+
   _subscribeOnEvents() {
     const checkSaveButtonDisabling = () => {
       element.querySelector(`.event__save-btn`)
@@ -487,6 +492,16 @@ export default class EditFormComponent extends AbstractSmartComponent {
       }
 
       this.rerender();
+    });
+
+    const dateStartElement = element.querySelector(`#event-start-time-1`);
+    dateStartElement.addEventListener(`change`, () => {
+      this._dateStart = new Date(dateStartElement.value);
+    });
+
+    const dateEndElement = element.querySelector(`#event-end-time-1`);
+    dateEndElement.addEventListener(`change`, () => {
+      this._dateEnd = new Date(dateEndElement.value);
     });
 
     const priceElement = element.querySelector(`#event-price-1`);

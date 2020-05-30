@@ -81,7 +81,7 @@ export default class TripController {
     this._noEventsComponent = null;
     this._sortingComponent = new SortingComponent();
     this._tripDaysComponent = new TripDaysComponent();
-    this._addEventButton = addEventButtonComponent.getElement();
+    this._addEventButton = addEventButtonComponent;
 
     this._onDataChange = this._onDataChange.bind(this);
     this._onSortTypeChange = this._onSortTypeChange.bind(this);
@@ -94,10 +94,12 @@ export default class TripController {
 
   hide() {
     this._container.hide();
+    this._addEventButton.disableButton();
   }
 
   show() {
     this._container.show();
+    this._addEventButton.enableButton();
   }
 
   render() {
