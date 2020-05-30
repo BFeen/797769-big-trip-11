@@ -17,8 +17,8 @@ const api = new API(AUTHORIZATION, END_POINT);
 
 const tripMain = document.querySelector(`.trip-main`);
 const tripControls = tripMain.querySelector(`.trip-controls`);
-const main = document.querySelector(`.page-main`);
-const mainContainer = main.querySelector(`.page-body__container`);
+const pageMain = document.querySelector(`.page-main`);
+const pageBodyContainer = pageMain.querySelector(`.page-body__container`);
 
 const menuComponent = new MenuComponent();
 const addEventButtonComponent = new AddEventButtonComponent();
@@ -33,12 +33,12 @@ const noEventsComponent = new NoEventsComponent();
 render(tripControls, menuComponent, RenderPosition.AFTER_BEGIN);
 filterController.render();
 render(tripMain, addEventButtonComponent, RenderPosition.BEFORE_END);
-render(mainContainer, tripEventsComponent, RenderPosition.BEFORE_END);
-render(mainContainer, statisticsComponent, RenderPosition.BEFORE_END);
+render(pageBodyContainer, tripEventsComponent, RenderPosition.BEFORE_END);
+render(pageBodyContainer, statisticsComponent, RenderPosition.BEFORE_END);
 statisticsComponent.hide();
 
 render(tripMain, new TripInfoComponent(0), RenderPosition.AFTER_BEGIN);
-render(mainContainer, noEventsComponent, RenderPosition.BEFORE_END);
+render(pageBodyContainer, noEventsComponent, RenderPosition.BEFORE_END);
 noEventsComponent.setLoadingView();
 
 menuComponent.setOnChange((menuItem) => {
