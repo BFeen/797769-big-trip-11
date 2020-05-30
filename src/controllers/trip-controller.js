@@ -24,7 +24,7 @@ const getRenderedDay = (tripDaysComponent, day, counter) => {
   const dayInfoComponent = new DayInfoComponent(day, counter);
   render(tripDaysComponent.getElement(), dayInfoComponent, RenderPosition.BEFORE_END);
 
-  return dayInfoComponent.getElement().querySelector(`.trip-events__list`);
+  return dayInfoComponent.getEventsListContainer();
 };
 
 const getSortedEvents = (events, sortType) => {
@@ -131,14 +131,11 @@ export default class TripController {
   createEvent() {
     this._addEventButton.disabled = true;
 
-    if (this._eventsModel.getActiveFilter() !== FilterType.EVERYTHING) {
-      this._eventsModel.resetFilter();
-    }
+    this._eventsModel.resetFilter();
+    this._onViewChange();
 
     const offers = this._eventsModel.getOffers();
     const destinations = this._eventsModel.getDestinations();
-
-    this._onViewChange();
 
     const eventsListElement = this._container.getElement();
     this._creatingEvent = new EventController(eventsListElement, offers, destinations, this._onDataChange, this._onViewChange);

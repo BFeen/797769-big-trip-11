@@ -24,4 +24,8 @@ export default class DayInfoComponent extends AbstractComponent {
   getTemplate() {
     return createDayInfoTemplate(this._day, this._counter);
   }
+
+  getEventsListContainer() {
+    return this.getElement().querySelector(`.trip-events__list`);
+  }
 }
