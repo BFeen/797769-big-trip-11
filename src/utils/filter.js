@@ -1,14 +1,14 @@
 import {FilterType} from "../const";
 
-export const getFutureEvents = (events, today) => {
+const getFutureEvents = (events, today) => {
   return events.filter((event) => event.dateStart > today);
 };
 
-export const getPastEvents = (events, today) => {
+const getPastEvents = (events, today) => {
   return events.filter((event) => event.dateStart < today);
 };
 
-export const getEventsByFilter = (events, filterType) => {
+const getEventsByFilter = (events, filterType) => {
   const today = new Date();
 
   switch (filterType) {
@@ -22,3 +22,5 @@ export const getEventsByFilter = (events, filterType) => {
 
   return events;
 };
+
+export {getFutureEvents, getPastEvents, getEventsByFilter};
