@@ -15,10 +15,10 @@ const END_POINT = `https://11.ecmascript.pages.academy/big-trip/`;
 
 const api = new API(AUTHORIZATION, END_POINT);
 
-const tripMain = document.querySelector(`.trip-main`);
-const tripControls = tripMain.querySelector(`.trip-controls`);
-const pageMain = document.querySelector(`.page-main`);
-const pageBodyContainer = pageMain.querySelector(`.page-body__container`);
+const tripMainElement = document.querySelector(`.trip-main`);
+const tripControlsElement = tripMainElement.querySelector(`.trip-controls`);
+const pageMainElement = document.querySelector(`.page-main`);
+const pageBodyElement = pageMainElement.querySelector(`.page-body__container`);
 
 const menuComponent = new MenuComponent();
 const addEventButtonComponent = new AddEventButtonComponent();
@@ -26,19 +26,19 @@ const tripEventsComponent = new TripEventsComponent();
 
 const eventsModel = new EventsModel();
 const tripController = new TripController(tripEventsComponent, eventsModel, addEventButtonComponent, api);
-const filterController = new FilterController(tripControls, eventsModel);
+const filterController = new FilterController(tripControlsElement, eventsModel);
 const statisticsComponent = new StatisticsComponent(eventsModel);
 const noEventsComponent = new NoEventsComponent();
 
-render(tripControls, menuComponent, RenderPosition.AFTER_BEGIN);
+render(tripControlsElement, menuComponent, RenderPosition.AFTER_BEGIN);
 filterController.render();
-render(tripMain, addEventButtonComponent, RenderPosition.BEFORE_END);
-render(pageBodyContainer, tripEventsComponent, RenderPosition.BEFORE_END);
-render(pageBodyContainer, statisticsComponent, RenderPosition.BEFORE_END);
+render(tripMainElement, addEventButtonComponent, RenderPosition.BEFORE_END);
+render(pageBodyElement, tripEventsComponent, RenderPosition.BEFORE_END);
+render(pageBodyElement, statisticsComponent, RenderPosition.BEFORE_END);
 statisticsComponent.hide();
 
-render(tripMain, new TripInfoComponent(0), RenderPosition.AFTER_BEGIN);
-render(pageBodyContainer, noEventsComponent, RenderPosition.BEFORE_END);
+render(tripMainElement, new TripInfoComponent(0), RenderPosition.AFTER_BEGIN);
+render(pageBodyElement, noEventsComponent, RenderPosition.BEFORE_END);
 noEventsComponent.setLoadingView();
 
 menuComponent.setOnChange((menuItem) => {
