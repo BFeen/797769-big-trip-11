@@ -20,7 +20,7 @@ const createSelectedOffersMarkup = (selectedOffers) => {
 };
 
 const createTripEventTemplate = (event) => {
-  const {type, destination, totalPrice, dateStart, dateEnd, selectedOffers} = event;
+  const {type, destination, price, dateStart, dateEnd, selectedOffers} = event;
   const {name: destinationName} = destination;
   const dayStart = getDate(dateStart);
   const timeStart = getTime(dateStart);
@@ -48,7 +48,7 @@ const createTripEventTemplate = (event) => {
       </div>
 
       <p class="event__price">
-          &euro;&nbsp;<span class="event__price-value">${totalPrice}</span>
+          &euro;&nbsp;<span class="event__price-value">${price}</span>
       </p>
 
       <h4 class="visually-hidden">Offers:</h4>

@@ -9,7 +9,7 @@ const BAR_HEIGHT = 55;
 
 const ChartTypes = {
   MONEY: { name: `MONEY`, postfix: `€` },
-  TRANSPORT: { name: `TRANSPORT`, postfix: `x`},
+  TRANSPORT: { name: `TRANSPORT`, postfix: `x` },
   TIME_SPEND: { name: `TIME SPEND`, postfix: `H` },
 };
 
@@ -230,9 +230,9 @@ export default class StatisticsComponent extends AbstractSmartComponent {
     transportCtx.height = BAR_HEIGHT * getUniqueTransferTypes(events).length + 1;
     timeSpendCtx.height = BAR_HEIGHT * getUniqueTypes(events).length + 1;
 
-    this._moneyChart = renderChart(moneyCtx, `MONEY`, events);
-    this._transportChart = renderChart(transportCtx, `TRANSPORT`, events);
-    this._timeSpendChart = renderChart(timeSpendCtx, `TIME_SPEND`, events);
+    this._moneyChart = renderChart(moneyCtx, ChartTypes.MONEY.name, events);
+    this._transportChart = renderChart(transportCtx, ChartTypes.TRANSPORT.name, events);
+    this._timeSpendChart = renderChart(timeSpendCtx, ChartTypes.TIME_SPEND.name, events);
   }
 
   _resetCharts() {
