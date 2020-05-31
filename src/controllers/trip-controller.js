@@ -78,7 +78,8 @@ export default class TripController {
     this._sortType = SortType.EVENT;
     this._eventControllers = [];
     this._creatingEvent = null;
-    this._noEventsComponent = null;
+
+    this._noEventsComponent = new NoEventsComponent();
     this._sortingComponent = new SortingComponent();
     this._tripDaysComponent = new TripDaysComponent();
     this._addEventButtonComponent = addEventButtonComponent;
@@ -101,7 +102,6 @@ export default class TripController {
     const events = getSortedEvents(this._eventsModel.getEvents(), this._sortType);
 
     if (events.length === 0) {
-      this._noEventsComponent = new NoEventsComponent();
       render(container, this._noEventsComponent, RenderPosition.BEFORE_END);
       return;
     } else if (this._noEventsComponent) {
