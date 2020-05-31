@@ -102,6 +102,7 @@ export default class TripController {
     const events = getSortedEvents(this._eventsModel.getEvents(), this._sortType);
 
     if (events.length === 0) {
+      remove(this._sortingComponent);
       render(container, this._noEventsComponent, RenderPosition.BEFORE_END);
       return;
     } else if (this._noEventsComponent) {
