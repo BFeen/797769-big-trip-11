@@ -1,7 +1,7 @@
 import AbstractComponent from "./abstract-component.js";
 
 
-const createTripInfoTemplate = (price) => {
+const createTripInfoTemplate = (totalCost) => {
   return (
     `<section class="trip-main__trip-info  trip-info">
         <div class="trip-info__main">
@@ -11,7 +11,7 @@ const createTripInfoTemplate = (price) => {
         </div>
 
         <p class="trip-info__cost">
-            Total: &euro;&nbsp;<span class="trip-info__cost-value">${price}</span>
+            Total: &euro;&nbsp;<span class="trip-info__cost-value">${totalCost}</span>
         </p>
     </section>`
   );
@@ -22,13 +22,10 @@ export default class TripInfoComponent extends AbstractComponent {
     super();
 
     this._events = null;
+    this._totalCost = null;
   }
 
   getTemplate() {
-    return createTripInfoTemplate(this._price);
-  }
-
-  setEvents(events) {
-    this._events = events;
+    return createTripInfoTemplate(this._totalCost);
   }
 }
