@@ -5,7 +5,7 @@ export default class TripInfoController {
   constructor(container, eventsModel) {
     this._container = container;
     this._eventsModel = eventsModel;
-    
+
     this._events = null;
 
     this._tripInfoComponent = null;
@@ -18,7 +18,7 @@ export default class TripInfoController {
 
     this._events = this._eventsModel.getEvents().slice();
     this._tripInfoComponent = new TripInfoComponent(this._events);
-    
+
     if (oldTripInfoComponent) {
       replace(oldTripInfoComponent, this._tripInfoComponent);
     } else {

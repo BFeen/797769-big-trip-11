@@ -6,7 +6,6 @@ import {encode} from "he";
 import flatpicr from "flatpickr";
 
 import "flatpickr/dist/flatpickr.min.css";
-import { relativeTimeThreshold } from "moment";
 
 
 const createRollupButtonMarkup = (mode) => {

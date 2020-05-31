@@ -8,9 +8,9 @@ import moment from "moment";
 const BAR_HEIGHT = 55;
 
 const ChartTypes = {
-  MONEY: { name: `MONEY`, postfix: `€` },
-  TRANSPORT: { name: `TRANSPORT`, postfix: `x` },
-  TIME_SPEND: { name: `TIME SPEND`, postfix: `H` },
+  MONEY: {name: `MONEY`, postfix: `€`},
+  TRANSPORT: {name: `TRANSPORT`, postfix: `x`},
+  TIME_SPEND: {name: `TIME SPEND`, postfix: `H`},
 };
 
 const getUniqueTypes = (events) => {

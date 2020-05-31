@@ -24,9 +24,9 @@ export default class TripInfoComponent extends AbstractComponent {
 
     this._events = events.slice();
 
-    this._tripInfo = this._getTripInfo();;
-    this._totalCost = this._getTotalCost();;
-    this._datesInfo = this._getTripInfoDates();;
+    this._tripInfo = this._getTripInfo();
+    this._totalCost = this._getTotalCost();
+    this._datesInfo = this._getTripInfoDates();
   }
 
   getTemplate() {
@@ -51,7 +51,7 @@ export default class TripInfoComponent extends AbstractComponent {
     const delimiter = `&nbsp;&mdash;&nbsp;`;
 
     const sameMonth = dateFrom.getMonth() === dateTo.getMonth();
-    
+
     dateFrom = formatDay(dateFrom).toUpperCase();
     dateTo = formatDay(dateTo).toUpperCase();
 

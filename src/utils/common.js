@@ -52,12 +52,12 @@ const createTotalPrice = (offers) => {
 };
 
 export {
-  capitalizeFirstLetter, 
-  countDurationTime, 
-  createOfferType, 
-  formatDay, 
-  getTime, 
-  getDate, 
-  getPrepositionFromType, 
+  capitalizeFirstLetter,
+  countDurationTime,
+  createOfferType,
+  formatDay,
+  getTime,
+  getDate,
+  getPrepositionFromType,
   createTotalPrice
 };
