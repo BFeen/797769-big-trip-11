@@ -136,13 +136,6 @@ export default class EventController {
           render(this._eventContainerComponent.getElement(), this._tripEventComponent, RenderPosition.BEFORE_END);
         }
         break;
-      case Mode.EDIT:
-        this._editFormComponent.applyFlatpicr();
-        replace(oldEventComponent, this._tripEventComponent);
-        replace(oldEventEditComponent, this._editFormComponent);
-        remove(oldEventComponent);
-        remove(oldEventEditComponent);
-        break;
       case Mode.ADDING:
         if (oldEventComponent && oldEventEditComponent) {
           remove(oldEventComponent);

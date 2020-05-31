@@ -81,7 +81,7 @@ export default class TripController {
     this._noEventsComponent = null;
     this._sortingComponent = new SortingComponent();
     this._tripDaysComponent = new TripDaysComponent();
-    this._addEventButton = addEventButtonComponent;
+    this._addEventButtonComponent = addEventButtonComponent;
 
     this._onDataChange = this._onDataChange.bind(this);
     this._onSortTypeChange = this._onSortTypeChange.bind(this);
@@ -92,14 +92,8 @@ export default class TripController {
     this._eventsModel.setFilterChangeHandler(this._onFilterChange);
   }
 
-  hide() {
-    this._container.hide();
-    this._addEventButton.disableButton();
-  }
-
-  show() {
-    this._container.show();
-    this._addEventButton.enableButton();
+  setSortType(sortType) {
+    this._sortType = sortType;
   }
 
   render() {
@@ -129,8 +123,18 @@ export default class TripController {
     }
   }
 
+  hide() {
+    this._container.hide();
+    this._addEventButtonComponent.disableButton();
+  }
+
+  show() {
+    this._container.show();
+    this._addEventButtonComponent.enableButton();
+  }
+
   createEvent() {
-    this._addEventButton.disabled = true;
+    this._addEventButtonComponent.disableButton();
 
     this._eventsModel.resetFilter();
     this._onViewChange();
@@ -141,10 +145,6 @@ export default class TripController {
     const eventsListElement = this._container.getElement();
     this._creatingEvent = new EventController(eventsListElement, offers, destinations, this._onDataChange, this._onViewChange);
     this._creatingEvent.render(EmptyEvent, EventControllerMode.ADDING);
-  }
-
-  setSortType(sortType) {
-    this._sortType = sortType;
   }
 
   _removeEvents() {
@@ -164,7 +164,7 @@ export default class TripController {
   }
 
   _onDataChange(eventController, oldData, newData, isChangeView = true) {
-    this._addEventButton.disabled = false;
+    this._addEventButtonComponent.enableButton();
     if (oldData === EmptyEvent) {
       this._creatingEvent = null;
 
@@ -200,8 +200,6 @@ export default class TripController {
             if (isChangeView) {
               eventController.render(EventModel, EventControllerMode.DEFAULT);
               this._updateEvents();
-            } else {
-              eventController.render(EventModel, EventControllerMode.EDIT);
             }
           }
         })
@@ -224,7 +222,7 @@ export default class TripController {
     if (this._creatingEvent) {
       this._creatingEvent.destroy();
       this._creatingEvent = null;
-      this._addEventButton.disabled = false;
+      this._addEventButtonComponent.enableButton();
     }
     this._eventControllers.forEach((item) => item.setDefaultView());
   }

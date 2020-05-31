@@ -6,6 +6,7 @@ import {encode} from "he";
 import flatpicr from "flatpickr";
 
 import "flatpickr/dist/flatpickr.min.css";
+import { relativeTimeThreshold } from "moment";
 
 
 const createRollupButtonMarkup = (mode) => {
@@ -315,6 +316,78 @@ export default class EditFormComponent extends AbstractSmartComponent {
     });
   }
 
+  setCloseEditButtonClickHandler(handler) {
+    if (this._mode === Mode.ADDING) {
+      return;
+    }
+
+    this.getElement().querySelector(`.event__rollup-btn`)
+      .addEventListener(`click`, handler);
+
+    this._closeHandler = handler;
+  }
+
+  setFavoriteButtonClickHandler(handler) {
+    if (this._mode === Mode.ADDING) {
+      return;
+    }
+
+    this.getElement().querySelector(`.event__favorite-checkbox`)
+      .addEventListener(`change`, handler);
+
+    this._favoriteHandler = handler;
+  }
+
+  setDeleteButtonClickHandler(handler) {
+    this._deleteButton = this.getElement().querySelector(`.event__reset-btn`);
+    this._deleteButton.addEventListener(`click`, handler);
+
+    this._deleteHandler = handler;
+  }
+
+  setSubmitHandler(handler) {
+    this._savebutton = this.getElement().querySelector(`.event__save-btn`);
+    this.getElement().addEventListener(`submit`, handler);
+
+    this._submitHandler = handler;
+  }
+
+  getData() {
+    const form = this.getElement();
+    const formData = new FormData(form);
+    formData.append(`event-id`, this._event.id);
+
+    return formData;
+  }
+
+  rerender() {
+    super.rerender();
+    this.applyFlatpicr();
+  }
+
+  reset() {
+    const event = this._event;
+
+    this._eventType = event.type;
+    this._destination = event.destination;
+    this._price = event.price;
+    this._selectedOffers = event.selectedOffers.slice();
+    this._availableOffers = this._offersAll.find((item) => item.type === this._eventType);
+    this._dateStart = event.dateStart;
+    this._dateEnd = event.dateEnd;
+
+    this.destroyFlatpicr();
+    this.rerender();
+  }
+
+  recoveryListeners() {
+    this.setCloseEditButtonClickHandler(this._closeHandler);
+    this.setSubmitHandler(this._submitHandler);
+    this.setDeleteButtonClickHandler(this._deleteHandler);
+    this.setFavoriteButtonClickHandler(this._favoriteHandler);
+    this._subscribeOnEvents();
+  }
+
   applyFlatpicr() {
     this.destroyFlatpicr();
 
@@ -356,8 +429,7 @@ export default class EditFormComponent extends AbstractSmartComponent {
 
     this._deleteButton.textContent = buttonText;
     this._savebutton.textContent = `Save`;
-    const formElements = this.getElement()
-      .querySelectorAll(`.event__save-btn, .event__reset-btn, .event__rollup-btn`);
+    const formElements = this.getElement().querySelectorAll(`button`);
     formElements.forEach((item) => item.removeAttribute(`disabled`));
   }
 
@@ -382,86 +454,13 @@ export default class EditFormComponent extends AbstractSmartComponent {
     }
   }
 
-  getData() {
-    const form = this.getElement();
-    const formData = new FormData(form);
-    formData.append(`event-id`, this._event.id);
-
-    return formData;
-  }
-
-  rerender() {
-    super.rerender();
-    this.applyFlatpicr();
-  }
-
-  reset() {
-    const event = this._event;
-
-    this._eventType = event.type;
-    this._destination = event.destination;
-    this._price = event.price;
-    this._selectedOffers = event.selectedOffers.slice();
-    this._availableOffers = this._offersAll.find((item) => item.type === this._eventType);
-    this._dateStart = event.dateStart;
-    this._dateEnd = event.dateEnd;
-
-    this.destroyFlatpicr();
-    this.rerender();
-  }
-
-  recoveryListeners() {
-    this.setCloseEditButtonClickHandler(this._closeHandler);
-    this.setSubmitHandler(this._submitHandler);
-    this.setDeleteButtonClickHandler(this._deleteHandler);
-    this.setFavoriteButtonClickHandler(this._favoriteHandler);
-    this._subscribeOnEvents();
-  }
-
   removeElement() {
     this.destroyFlatpicr();
     super.removeElement();
   }
 
-  setCloseEditButtonClickHandler(handler) {
-    if (this._mode === Mode.ADDING) {
-      return;
-    }
-
-    this.getElement().querySelector(`.event__rollup-btn`)
-      .addEventListener(`click`, handler);
-
-    this._closeHandler = handler;
-  }
-
-  setFavoriteButtonClickHandler(handler) {
-    if (this._mode === Mode.ADDING) {
-      return;
-    }
-
-    this.getElement().querySelector(`.event__favorite-checkbox`)
-      .addEventListener(`change`, handler);
-
-    this._favoriteHandler = handler;
-  }
-
-  setDeleteButtonClickHandler(handler) {
-    this._deleteButton = this.getElement().querySelector(`.event__reset-btn`);
-    this._deleteButton.addEventListener(`click`, handler);
-
-    this._deleteHandler = handler;
-  }
-
-  setSubmitHandler(handler) {
-    this._savebutton = this.getElement().querySelector(`.event__save-btn`);
-    this.getElement().addEventListener(`submit`, handler);
-
-    this._submitHandler = handler;
-  }
-
   _disablingForm() {
-    const formElements = this.getElement()
-      .querySelectorAll(`.event__save-btn, .event__reset-btn, .event__rollup-btn`);
+    const formElements = this.getElement().querySelectorAll(`button`);
     formElements.forEach((item) => item.setAttribute(`disabled`, `disabled`));
   }
 
@@ -510,7 +509,7 @@ export default class EditFormComponent extends AbstractSmartComponent {
 
     const priceElement = element.querySelector(`#event-price-1`);
     priceElement.addEventListener(`input`, (evt) => {
-      this._price = Number(evt.target.value);
+      this._price = Math.abs(Number(evt.target.value));
 
       checkSaveButtonDisabling();
     });
@@ -530,5 +529,12 @@ export default class EditFormComponent extends AbstractSmartComponent {
         }
       });
     });
+
+    element.querySelector(`.event__favorite-checkbox`)
+      .addEventListener(`change`, () => {
+        this._event.isFavorite = !this._event.isFavorite;
+
+        this.rerender();
+      });
   }
 }
