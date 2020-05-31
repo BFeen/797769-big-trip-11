@@ -1,5 +1,5 @@
 import TripInfoComponent from "../components/trip-info.js";
-import {remove, RenderPosition} from "../utils/render.js";
+import {render, replace, RenderPosition} from "../utils/render.js";
 
 export default class TripInfoController {
   constructor(container, eventsModel) {
@@ -14,15 +14,19 @@ export default class TripInfoController {
   }
 
   render() {
-    this._events = this._eventsModel.getEvents().slice();
-    this._tripInfoComponent = new TripInfoComponent();
+    const oldTripInfoComponent = this._tripInfoComponent;
 
-    render(this._container, this._tripInfoComponent, RenderPosition.BEFORE_END);
+    this._events = this._eventsModel.getEvents().slice();
+    this._tripInfoComponent = new TripInfoComponent(this._events);
+    
+    if (oldTripInfoComponent) {
+      replace(oldTripInfoComponent, this._tripInfoComponent);
+    } else {
+      render(this._container, this._tripInfoComponent, RenderPosition.AFTER_BEGIN);
+    }
   }
 
   _rerender() {
-    remove(this._tripInfoComponent);
-
     this.render();
   }
 

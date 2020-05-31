@@ -30,7 +30,7 @@ export default class TripInfoComponent extends AbstractComponent {
   }
 
   getTemplate() {
-    return createTripInfoTemplate(this._tripInfo, this._totalCost, this._datesInfo);
+    return createTripInfoTemplate(this._tripInfo, this._datesInfo, this._totalCost);
   }
 
   _getTripInfo() {
