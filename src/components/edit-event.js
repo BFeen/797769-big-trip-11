@@ -529,11 +529,13 @@ export default class EditFormComponent extends AbstractSmartComponent {
       });
     });
 
-    element.querySelector(`.event__favorite-checkbox`)
-      .addEventListener(`change`, () => {
-        this._event.isFavorite = !this._event.isFavorite;
+    if (this._mode !== Mode.ADDING) {
+      element.querySelector(`.event__favorite-checkbox`)
+        .addEventListener(`change`, () => {
+          this._event.isFavorite = !this._event.isFavorite;
 
-        this.rerender();
-      });
+          this.rerender();
+        });
+    }
   }
 }
