@@ -466,7 +466,7 @@ export default class EditFormComponent extends AbstractSmartComponent {
   _subscribeOnEvents() {
     const checkSaveButtonDisabling = () => {
       element.querySelector(`.event__save-btn`)
-        .disabled = !Number.isInteger(this._price) || !destinationElement.value;
+        .disabled = !Number.isInteger(this._price) || this._price < 0 || !destinationElement.value;
     };
 
     const element = this.getElement();
@@ -509,6 +509,11 @@ export default class EditFormComponent extends AbstractSmartComponent {
     const priceElement = element.querySelector(`#event-price-1`);
     priceElement.addEventListener(`input`, (evt) => {
       this._price = Math.abs(Number(evt.target.value));
+      // console.log(encode(this._price))
+
+      // if (!isNaN(Number(evt.target.price))) {
+      //   console.log(`не число`)
+      // }
 
       checkSaveButtonDisabling();
     });
@@ -533,8 +538,6 @@ export default class EditFormComponent extends AbstractSmartComponent {
       element.querySelector(`.event__favorite-checkbox`)
         .addEventListener(`change`, () => {
           this._event.isFavorite = !this._event.isFavorite;
-
-          this.rerender();
         });
     }
   }

@@ -5,8 +5,6 @@ import TripDaysComponent from "../components/trip-days.js";
 import SortingComponent, {SortType} from "../components/sorting.js";
 import {render, RenderPosition, remove} from "../utils/render";
 import {formatDay} from "../utils/common.js";
-import moment from "moment";
-
 
 const formatEventsByDay = (events) => {
   const days = getUniqueDays(events);
@@ -34,14 +32,14 @@ const getSortedEvents = (events, sortType) => {
         .sort((a, b) => (b.dateEnd - b.dateStart) - (a.dateEnd - a.dateStart));
     case SortType.PRICE:
       return unsortedEvents
-        .sort((a, b) => b.totalPrice - a.totalPrice);
+        .sort((a, b) => b.price - a.price);
   }
   return unsortedEvents;
 };
 
 const getUniqueDays = (events) => {
   const days = events.map((event) => {
-    return moment(event.dateStart).format(`MMM DD`);
+    return formatDay(event.dateStart);
   });
   return [...new Set(days)];
 };
@@ -79,7 +77,7 @@ export default class TripController {
     this._eventControllers = [];
     this._creatingEvent = null;
 
-    this._noEventsComponent = new NoEventsComponent();
+    this._noEventsComponent = new NoEventsComponent();;
     this._sortingComponent = new SortingComponent();
     this._tripDaysComponent = new TripDaysComponent();
     this._addEventButtonComponent = addEventButtonComponent;
@@ -101,11 +99,12 @@ export default class TripController {
     const container = this._container.getElement();
     const events = getSortedEvents(this._eventsModel.getEvents(), this._sortType);
 
-    if (events.length === 0) {
-      remove(this._sortingComponent);
+    if (this._eventsModel.getEventsAll().length === 0) {
+      this._sortingComponent.hide();
       render(container, this._noEventsComponent, RenderPosition.BEFORE_END);
       return;
     } else if (this._noEventsComponent) {
+      this._sortingComponent.show();
       remove(this._noEventsComponent);
     }
 
@@ -116,10 +115,8 @@ export default class TripController {
     const destinations = this._eventsModel.getDestinations();
 
     if (this._sortType === SortType.EVENT) {
-      this._sortingComponent.setDayContent();
       this._renderEventsByDays(events, offers, destinations);
     } else {
-      this._sortingComponent.removeDayContent();
       this._renderEventsWithoutDays(events, offers, destinations);
     }
   }

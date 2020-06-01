@@ -57,6 +57,7 @@ export default class SortingComponent extends AbstractComponent {
   setDefaultType() {
     this.getElement().querySelector(`#sort-event`).click();
     this._currentSortType = SortType.EVENT;
+    // this.setDayContent();
   }
 
   setSortTypeChangeHandler(handler) {
@@ -65,6 +66,12 @@ export default class SortingComponent extends AbstractComponent {
 
       if (this._currentSortType === sortType) {
         return;
+      }
+
+      if (sortType === SortType.EVENT) {
+        this.setDayContent();
+      } else {
+        this.removeDayContent();
       }
 
       this._currentSortType = sortType;

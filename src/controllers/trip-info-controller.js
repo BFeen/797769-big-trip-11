@@ -15,12 +15,18 @@ export default class TripInfoController {
 
   render() {
     const oldTripInfoComponent = this._tripInfoComponent;
+    console.log(`render tripInfo`);
 
     this._events = this._eventsModel.getEvents().slice();
+    
+    console.log(this._events)
 
     if (this._events.length === 0) {
+      console.log(`nothing`)
       if (oldTripInfoComponent) {
-        remove(oldTripInfoComponent);
+        // remove(oldTripInfoComponent);
+        // oldTripInfoComponent = null;
+        // почему-то случается ошибка удаления  при этих условиях
       }
       return;
     }
@@ -28,8 +34,11 @@ export default class TripInfoController {
     this._tripInfoComponent = new TripInfoComponent(this._events);
 
     if (oldTripInfoComponent) {
+      console.log(`replace`)
+      console.log(oldTripInfoComponent)
       replace(oldTripInfoComponent, this._tripInfoComponent);
     } else {
+      console.log(`render`)
       render(this._container, this._tripInfoComponent, RenderPosition.AFTER_BEGIN);
     }
   }
