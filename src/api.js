@@ -32,7 +32,6 @@ const API = class {
     ])
       .then((response) => {
         const [events, offers, destinations] = response;
-        events.sort((a, b) => a.dateStart - b.dateStart);
         return {
           events,
           offers,

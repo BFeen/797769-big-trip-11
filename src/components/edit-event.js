@@ -246,7 +246,7 @@ export const createEditEventFormTemplate = (event, mode, options = {}) => {
           <label class="event__label" for="event-price-1">
           <span class="visually-hidden">Price</span>&euro;</label>
           <input class="event__input  event__input--price" id="event-price-1" 
-          type="text" name="event-price" value="${price}">
+          type="number" min="0" name="event-price" value="${price}">
       </div>
 
       ${saveButtonMarkup}
@@ -466,11 +466,13 @@ export default class EditFormComponent extends AbstractSmartComponent {
   _subscribeOnEvents() {
     const checkSaveButtonDisabling = () => {
       element.querySelector(`.event__save-btn`)
-        .disabled = !Number.isInteger(this._price) || this._price < 0 || !destinationElement.value;
+        .disabled = !Number.isInteger(this._price) || !destinationElement.value;
     };
 
     const element = this.getElement();
     const destinationElement = element.querySelector(`.event__input--destination`);
+    const dateStartElement = element.querySelector(`#event-start-time-1`);
+    const dateEndElement = element.querySelector(`#event-end-time-1`);
 
     checkSaveButtonDisabling();
 
@@ -496,24 +498,21 @@ export default class EditFormComponent extends AbstractSmartComponent {
       this.rerender();
     });
 
-    const dateStartElement = element.querySelector(`#event-start-time-1`);
-    dateStartElement.addEventListener(`change`, () => {
-      this._dateStart = new Date(dateStartElement.value);
+    dateStartElement.addEventListener(`change`, (evt) => {
+      this._dateStart = new Date(evt.target.value);
+
+      if (this._dateStart > this._dateEnd) {
+        this._flatpicrEnd.setDate(this._dateStart);
+      }
     });
 
-    const dateEndElement = element.querySelector(`#event-end-time-1`);
-    dateEndElement.addEventListener(`change`, () => {
+    dateEndElement.addEventListener(`change`, (evt) => {
       this._dateEnd = new Date(dateEndElement.value);
     });
 
     const priceElement = element.querySelector(`#event-price-1`);
-    priceElement.addEventListener(`input`, (evt) => {
-      this._price = Math.abs(Number(evt.target.value));
-      // console.log(encode(this._price))
-
-      // if (!isNaN(Number(evt.target.price))) {
-      //   console.log(`не число`)
-      // }
+    priceElement.addEventListener(`change`, (evt) => {
+      this._price = Number(evt.target.value);
 
       checkSaveButtonDisabling();
     });

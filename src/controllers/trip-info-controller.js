@@ -1,6 +1,7 @@
 import TripInfoComponent from "../components/trip-info.js";
 import {render, replace, remove, RenderPosition} from "../utils/render.js";
 
+
 export default class TripInfoController {
   constructor(container, eventsModel) {
     this._container = container;
@@ -14,19 +15,14 @@ export default class TripInfoController {
   }
 
   render() {
+    const container = this._container;
     const oldTripInfoComponent = this._tripInfoComponent;
-    console.log(`render tripInfo`);
 
-    this._events = this._eventsModel.getEvents().slice();
-    
-    console.log(this._events)
+    this._events = this._eventsModel.getEventsAll().slice();
 
     if (this._events.length === 0) {
-      console.log(`nothing`)
-      if (oldTripInfoComponent) {
-        // remove(oldTripInfoComponent);
-        // oldTripInfoComponent = null;
-        // почему-то случается ошибка удаления  при этих условиях
+      if (this._tripInfoComponent) {
+        this._tripInfoComponent.hide();
       }
       return;
     }
@@ -34,20 +30,13 @@ export default class TripInfoController {
     this._tripInfoComponent = new TripInfoComponent(this._events);
 
     if (oldTripInfoComponent) {
-      console.log(`replace`)
-      console.log(oldTripInfoComponent)
       replace(oldTripInfoComponent, this._tripInfoComponent);
     } else {
-      console.log(`render`)
-      render(this._container, this._tripInfoComponent, RenderPosition.AFTER_BEGIN);
+      render(container, this._tripInfoComponent, RenderPosition.AFTER_BEGIN);
     }
   }
 
-  _rerender() {
-    this.render();
-  }
-
   _onDataChange() {
-    this._rerender();
+    this.render();
   }
 }

@@ -27,6 +27,9 @@ const getRenderedDay = (tripDaysComponent, day, counter) => {
 const getSortedEvents = (events, sortType) => {
   const unsortedEvents = events.slice();
   switch (sortType) {
+    case SortType.EVENT:
+      return unsortedEvents
+        .sort((a,b) => a.dateStart - b.dateStart);
     case SortType.TIME:
       return unsortedEvents
         .sort((a, b) => (b.dateEnd - b.dateStart) - (a.dateEnd - a.dateStart));
@@ -162,19 +165,18 @@ export default class TripController {
   }
 
   _onDataChange(eventController, oldData, newData, isChangeView = true) {
-    this._addEventButtonComponent.enableButton();
     if (oldData === EmptyEvent) {
       this._creatingEvent = null;
-
       if (newData === null) {
         eventController.destroy();
-
+        this._addEventButtonComponent.enableButton();
       } else {
         this._api.createEvent(newData)
           .then((eventModel) => {
             this._eventsModel.addEvent(eventModel);
             this._eventControllers = [].concat(eventController, this._eventControllers);
             this._updateEvents();
+            this._addEventButtonComponent.enableButton();
           })
           .catch(() => {
             eventController.shake();

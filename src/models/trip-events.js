@@ -66,6 +66,7 @@ export default class EventsModel {
 
   setEvents(events) {
     this._events = Array.from(events);
+    this._events.sort((a, b) => a.dateStart - b.dateStart);
     this._callHandlers(this._dataChangeHandlers);
   }
 
