@@ -506,7 +506,7 @@ export default class EditFormComponent extends AbstractSmartComponent {
       }
     });
 
-    dateEndElement.addEventListener(`change`, (evt) => {
+    dateEndElement.addEventListener(`change`, () => {
       this._dateEnd = new Date(dateEndElement.value);
     });
 
@@ -528,7 +528,7 @@ export default class EditFormComponent extends AbstractSmartComponent {
         } else {
           const {offers} = this._availableOffers;
           const index = getOfferIndex(offers, offerTitle);
-          this._selectedOffers.push(this._offersAll[index]);
+          this._selectedOffers.push(offers[index]);
         }
       });
     });
