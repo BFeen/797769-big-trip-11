@@ -10,7 +10,7 @@ import TripEventsComponent from "./components/trip-events.js";
 import TripInfoController from "./controllers/trip-info-controller.js";
 import {render, RenderPosition, remove} from "./utils/render.js";
 
-const AUTHORIZATION = `Basic JDKSL3sd!au-hjs=sEIQW77`;
+const AUTHORIZATION = `Basic JDKSL3sd!au-hjs=sEIQW7789`;
 const END_POINT = `https://11.ecmascript.pages.academy/big-trip/`;
 
 const api = new API(AUTHORIZATION, END_POINT);

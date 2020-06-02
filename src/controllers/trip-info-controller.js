@@ -1,5 +1,5 @@
 import TripInfoComponent from "../components/trip-info.js";
-import {render, replace, remove, RenderPosition} from "../utils/render.js";
+import {render, replace, RenderPosition} from "../utils/render.js";
 
 
 export default class TripInfoController {

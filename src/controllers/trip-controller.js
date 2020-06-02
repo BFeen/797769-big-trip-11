@@ -29,7 +29,7 @@ const getSortedEvents = (events, sortType) => {
   switch (sortType) {
     case SortType.EVENT:
       return unsortedEvents
-        .sort((a,b) => a.dateStart - b.dateStart);
+        .sort((a, b) => a.dateStart - b.dateStart);
     case SortType.TIME:
       return unsortedEvents
         .sort((a, b) => (b.dateEnd - b.dateStart) - (a.dateEnd - a.dateStart));
@@ -80,7 +80,7 @@ export default class TripController {
     this._eventControllers = [];
     this._creatingEvent = null;
 
-    this._noEventsComponent = new NoEventsComponent();;
+    this._noEventsComponent = new NoEventsComponent();
     this._sortingComponent = new SortingComponent();
     this._tripDaysComponent = new TripDaysComponent();
     this._addEventButtonComponent = addEventButtonComponent;
