@@ -47,7 +47,7 @@ const countTransportTypes = (events, transferTypes) => {
 };
 
 const countDurationHours = (events, uniqueEventTypes) => {
-  let durationsList = [];
+  const durationsList = [];
 
   for (const eventType of uniqueEventTypes) {
     durationsList.push(events
