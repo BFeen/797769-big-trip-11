@@ -1,4 +1,5 @@
 import FilterComponent from "../components/filters.js";
+import {getEventsByFilter} from "../utils/filter.js";
 import {FilterType} from "../const.js";
 import {render, replace, RenderPosition} from "../utils/render.js";
 
@@ -18,11 +19,15 @@ export default class FilterController {
   }
 
   render() {
+    const events = this._eventsModel.getEventsAll().slice();
     const container = this._container;
     const filters = Object.values(FilterType).map((filterType) => {
+      const filteredEvents = getEventsByFilter(events, filterType);
       return {
         name: filterType,
         checked: filterType === this._activeFilter,
+        isDisabled: filteredEvents.length === 0 ? `disabled` : ``,
+        // ЭКРАНИРОВАТЬ EVENT.PRICE
       };
     });
 
