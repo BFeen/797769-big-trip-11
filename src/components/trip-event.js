@@ -1,5 +1,6 @@
 import AbstractComponent from "./abstract-component.js";
 import {capitalizeFirstLetter, countDurationTime, getTime, getDate, getPrepositionFromType} from "../utils/common.js";
+import {encode} from "he";
 
 
 const createSelectedOffersMarkup = (selectedOffers) => {
@@ -28,6 +29,7 @@ const createTripEventTemplate = (event) => {
   const timeEnd = getTime(dateEnd);
   const duration = countDurationTime(dateStart, dateEnd);
   const preposition = getPrepositionFromType(type);
+  const sterilizedPrice = encode(String(price));
 
   const selectedOffersMarkup = createSelectedOffersMarkup(selectedOffers);
 
@@ -48,7 +50,7 @@ const createTripEventTemplate = (event) => {
       </div>
 
       <p class="event__price">
-          &euro;&nbsp;<span class="event__price-value">${price}</span>
+          &euro;&nbsp;<span class="event__price-value">${sterilizedPrice}</span>
       </p>
 
       <h4 class="visually-hidden">Offers:</h4>

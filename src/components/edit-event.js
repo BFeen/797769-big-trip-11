@@ -184,6 +184,7 @@ export const createEditEventFormTemplate = (event, mode, options = {}) => {
   const dayEnd = getDate(dateEnd);
   const timeEnd = getTime(dateEnd);
   const preposition = getPrepositionFromType(type);
+  const sterilizedPrice = encode(String(price));
 
   const typeSelectMarkup = createTypeSelectMarkup(type);
   const destinationSelectMarkup = createDestinationSelectMarkup(Destinations);
@@ -246,7 +247,7 @@ export const createEditEventFormTemplate = (event, mode, options = {}) => {
           <label class="event__label" for="event-price-1">
           <span class="visually-hidden">Price</span>&euro;</label>
           <input class="event__input  event__input--price" id="event-price-1" 
-          type="number" min="0" name="event-price" value="${price}">
+          type="number" min="0" name="event-price" value="${sterilizedPrice}">
       </div>
 
       ${saveButtonMarkup}

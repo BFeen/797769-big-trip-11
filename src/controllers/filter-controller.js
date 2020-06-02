@@ -27,7 +27,6 @@ export default class FilterController {
         name: filterType,
         checked: filterType === this._activeFilter,
         isDisabled: filteredEvents.length === 0 ? `disabled` : ``,
-        // ЭКРАНИРОВАТЬ EVENT.PRICE
       };
     });
 
